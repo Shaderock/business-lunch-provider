@@ -1,6 +1,7 @@
 package com.shaderock.backend.model.entity.preference;
 
 import com.shaderock.backend.model.entity.preference.notification.EmployeeNotificationConfig;
+import com.shaderock.backend.model.entity.user.Employee;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -29,4 +30,8 @@ public class EmployeePreferenceConfig implements PreferenceConfig {
   @OneToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "notification_config_id", nullable = false)
   private EmployeeNotificationConfig notificationConfig;
+
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "employee_id", nullable = false)
+  private Employee employee;
 }
