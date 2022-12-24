@@ -37,7 +37,7 @@ public class SupplierPreferenceConfig implements PreferenceConfig {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   @OneToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "supplier_id", referencedColumnName = "supplier_id", nullable = false)
+  @JoinColumn(name = "supplier_id", nullable = false)
   private Supplier supplier;
   @Column(nullable = false)
   private Duration deliveryDuration;

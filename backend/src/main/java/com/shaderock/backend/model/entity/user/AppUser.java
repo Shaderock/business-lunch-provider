@@ -46,6 +46,11 @@ public class AppUser implements UserDetails {
   @Column(nullable = false)
   private String password;
 
+  @Column(nullable = false)
+  private String firstName;
+  @Column(nullable = false)
+  private String lastName;
+
   @Column(nullable = false, columnDefinition = "boolean default false")
   private boolean isEnabled = false;
 
