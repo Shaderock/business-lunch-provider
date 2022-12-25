@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GeneralControllerAdvice {
   @ExceptionHandler(Exception.class)
   public ErrorMessage handleAnyException(Exception e) {
-    return ErrorMessage.builder().message(e.getMessage()).build();
+    return ErrorMessage.builder().errMessage(e.getMessage()).build();
   }
 }

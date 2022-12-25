@@ -24,12 +24,11 @@ public class JWTRequestFilter extends OncePerRequestFilter {
   private final JwtUserDetailsService jwtUserDetailsService;
 
   @Override
-
-  protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response,
-                                  final FilterChain chain) throws ServletException, IOException {
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+          throws ServletException, IOException {
     final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
     if (header == null || !header.startsWith("Bearer ")) {
-      chain.doFilter(request, response);
+      filterChain.doFilter(request, response);
       return;
     }
 
@@ -37,7 +36,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     final Optional<String> optionalUsername = jwtTokenService.validateTokenAndGetUsername(token);
     if (optionalUsername.isEmpty()) {
       // validation failed or token expired
-      chain.doFilter(request, response);
+      filterChain.doFilter(request, response);
       return;
     }
 
@@ -51,7 +50,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     // continue with authenticated user
-    chain.doFilter(request, response);
+    filterChain.doFilter(request, response);
   }
 
 }
