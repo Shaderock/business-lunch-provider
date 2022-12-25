@@ -1,5 +1,7 @@
 package com.shaderock.backend.auth.login;
 
+import com.shaderock.backend.auth.login.model.LoginForm;
+import com.shaderock.backend.auth.login.model.UserDTO;
 import com.shaderock.backend.model.entity.user.AppUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class AuthController {
 
     AppUser appUser = (AppUser) jwtUserDetailsService.loadUserByUsername(loginForm.getEmail());
     UserDTO response = UserDTO.builder()
+            .email(appUser.getEmail())
             .firstName(appUser.getFirstName())
             .lastName(appUser.getLastName())
             .token(jwtTokenService.generateToken(appUser))

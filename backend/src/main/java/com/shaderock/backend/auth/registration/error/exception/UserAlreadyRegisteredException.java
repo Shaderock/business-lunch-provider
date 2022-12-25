@@ -1,4 +1,4 @@
-package com.shaderock.backend.auth.registration;
+package com.shaderock.backend.auth.registration.error.exception;
 
 import lombok.Getter;
 
