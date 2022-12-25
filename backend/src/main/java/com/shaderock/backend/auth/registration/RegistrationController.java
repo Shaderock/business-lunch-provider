@@ -47,6 +47,6 @@ public class RegistrationController {
   @GetMapping("/confirm-email")
   public ResponseEntity<Void> confirmEmail(@RequestParam @NotNull String token) {
     registrationService.confirmEmail(token);
-    return ResponseEntity.status(HttpStatus.FOUND).header("Location", frontendUrl + "/login").build();
+    return ResponseEntity.status(HttpStatus.FOUND).header("Location", frontendUrl + "/login?emailConfirmed=true").build();
   }
 }

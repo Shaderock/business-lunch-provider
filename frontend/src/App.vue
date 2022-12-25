@@ -1,6 +1,15 @@
 <script lang="ts" setup>
 import {MDBContainer, MDBFooter} from 'mdb-vue-ui-kit';
-import TheNavigation from "./components/TheNavigation.vue";</script>
+import TheNavigation from "./components/TheNavigation.vue";
+import {onMounted} from "vue";
+import {useAuthStore} from "./stores/AuthStore";
+
+const authStore = useAuthStore()
+
+onMounted(() => {
+  authStore.initializeUser()
+})
+</script>
 
 <template>
   <TheNavigation/>
