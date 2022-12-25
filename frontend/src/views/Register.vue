@@ -154,7 +154,7 @@ async function register() {
   } catch (error) {
     console.log('Something wrong happened during registration: ' + error)
     let toastManager: ToastManager = new ToastManager()
-    toastManager.showError("There was an error during registration request")
+    toastManager.showDefaultError("There was an error during registration request")
   }
 }
 </script>

@@ -48,21 +48,20 @@
                 <MDBIcon icon="user"/>
               </MDBDropdownToggle>
               <MDBDropdownMenu>
-                <MDBDropdownItem href="#">Action</MDBDropdownItem>
+                <MDBDropdownItem href="#" @click="logout ">Logout</MDBDropdownItem>
                 <MDBDropdownItem href="#">Another Action</MDBDropdownItem>
                 <MDBDropdownItem href="#">Something else here</MDBDropdownItem>
               </MDBDropdownMenu>
             </MDBDropdown>
           </MDBNavbarItem>
         </MDBNavbarNav>
+
         <MDBNavbarNav v-else right>
           <MDBNavbarItem class="d-flex align-items-end" to="/login">
-            <MDBBtn outline="primary">Login
-            </MDBBtn>
+            <MDBBtn outline="primary">Login</MDBBtn>
           </MDBNavbarItem>
         </MDBNavbarNav>
       </MDBCollapse>
-
     </MDBNavbar>
   </MDBContainer>
 </template>
@@ -84,9 +83,18 @@ import {
 } from 'mdb-vue-ui-kit';
 import {ref} from 'vue';
 import {useAuthStore} from "../stores/AuthStore";
+import {ToastManager} from "../services/ToastManager";
+import {useRouter} from "vue-router";
 
 const collapse1 = ref(false);
 const dropdown1 = ref(false);
 const dropdown3 = ref(false);
 const authStore = useAuthStore();
+const router = useRouter()
+
+function logout() {
+  authStore.logout();
+  router.push('/');
+  new ToastManager().showSuccess("Good Bye!", "You were signed out")
+}
 </script>
