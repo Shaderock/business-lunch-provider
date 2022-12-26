@@ -1,5 +1,6 @@
 package com.shaderock.backend.model.entity.user;
 
+import com.shaderock.backend.model.entity.company.Company;
 import com.shaderock.backend.model.entity.menu.Menu;
 import com.shaderock.backend.model.entity.preference.SupplierPreferenceConfig;
 import jakarta.persistence.Column;
@@ -9,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +26,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@PrimaryKeyJoinColumn(name = "id")
 public class Supplier extends AppUser {
   @Column(nullable = false)
   private String name;

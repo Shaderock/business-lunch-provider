@@ -10,7 +10,7 @@ public class TokenNotFoundErrorMessage extends ErrorMessage {
   private final String email;
 
   public TokenNotFoundErrorMessage(String message, String email) {
-    super(message);
+    super(true, message);
     this.email = email;
   }
 }

@@ -1,8 +1,9 @@
 package com.shaderock.backend.auth.registration.error.exception;
 
+import com.shaderock.backend.messaging.exception.TransferableApplicationException;
 import lombok.Getter;
 
-public class TokenNotFoundException extends RuntimeException {
+public class TokenNotFoundException extends TransferableApplicationException {
   @Getter
   private final String token;
 

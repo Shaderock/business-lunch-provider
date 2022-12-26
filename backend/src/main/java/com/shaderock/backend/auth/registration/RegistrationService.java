@@ -1,12 +1,12 @@
 package com.shaderock.backend.auth.registration;
 
 import com.shaderock.backend.auth.registration.error.exception.ConfirmationEmailNotSentException;
+import com.shaderock.backend.auth.registration.error.exception.TokenNotFoundException;
 import com.shaderock.backend.auth.registration.error.exception.UserAlreadyRegisteredException;
 import com.shaderock.backend.mail.MailService;
-import com.shaderock.backend.auth.registration.error.exception.TokenNotFoundException;
 import com.shaderock.backend.model.entity.user.AppUser;
-import com.shaderock.backend.model.repository.AppUserRepository;
 import com.shaderock.backend.model.type.Role;
+import com.shaderock.backend.repository.user.AppUserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class RegistrationService {
-  private final AppUserRepository userRepository;
+  private final AppUserRepository<AppUser> appUserRepository;
   private final MailService mailService;
 
   @Transactional
@@ -35,17 +35,17 @@ public class RegistrationService {
       throw new ConfirmationEmailNotSentException(appUser.getEmail());
     }
 
-    userRepository.save(appUser);
+    appUserRepository.save(appUser);
   }
 
   public boolean isUserRegistered(String email) {
-    Optional<AppUser> userOptional = userRepository.findByEmail(email);
+    Optional<AppUser> userOptional = appUserRepository.findByEmail(email);
     return userOptional.isPresent() && userOptional.get().isEnabled();
   }
 
   @Transactional
   public void confirmEmail(String token) {
-    Optional<AppUser> userOptional = userRepository.findByRegistrationToken(token);
+    Optional<AppUser> userOptional = appUserRepository.findByRegistrationToken(token);
     if (userOptional.isEmpty()) {
       throw new TokenNotFoundException(token);
     }

@@ -1,7 +1,7 @@
 package com.shaderock.backend.model.entity.preference;
 
+import com.shaderock.backend.model.entity.company.Company;
 import com.shaderock.backend.model.type.CompanyDiscountType;
-import com.shaderock.backend.model.entity.user.Company;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -39,4 +39,6 @@ public class CompanyPreferenceConfig implements PreferenceConfig {
   @Enumerated(EnumType.STRING)
   private CompanyDiscountType companyDiscountType;
 
+  @Column(nullable = false)
+  private String deliveryAddress;
 }

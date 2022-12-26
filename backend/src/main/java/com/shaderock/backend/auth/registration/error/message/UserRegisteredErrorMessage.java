@@ -9,7 +9,7 @@ public class UserRegisteredErrorMessage extends ErrorMessage {
   private final String email;
 
   public UserRegisteredErrorMessage(String message, String email) {
-    super(message);
+    super(true, message);
     this.email = email;
   }
 }
