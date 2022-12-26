@@ -10,7 +10,7 @@ public class ConfirmationEmailErrorMessage extends ErrorMessage {
   private final String email;
 
   public ConfirmationEmailErrorMessage(String message, String email) {
-    super(message);
+    super(true, message);
     this.email = email;
   }
 }

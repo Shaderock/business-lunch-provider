@@ -1,8 +1,9 @@
 package com.shaderock.backend.auth.registration.error.exception;
 
+import com.shaderock.backend.messaging.exception.TransferableApplicationException;
 import lombok.Getter;
 
-public class ConfirmationEmailNotSentException extends RuntimeException {
+public class ConfirmationEmailNotSentException extends TransferableApplicationException {
   @Getter
   private final String email;
 

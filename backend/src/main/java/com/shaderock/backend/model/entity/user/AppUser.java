@@ -40,7 +40,7 @@ public class AppUser implements UserDetails {
   private Long id;
 
   @Email
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String email;
 
   @Column(nullable = false)
