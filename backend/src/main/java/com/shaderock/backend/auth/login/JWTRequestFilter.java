@@ -1,6 +1,6 @@
 package com.shaderock.backend.auth.login;
 
-import com.shaderock.backend.service.user.AppUserDetailsService;
+import com.shaderock.backend.user.AppUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

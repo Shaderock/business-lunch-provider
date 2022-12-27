@@ -1,7 +1,7 @@
 package com.shaderock.backend.conf;
 
 import com.shaderock.backend.auth.login.JWTRequestFilter;
-import com.shaderock.backend.model.type.Role;
+import com.shaderock.backend.user.model.type.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

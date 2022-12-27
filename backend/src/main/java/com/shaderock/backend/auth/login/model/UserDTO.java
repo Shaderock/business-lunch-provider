@@ -1,6 +1,6 @@
 package com.shaderock.backend.auth.login.model;
 
-import com.shaderock.backend.model.type.Role;
+import com.shaderock.backend.user.model.type.Role;
 
 import java.util.Set;
 
