@@ -1,14 +1,12 @@
 package com.shaderock.backend.auth.registration;
 
-import com.shaderock.backend.auth.registration.model.RegistrationForm;
-import com.shaderock.backend.model.entity.user.AppUser;
+import com.shaderock.backend.auth.registration.model.UserRegistrationForm;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RegistrationController {
   private final RegistrationService registrationService;
-  private final BCryptPasswordEncoder passwordEncoder;
 
   @Value(value = "${application.frontend.url}")
   private String frontendUrl;
@@ -32,21 +29,16 @@ public class RegistrationController {
   }
 
   @PostMapping
-  public ResponseEntity<Void> registerUser(@RequestBody @Valid RegistrationForm registrationForm) {
-    AppUser appUser = AppUser.builder()
-            .email(registrationForm.getEmail())
-            .password(passwordEncoder.encode(registrationForm.getPassword()))
-            .firstName(registrationForm.getFirstName())
-            .lastName(registrationForm.getLastName())
-            .build();
-
-    registrationService.registerUser(appUser);
+  public ResponseEntity<Void> registerUser(@RequestBody @Valid final UserRegistrationForm form) {
+    registrationService.registerUser(form);
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/confirm-email")
-  public ResponseEntity<Void> confirmEmail(@RequestParam @NotNull String token) {
+  public ResponseEntity<Void> confirmEmail(@RequestParam @NotNull final String token) {
     registrationService.confirmEmail(token);
-    return ResponseEntity.status(HttpStatus.FOUND).header("Location", frontendUrl + "/login?emailConfirmed=true").build();
+    return ResponseEntity.status(HttpStatus.FOUND)
+            .header("Location", frontendUrl + "/login?emailConfirmed=true")
+            .build();
   }
 }

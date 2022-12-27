@@ -1,17 +1,13 @@
 package com.shaderock.backend.auth.login.model;
 
-import com.shaderock.backend.model.type.Role;
-import lombok.Builder;
-import lombok.Data;
+import com.shaderock.backend.user.model.type.Role;
 
 import java.util.Set;
 
-@Data
-@Builder
-public class UserDTO {
-  private String email;
-  private String token;
-  private String firstName;
-  private String lastName;
-  private Set<Role> roles;
+public record UserDTO(
+        String email,
+        String token,
+        String firstName,
+        String lastName,
+        Set<Role> roles) {
 }
