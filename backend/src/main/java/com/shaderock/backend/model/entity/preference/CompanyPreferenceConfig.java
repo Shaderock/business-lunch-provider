@@ -1,6 +1,6 @@
 package com.shaderock.backend.model.entity.preference;
 
-import com.shaderock.backend.model.entity.company.Company;
+import com.shaderock.backend.model.entity.organization.Company;
 import com.shaderock.backend.model.type.CompanyDiscountType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,16 +17,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serial;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class CompanyPreferenceConfig implements PreferenceConfig {
-  @Serial
-  private static final long serialVersionUID = 9L;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

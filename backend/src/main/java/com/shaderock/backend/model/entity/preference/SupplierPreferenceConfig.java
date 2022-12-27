@@ -1,8 +1,8 @@
 package com.shaderock.backend.model.entity.preference;
 
+import com.shaderock.backend.model.entity.organization.Supplier;
 import com.shaderock.backend.model.entity.preference.capacity.OrderCapacity;
 import com.shaderock.backend.model.entity.preference.price.PriceBy;
-import com.shaderock.backend.model.entity.user.Supplier;
 import com.shaderock.backend.model.type.OrderType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +20,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serial;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Set;
@@ -31,8 +30,6 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 public class SupplierPreferenceConfig implements PreferenceConfig {
-  @Serial
-  private static final long serialVersionUID = 12L;
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -40,7 +37,7 @@ public class SupplierPreferenceConfig implements PreferenceConfig {
   @JoinColumn(name = "supplier_id", nullable = false)
   private Supplier supplier;
   @Column(nullable = false)
-  private Duration deliveryDuration;
+  private Duration requestOffset;
 
   @Column(nullable = false)
   private LocalTime deliveryPeriodStartTime;
@@ -57,7 +54,7 @@ public class SupplierPreferenceConfig implements PreferenceConfig {
 
   @Column
   @OneToMany(mappedBy = "preferenceConfig", fetch = FetchType.LAZY)
-  private Set<PriceBy> prices;
+  private Set<PriceBy> prices; // todo should be one and not set
 
   @OneToOne(mappedBy = "preferenceConfig", fetch = FetchType.LAZY)
   private OrderCapacity orderCapacity;

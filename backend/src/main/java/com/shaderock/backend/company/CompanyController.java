@@ -2,7 +2,7 @@ package com.shaderock.backend.company;
 
 import com.shaderock.backend.company.model.CompanyDTO;
 import com.shaderock.backend.company.model.CompanyRegistrationForm;
-import com.shaderock.backend.model.entity.company.Company;
+import com.shaderock.backend.model.entity.organization.Company;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

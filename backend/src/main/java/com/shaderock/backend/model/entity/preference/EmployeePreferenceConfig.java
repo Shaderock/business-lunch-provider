@@ -1,7 +1,7 @@
 package com.shaderock.backend.model.entity.preference;
 
 import com.shaderock.backend.model.entity.preference.notification.EmployeeNotificationConfig;
-import com.shaderock.backend.model.entity.user.Employee;
+import com.shaderock.backend.model.entity.user.AppUser;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -14,16 +14,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serial;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class EmployeePreferenceConfig implements PreferenceConfig {
-  @Serial
-  private static final long serialVersionUID = 10L;
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -33,5 +29,5 @@ public class EmployeePreferenceConfig implements PreferenceConfig {
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "employee_id", nullable = false)
-  private Employee employee;
+  private AppUser employee;
 }

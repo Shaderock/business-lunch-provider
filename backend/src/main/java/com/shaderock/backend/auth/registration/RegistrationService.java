@@ -3,54 +3,70 @@ package com.shaderock.backend.auth.registration;
 import com.shaderock.backend.auth.registration.error.exception.ConfirmationEmailNotSentException;
 import com.shaderock.backend.auth.registration.error.exception.TokenNotFoundException;
 import com.shaderock.backend.auth.registration.error.exception.UserAlreadyRegisteredException;
+import com.shaderock.backend.auth.registration.model.UserRegistrationForm;
 import com.shaderock.backend.mail.MailService;
 import com.shaderock.backend.model.entity.user.AppUser;
+import com.shaderock.backend.model.entity.user.AppUserDetails;
 import com.shaderock.backend.model.type.Role;
-import com.shaderock.backend.repository.user.AppUserRepository;
+import com.shaderock.backend.repository.user.UserDetailsRepository;
+import com.shaderock.backend.repository.user.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.HashSet;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class RegistrationService {
-  private final AppUserRepository<AppUser> appUserRepository;
+  private final UserDetailsRepository userDetailsRepository;
+  private final UserRepository userRepository;
   private final MailService mailService;
+  private final BCryptPasswordEncoder passwordEncoder;
 
   @Transactional
-  public void registerUser(AppUser appUser) {
-    if (isUserRegistered(appUser.getEmail())) {
-      throw new UserAlreadyRegisteredException(appUser.getEmail());
+  public void registerUser(@Valid UserRegistrationForm form) {
+    if (isUserRegistered(form.email())) {
+      throw new UserAlreadyRegisteredException(form.email());
     }
 
-    appUser.setRegistrationToken(UUID.randomUUID().toString());
+    AppUserDetails details = AppUserDetails.builder()
+            .email(form.email())
+            .password(passwordEncoder.encode(form.password()))
+            .firstName(form.firstName())
+            .lastName(form.lastName())
+            .roles(new HashSet<>())
+            .registrationToken(UUID.randomUUID().toString())
+            .isEnabled(false)
+            .build();
+    AppUserDetails persistedDetails = userDetailsRepository.save(details);
 
+    AppUser appUser = new AppUser();
+    appUser.setUserDetails(persistedDetails);
+    AppUser persistedUser = userRepository.save(appUser);
+
+    persistedDetails.setAppUser(persistedUser);
     try {
-      mailService.sendConfirmationEmail(appUser);
+      mailService.sendConfirmationEmail(persistedDetails);
     } catch (MessagingException e) {
-      throw new ConfirmationEmailNotSentException(appUser.getEmail());
+      throw new ConfirmationEmailNotSentException(details.getEmail());
     }
-
-    appUserRepository.save(appUser);
   }
 
   public boolean isUserRegistered(String email) {
-    Optional<AppUser> userOptional = appUserRepository.findByEmail(email);
-    return userOptional.isPresent() && userOptional.get().isEnabled();
+    return userDetailsRepository.findByEmail(email).isPresent();
   }
 
   @Transactional
   public void confirmEmail(String token) {
-    Optional<AppUser> userOptional = appUserRepository.findByRegistrationToken(token);
-    if (userOptional.isEmpty()) {
-      throw new TokenNotFoundException(token);
-    }
+    AppUserDetails userDetails = userDetailsRepository.findByRegistrationToken(token)
+            .orElseThrow(() -> new TokenNotFoundException(token));
 
-    userOptional.get().setEnabled(true);
-    userOptional.get().getRoles().add(Role.USER);
+    userDetails.setEnabled(true);
+    userDetails.getRoles().add(Role.USER);
   }
 }

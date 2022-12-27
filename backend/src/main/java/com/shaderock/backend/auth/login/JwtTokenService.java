@@ -36,17 +36,9 @@ public class JwtTokenService {
   }
 
   public Optional<String> validateTokenAndGetUsername(final String token) {
-    String result;
-
     try {
-      result = verifier.verify(token).getSubject();
+      return Optional.of(verifier.verify(token).getSubject());
     } catch (final JWTVerificationException verificationEx) {
-      result = null;
-    }
-
-    if (result != null) {
-      return Optional.of(result);
-    } else {
       return Optional.empty();
     }
   }

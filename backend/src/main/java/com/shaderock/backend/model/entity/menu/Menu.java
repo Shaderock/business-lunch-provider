@@ -1,6 +1,6 @@
 package com.shaderock.backend.model.entity.menu;
 
-import com.shaderock.backend.model.entity.user.Supplier;
+import com.shaderock.backend.model.entity.organization.Supplier;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,8 +15,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.Set;
 
 @Data
@@ -24,9 +22,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Menu implements Serializable {
-  @Serial
-  private static final long serialVersionUID = 1L;
+public class Menu {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

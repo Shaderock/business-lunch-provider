@@ -14,22 +14,18 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Option implements Serializable {
-  @Serial
-  private static final long serialVersionUID = 4L;
+public class Option {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -47,6 +43,6 @@ public class Option implements Serializable {
   @OneToMany(mappedBy = "option", fetch = FetchType.LAZY)
   private List<OptionDescription> optionDescriptions;
 
-  @OneToOne(mappedBy = "option")
+  @OneToOne(mappedBy = "option", fetch = FetchType.LAZY)
   private PriceByOption price;
 }

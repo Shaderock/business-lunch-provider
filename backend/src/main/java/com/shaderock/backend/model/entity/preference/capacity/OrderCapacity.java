@@ -13,8 +13,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.time.Duration;
 
 @Data
@@ -22,9 +20,7 @@ import java.time.Duration;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class OrderCapacity implements Serializable {
-  @Serial
-  private static final long serialVersionUID = 8L;
+public class OrderCapacity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

@@ -3,17 +3,14 @@ package com.shaderock.backend.company;
 import com.shaderock.backend.company.error.exception.CompanyRegistrationValidationException;
 import com.shaderock.backend.company.model.CompanyDTO;
 import com.shaderock.backend.company.model.CompanyRegistrationForm;
-import com.shaderock.backend.model.entity.company.Company;
+import com.shaderock.backend.model.entity.organization.Company;
 import com.shaderock.backend.model.entity.user.AppUser;
-import com.shaderock.backend.model.entity.user.Employee;
+import com.shaderock.backend.model.entity.user.AppUserDetails;
 import com.shaderock.backend.model.type.Role;
-import com.shaderock.backend.repository.user.AppUserRepository;
-import com.shaderock.backend.repository.user.CompanyRepository;
-import com.shaderock.backend.service.user.AppUserConverter;
-import com.shaderock.backend.service.user.EmployeeService;
+import com.shaderock.backend.repository.organization.CompanyRepository;
+import com.shaderock.backend.service.user.AppUserDetailsService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -23,63 +20,53 @@ import java.util.HashSet;
 @RequiredArgsConstructor
 public class CompanyService {
   private final CompanyRepository companyRepository;
-  private final EmployeeService employeeService;
-  private final AppUserRepository<AppUser> appUserRepository;
-  private final AppUserConverter<AppUser, Employee> appUserConverter;
+  private final AppUserDetailsService userDetailsService;
 
   @Transactional
   public Company register(final CompanyRegistrationForm form, Principal principal) {
     validateRegistration(form, principal);
 
-    Company newCompany = Company.builder()
-            .email(form.getEmail())
-            .name(form.getName())
-            .phone(form.getPhone())
-            .employees(new HashSet<>())
-            .isDeleted(false)
-            .build();
+    Company newCompany = new Company();
+    newCompany.setEmail(form.email());
+    newCompany.setName(form.name());
+    newCompany.setPhone(form.phone());
+    newCompany.setDeleted(false);
+    newCompany.setUsers(new HashSet<>());
+
     Company savedCompany = companyRepository.save(newCompany);
 
-    AppUser appUser = appUserRepository.findByEmail(principal.getName())
-            .orElseThrow(() -> new UsernameNotFoundException(String.format("User with email=[%s} not found", principal.getName())));
+    AppUserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+    userDetails.getRoles().add(Role.COMPANY_ADMIN);
+    userDetails.getRoles().add(Role.EMPLOYEE);
 
-    Employee employee = new Employee();
-    appUserConverter.convertFromTo(appUser, employee);
-    employee.setCompany(savedCompany);
-    employee.getRoles().add(Role.COMPANY_ADMIN);
-    employee.getRoles().add(Role.EMPLOYEE);
-    employee = employeeService.save(employee);
+    AppUser user = userDetails.getAppUser();
+    user.setOrganization(savedCompany);
 
-    savedCompany.getEmployees().add(employee);
-    savedCompany = companyRepository.save(newCompany);
+    savedCompany.getUsers().add(user);
 
     return savedCompany;
   }
 
   private void validateRegistration(final CompanyRegistrationForm form, Principal principal) {
-    if (companyRepository.findByName(form.getName()).isPresent()) {
+    if (companyRepository.findByName(form.name()).isPresent()) {
       throw new CompanyRegistrationValidationException(String.format("Company with name [%s] already exists",
-                                                                     form.getName()));
+                                                                     form.name()));
     }
-    if (companyRepository.findByEmail(form.getEmail()).isPresent()) {
+    if (companyRepository.findByEmailAndDeletedIsFalse(form.email()).isPresent()) {
       throw new CompanyRegistrationValidationException(String.format("Company with email [%s] already exists",
-                                                                     form.getEmail()));
+                                                                     form.email()));
     }
 
-    AppUser appUser = appUserRepository.findByEmail(principal.getName())
-            .orElseThrow(() -> new UsernameNotFoundException(String.format("User with email=[%s} not found", principal.getName())));
+    AppUserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
 
-    if (appUser.getRoles().size() > 1 && !appUser.getRoles().contains(Role.USER)) {
+    if (userDetails.getRoles().size() > 1 && !userDetails.getRoles().contains(Role.USER)) {
       throw new CompanyRegistrationValidationException(String.format("User [%s] can not create companies",
-                                                                     form.getEmail()));
+                                                                     form.email()));
     }
   }
 
+  @Transactional
   public CompanyDTO convertToDto(Company company) {
-    return CompanyDTO.builder()
-            .name(company.getName())
-            .email(company.getEmail())
-            .phone(company.getPhone())
-            .build();
+    return new CompanyDTO(company.getName(), company.getEmail(), company.getPhone());
   }
 }

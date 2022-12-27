@@ -11,23 +11,18 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.io.Serial;
-import java.io.Serializable;
-
-@Data
-@EqualsAndHashCode
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public class PriceBy implements Serializable {
-  @Serial
-  private static final long serialVersionUID = 15L;
+public class PriceBy {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

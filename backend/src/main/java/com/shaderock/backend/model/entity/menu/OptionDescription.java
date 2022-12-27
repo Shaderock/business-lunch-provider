@@ -12,18 +12,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class OptionDescription implements Serializable {
-  @Serial
-  private static final long serialVersionUID = 16L;
-
+public class OptionDescription {
   @Column
   private boolean isDeleted;
   @Id

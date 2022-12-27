@@ -10,8 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Objects;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -21,18 +19,4 @@ public class EmployeeNotificationConfig extends NotificationConfig {
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "employee_id", nullable = false)
   private EmployeePreferenceConfig preferenceConfig;
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    EmployeeNotificationConfig that = (EmployeeNotificationConfig) o;
-    return preferenceConfig.equals(that.preferenceConfig);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), preferenceConfig);
-  }
 }

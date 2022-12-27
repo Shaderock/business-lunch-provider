@@ -1,6 +1,6 @@
 package com.shaderock.backend.mail;
 
-import com.shaderock.backend.model.entity.user.AppUser;
+import com.shaderock.backend.model.entity.user.AppUserDetails;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -32,14 +32,14 @@ public class MailService {
     mailSender.send(message);
   }
 
-  public void sendConfirmationEmail(AppUser appUser) throws MessagingException {
+  public void sendConfirmationEmail(AppUserDetails userDetails) throws MessagingException {
     String subject = "Please verify your registration";
-    String content = "Dear " + appUser.getFirstName() + " " + appUser.getLastName() + ",<br>" +
+    String content = "Dear " + userDetails.getFirstName() + " " + userDetails.getLastName() + ",<br>" +
             "Please click the link below to verify your registration:<br>" +
-            "<h3><a href=\"" + backendUrl + "/api/register/confirm-email?token=" + appUser.getRegistrationToken() +
+            "<h3><a href=\"" + backendUrl + "/api/register/confirm-email?token=" + userDetails.getRegistrationToken() +
             "\" target=\"_self\">VERIFY</a></h3>" +
             "Thank you,<br>" +
             "BLP Team.";
-    sendEmail(appUser.getEmail(), subject, content);
+    sendEmail(userDetails.getEmail(), subject, content);
   }
 }

@@ -1,5 +1,6 @@
 package com.shaderock.backend.auth.login;
 
+import com.shaderock.backend.service.user.AppUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ import java.util.Optional;
 public class JWTRequestFilter extends OncePerRequestFilter {
 
   private final JwtTokenService jwtTokenService;
-  private final JwtUserDetailsService jwtUserDetailsService;
+  private final AppUserDetailsService appUserDetailsService;
 
   @Override
   public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -45,8 +46,8 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     String username = optionalUsername.get();
 
     // set user details on spring security context
-    final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
-    Collection<? extends GrantedAuthority> authorities = jwtUserDetailsService.getUserDetailsAuthorities(userDetails);
+    final UserDetails userDetails = appUserDetailsService.loadUserByUsername(username);
+    Collection<? extends GrantedAuthority> authorities = appUserDetailsService.getUserDetailsAuthorities(userDetails);
     final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
             userDetails, null, authorities);
     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
