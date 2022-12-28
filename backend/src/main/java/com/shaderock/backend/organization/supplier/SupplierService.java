@@ -8,7 +8,7 @@ import com.shaderock.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.backend.organization.supplier.model.exception.SupplierRegistrationValidationException;
 import com.shaderock.backend.organization.supplier.preference.model.entity.SupplierPreferenceConfig;
 import com.shaderock.backend.organization.supplier.preference.model.type.OrderType;
-import com.shaderock.backend.organization.supplier.preference.repository.SupplierPreferenceRepository;
+import com.shaderock.backend.organization.supplier.preference.repository.SupplierPreferencesRepository;
 import com.shaderock.backend.user.AppUserDetailsService;
 import com.shaderock.backend.user.model.entity.AppUserDetails;
 import com.shaderock.backend.user.model.type.Role;
@@ -22,8 +22,8 @@ import java.security.Principal;
 @Service
 @RequiredArgsConstructor
 public class SupplierService {
-  private final SupplierRepository supplierRepository;
-  private final SupplierPreferenceRepository supplierPreferenceRepository;
+  private final SupplierRepository<Supplier> supplierRepository;
+  private final SupplierPreferencesRepository supplierPreferencesRepository;
   private final AppUserDetailsService userDetailsService;
 
   @Transactional
@@ -49,7 +49,7 @@ public class SupplierService {
     preferences.setOrderType(OrderType.UNLIMITED_OPTIONS);
     preferences.setSupplier(supplier);
 
-    preferences = supplierPreferenceRepository.save(preferences);
+    preferences = supplierPreferencesRepository.save(preferences);
 
     supplier.setPreferences(preferences);
     userDetails.getAppUser().setOrganization(supplier);

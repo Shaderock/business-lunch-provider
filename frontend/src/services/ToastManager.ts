@@ -33,7 +33,7 @@ export class ToastManager {
     }
 
     showErrorFromErrorResponse(response: any) {
-        if (response.data.errMessage)
+        if (response.data && response.data.displayToUser === true && response.data.errMessage)
             this.showDefaultError(response.data.errMessage)
         else
             this.showDefaultError("Something went wrong")

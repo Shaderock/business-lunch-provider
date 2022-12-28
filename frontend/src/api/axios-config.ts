@@ -26,16 +26,22 @@ export default function configureAxios() {
         },
         async (error) => {
             const router = useRouter()
+            const toastManager: ToastManager = new ToastManager()
             if (error.response.config.url !== AppSettings.API_URL + '/login')
-                if (error.response.status === 401 || error.response.status === 403) {
-                    const toastManager: ToastManager = new ToastManager()
-                    toastManager.showInfo('Unauthorized access', 'Your session has expired. Sign in, please.')
+                if (error.response.status === 403 || error.response.status === 401) {
+                    toastManager.showInfo('Unauthorized access',
+                        'Your session could have expired. Sign in, please.')
                     let authStore = useAuthStore()
                     authStore.logout()
-
                     await router.push("/login")
                 }
-
+            if (error.response.status === 500) {
+                toastManager.showError('Server error', 'It looks like there was a server-side problem. ' +
+                    'Please, try again later')
+            }
+            if (error.response.status === 400)
+                if (error.response.data && error.response.data.displayToUser === true && error.response.data.errMessage)
+                    toastManager.showErrorFromErrorResponse(error.response)
             return Promise.reject(error);
         }
     );

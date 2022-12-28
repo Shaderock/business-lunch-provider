@@ -1,69 +1,52 @@
 import {defineStore} from "pinia";
 import {AuthService} from "../services/AuthService";
-import {AppSettings} from "../services/AppSettings";
-import {ToastManager} from "../services/ToastManager";
-import {User} from "../models/User";
-import axios from "axios";
+import {useUserStore} from "./UserStore";
 
 const authService: AuthService = new AuthService()
-const toastManager: ToastManager = new ToastManager()
 export const useAuthStore = defineStore('auth', {
     state: () => ({
-        // @ts-ignore
-        user: JSON.parse(localStorage.getItem(AppSettings.LOCAL_STORAGE_USER))
+        jwtToken: null as string | null
     }),
     getters: {
         isAuthenticated(): boolean {
-            return this.user !== null && this.user.token !== null
-        },
-        isAppUser(): boolean {
-            return this.isAuthenticated && this.user.roles.includes(AppSettings.APP_USER_ROLE)
-        },
-        isEmployee(): boolean {
-            return this.isAuthenticated && this.user.roles.includes(AppSettings.EMPLOYEE_ROLE)
-        },
-        isCompanyAdmin(): boolean {
-            return this.isAuthenticated && this.user.roles.includes(AppSettings.COMPANY_ADMIN_ROLE)
-        },
-        isSupplier(): boolean {
-            return this.isAuthenticated && this.user.roles.includes(AppSettings.SUPPLIER_ROLE)
+            const userStore = useUserStore();
+            return this.jwtToken !== null && userStore.hasUser
         }
     },
     actions: {
-        getLocalStorageUser(): User | null {
-            let userJson = localStorage.getItem(AppSettings.LOCAL_STORAGE_USER)
-            if (userJson) {
-                return JSON.parse(userJson);
-            }
-            return null
+        initializeToken() {
+            this.jwtToken = this.getLocalStorageToken()
         },
-        initializeUser() {
-            this.user = this.getLocalStorageUser()
-            axios.defaults.headers.common['Authorization'] = this.getAuthHeaderBearer()
+        getLocalStorageToken(): string | null {
+            return this.jwtToken = localStorage.getItem("token")
+        },
+        getToken(): string | null {
+            return this.jwtToken;
         },
         getAuthHeaderBearer(): string | null {
-            if (this.isAuthenticated) {
-                return 'Bearer ' + this.user.token
+            const token = this.getToken();
+            if (token) {
+                return 'Bearer ' + token.toString()
             }
             return null
         },
         logout() {
-            localStorage.removeItem(AppSettings.LOCAL_STORAGE_USER)
-            this.initializeUser()
+            localStorage.removeItem("token")
+            this.initializeToken()
+            const userStore = useUserStore();
+            userStore.clearUser()
         },
         async login(email: string, password: string): Promise<any> {
-            try {
-                let response = await authService.login(email, password)
-                if (response.data.token) {
-                    localStorage.setItem(AppSettings.LOCAL_STORAGE_USER, JSON.stringify(response.data))
-                }
-                this.initializeUser()
-                return Promise.resolve
-            } catch (reason) {
-                toastManager.showError('Sign in problem',
-                    "Couldn't sign you in. Could be wrong credentials.")
-                return Promise.reject(reason)
+            let response = await authService.login(email, password)
+            if (response.data) {
+                localStorage.setItem("token", response.data.token)
+            } else {
+                return Promise.reject
             }
+            this.initializeToken()
+            const userStore = useUserStore();
+            await userStore.requestUserData()
+            return Promise.resolve
         },
         async register(email: string, password: string, firstName: string, lastName: string): Promise<any> {
             return authService.register(email, password, firstName, lastName)
@@ -74,8 +57,7 @@ export const useAuthStore = defineStore('auth', {
                 .then(response => {
                     return Promise.resolve(response.data);
                 })
-                .catch(error => {
-                    toastManager.showErrorFromErrorResponse(error)
+                .catch(() => {
                     return Promise.reject();
                 });
         }

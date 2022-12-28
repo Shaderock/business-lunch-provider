@@ -3,12 +3,24 @@ import {MDBContainer, MDBFooter} from 'mdb-vue-ui-kit';
 import TheNavigation from "./components/TheNavigation.vue";
 import {onMounted} from "vue";
 import {useAuthStore} from "./stores/AuthStore";
+import {useUserStore} from "./stores/UserStore";
+import {useCompanyStore} from "./stores/CompanyStore";
 
 const authStore = useAuthStore()
-
+const userStore = useUserStore()
+const companyStore = useCompanyStore()
 onMounted(() => {
-  authStore.initializeUser()
+  initializeStores()
 })
+
+async function initializeStores() {
+  await authStore.initializeToken()
+  if (authStore.isAuthenticated)
+    await userStore.requestUserData()
+  if (userStore.isEmployee) {
+    await companyStore.requestData()
+  }
+}
 </script>
 
 <template>

@@ -5,10 +5,10 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface OrganizationRepository extends CrudRepository<Organization, Long> {
-  Optional<Organization> findByName(String name);
+public interface OrganizationRepository<O extends Organization> extends CrudRepository<Organization, Long> {
+  Optional<O> findByName(String name);
 
-  Optional<Organization> findByEmail(String email);
+  Optional<O> findByEmail(String email);
 
-  Optional<Organization> findByEmailAndDeletedIsFalse(String email);
+  Optional<O> findByEmailAndDeletedIsFalse(String email);
 }

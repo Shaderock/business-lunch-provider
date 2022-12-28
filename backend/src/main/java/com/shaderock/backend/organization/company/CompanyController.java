@@ -6,6 +6,7 @@ import com.shaderock.backend.organization.company.model.entity.Company;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,12 +19,20 @@ import java.security.Principal;
 @RequestMapping("/api/company")
 public class CompanyController {
   private final CompanyService companyService;
+  private final CompanyDTOConverter companyDTOConverter;
 
   @PostMapping("/register")
   public ResponseEntity<CompanyDTO> registerCompany(@RequestBody @Valid final CompanyRegistrationForm companyRegistrationForm,
                                                     Principal principal) {
     Company registeredCompany = companyService.register(companyRegistrationForm, principal);
-    CompanyDTO responseCompany = companyService.convertToDto(registeredCompany);
+    CompanyDTO responseCompany = companyDTOConverter.convertToDto(registeredCompany);
     return ResponseEntity.ok(responseCompany);
+  }
+
+  @GetMapping("/my")
+  public ResponseEntity<CompanyDTO> getUserCompany(Principal principal) {
+    Company userCompany = companyService.getUserCompany(principal);
+    CompanyDTO userCompanyDto = companyDTOConverter.convertToDto(userCompany);
+    return ResponseEntity.ok(userCompanyDto);
   }
 }

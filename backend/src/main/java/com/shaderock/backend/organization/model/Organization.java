@@ -43,10 +43,10 @@ public class Organization {
   private byte[] logo;
   @Column(nullable = false, columnDefinition = "boolean default false")
   private boolean deleted;
-  @Column
+
   @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
   private Set<AppUser> users;
-  @Column
+
   @OneToMany(mappedBy = "organizationRequest", fetch = FetchType.LAZY)
   private Set<AppUser> usersRequests;
 }

@@ -1,7 +1,6 @@
 package com.shaderock.backend.order.model.menu;
 
 import com.shaderock.backend.organization.supplier.model.entity.Supplier;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -31,7 +30,6 @@ public class Menu {
   @JoinColumn(name = "supplier_id", nullable = false)
   private Supplier supplier;
 
-  @Column
   @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
   private Set<Category> categories;
 }
