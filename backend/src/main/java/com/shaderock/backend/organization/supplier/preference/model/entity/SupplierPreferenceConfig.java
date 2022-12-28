@@ -52,7 +52,6 @@ public class SupplierPreferenceConfig implements PreferenceConfig {
   @Enumerated(EnumType.STRING)
   private OrderType orderType;
 
-  @Column
   @OneToMany(mappedBy = "preferenceConfig", fetch = FetchType.LAZY)
   private Set<PriceBy> prices; // todo should be one and not set
 

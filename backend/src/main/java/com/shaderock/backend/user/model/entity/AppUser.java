@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
@@ -30,9 +31,11 @@ public class AppUser {
   private AppUserDetails userDetails;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "organization_id")
   private Organization organization;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "organization_request_id")
   private Organization organizationRequest;
 
   @OneToOne(mappedBy = "employee", fetch = FetchType.LAZY)

@@ -29,7 +29,6 @@ public class CompanyOrder {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column
   @OneToMany(mappedBy = "companyOrder", fetch = FetchType.LAZY)
   private Set<EmployeeOrder> employeesOrders;
 

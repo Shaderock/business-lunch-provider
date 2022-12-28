@@ -38,6 +38,7 @@ public class EmployeeOrder {
   private boolean isDeleted;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "company_order_id")
   private CompanyOrder companyOrder;
 
   @JoinTable(name = "employees_orders_options",

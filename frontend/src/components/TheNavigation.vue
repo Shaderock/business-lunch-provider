@@ -3,30 +3,35 @@
     <MDBNavbar bg="light" container expand="md" light>
       <MDBNavbarToggler
           target="#navbarSupportedContent"
-          @click="collapse1 = !collapse1">
+          @click="collapse = !collapse">
       </MDBNavbarToggler>
-      <MDBCollapse id="navbarSupportedContent" v-model="collapse1">
+      <MDBCollapse id="navbarSupportedContent" v-model="collapse">
         <MDBNavbarNav class="mb-lg-0">
-          <MDBNavbarItem active to="food">
-            Food
+          <MDBNavbarItem to="/">
+            <MDBIcon icon="home"/>
+            Home
           </MDBNavbarItem>
-          <MDBNavbarItem>
+          <MDBNavbarItem v-if="userStore.isOnlyAppUser">
             <!-- Navbar dropdown -->
-            <MDBDropdown v-model="dropdown1" class="nav-item">
+            <MDBDropdown v-model="organizationCreationDropdown" class="nav-item">
               <MDBDropdownToggle
                   class="nav-link"
                   tag="a"
-                  @click="dropdown1 = !dropdown1">Dropdown
+                  @click="organizationCreationDropdown = !organizationCreationDropdown">Create Organization
               </MDBDropdownToggle>
               <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
-                <MDBDropdownItem href="#">Action</MDBDropdownItem>
-                <MDBDropdownItem href="#">Another Action</MDBDropdownItem>
-                <MDBDropdownItem href="#">Something else here</MDBDropdownItem>
+                <MDBDropdownItem href="#" @click="router.push('/company/registration')">Register my company
+                </MDBDropdownItem>
+                <MDBDropdownItem href="#" @click="router.push('/supplier/registration')">Become a supplier
+                </MDBDropdownItem>
               </MDBDropdownMenu>
             </MDBDropdown>
           </MDBNavbarItem>
-          <MDBNavbarItem disabled to="#">
-            Disabled
+          <MDBNavbarItem v-else-if="userStore.isEmployee">
+            <MDBNavbarItem to="/company">
+              <MDBIcon icon="building"/>
+              My Company
+            </MDBNavbarItem>
           </MDBNavbarItem>
         </MDBNavbarNav>
 
@@ -36,21 +41,20 @@
             <MDBIcon icon="shopping-cart"></MDBIcon>
           </MDBNavbarItem>
           <MDBNavbarItem class="me-3 me-lg-0" href="#">
-            <MDBIcon icon="bell"></MDBIcon>
+            <MDBIcon icon="bell"/>
           </MDBNavbarItem>
           <!-- Icon dropdown -->
           <MDBNavbarItem class="me-3 me-lg-0 dropdown">
-            <MDBDropdown v-model="dropdown3">
-              <MDBDropdownToggle
-                  class="nav-link"
-                  tag="a"
-                  @click="dropdown3 = !dropdown3">
+            <MDBDropdown v-model="profileActionsDropdown">
+              <MDBDropdownToggle class="nav-link" tag="a" @click="profileActionsDropdown = !profileActionsDropdown">
+                {{ userStore.getUser.email }}
                 <MDBIcon icon="user"/>
               </MDBDropdownToggle>
               <MDBDropdownMenu>
-                <MDBDropdownItem href="#" @click="logout ">Logout</MDBDropdownItem>
-                <MDBDropdownItem href="#">Another Action</MDBDropdownItem>
-                <MDBDropdownItem href="#">Something else here</MDBDropdownItem>
+                <MDBDropdownItem href="/profile">My Profile</MDBDropdownItem>
+                <!--todo-->
+                <MDBDropdownItem href="#">My Preferences</MDBDropdownItem>
+                <MDBDropdownItem href="#" @click="logout">Logout</MDBDropdownItem>
               </MDBDropdownMenu>
             </MDBDropdown>
           </MDBNavbarItem>
@@ -85,11 +89,13 @@ import {ref} from 'vue';
 import {useAuthStore} from "../stores/AuthStore";
 import {ToastManager} from "../services/ToastManager";
 import {useRouter} from "vue-router";
+import {useUserStore} from "../stores/UserStore";
 
-const collapse1 = ref(false);
-const dropdown1 = ref(false);
-const dropdown3 = ref(false);
+const collapse = ref(false);
+const organizationCreationDropdown = ref(false);
+const profileActionsDropdown = ref(false);
 const authStore = useAuthStore();
+const userStore = useUserStore();
 const router = useRouter()
 
 function logout() {

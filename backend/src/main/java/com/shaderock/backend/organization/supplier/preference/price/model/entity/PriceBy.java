@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,5 +29,6 @@ public class PriceBy {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "preference_config_id", nullable = false)
   private SupplierPreferenceConfig preferenceConfig;
 }
