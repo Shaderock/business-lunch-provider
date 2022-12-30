@@ -184,7 +184,7 @@ async function registerSubmit() {
   }
 }
 
-async function registerCompany() {
+async function registerUser() {
   try {
     toastManager.showInfo('Registration', 'Registration in progress. Wait a second.')
     await authService.register(email.value, password.value, firstName.value, lastName.value)

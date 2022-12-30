@@ -77,6 +77,15 @@ async function validateName() {
   try {
     await yup.string().required().label('Name').validate(name.value)
     nameErrors.value = ""
+
+    try {
+      let response = await companyService.validateOrganizationName(name.value)
+      if (!response.data) {
+        emailErrors.value = "Name is already taken"
+      }
+    } catch (err: any) {
+      emailErrors.value = "Couldn't verify if name is taken"
+    }
   } catch (err: any) {
     nameErrors.value = err.message
   }
