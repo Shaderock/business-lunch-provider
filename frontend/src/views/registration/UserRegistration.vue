@@ -1,175 +1,197 @@
 <template>
-  <MDBRow center class="needs-validation" novalidate tag="form">
-    <MDBCol auto>
-      <MDBCard>
-        <MDBCardHeader>
-          <MDBCardTitle>Registration</MDBCardTitle>
-        </MDBCardHeader>
+  <v-row justify="center">
+    <v-col align-self="center" lg="4">
+      <v-form
+        ref="userRegistrationForm"
+        @submit.prevent="registerSubmit"
+      >
+        <v-card>
+          <v-card-title>Register</v-card-title>
 
-        <MDBCardBody>
-          <!-- 2 column grid layout with text inputs for the first and last names -->
-          <MDBRow :class="isValidated ? 'mb-5' : 'mb-4'">
-            <MDBCol>
-              <MDBInput
-                  id="firstName"
-                  v-model="firstName"
-                  :is-valid="isFirstNameValid"
-                  :is-validated="isValidated"
-                  :maxlength=20
-                  counter
-                  invalidFeedback="Please provide your first name"
-                  label="First name"
-                  required
-                  type="text"
-                  validFeedback="Looks good!"/>
-            </MDBCol>
-            <MDBCol>
-              <MDBInput
-                  id="lastName"
-                  v-model="lastName"
-                  :is-valid="isLastNameValid"
-                  :is-validated="isValidated"
-                  :maxlength=20
-                  counter
-                  invalidFeedback="Please provide your last name"
-                  label="Last name"
-                  required
-                  type="text"
-                  validFeedback="Looks good!"
-              />
-            </MDBCol>
-          </MDBRow>
-          <!-- Email input -->
-          <MDBInput
-              id="email"
+          <v-divider/>
+
+          <v-card-item>
+            <v-text-field
+              v-model="firstName"
+              :error-messages="firstNameErrors"
+              counter="20"
+              label="First Name"
+              required
+              type="text"
+              @blur="validateFirstName"
+              @keypress="validateFirstName"
+            ></v-text-field>
+          </v-card-item>
+
+          <v-card-item>
+            <v-text-field
+              v-model="lastName"
+              :error-messages="lastNameErrors"
+              counter="20"
+              label="Last Name"
+              required
+              type="text"
+              @blur="validateLastName"
+              @keypress="validateLastName"
+            ></v-text-field>
+          </v-card-item>
+
+          <v-card-item>
+            <v-text-field
               v-model="email"
-              :invalidFeedback="invalidEmailFeedback"
-              :is-valid="isEmailValid"
-              :is-validated="isValidated"
-              :wrapperClass="isValidated ? 'mb-5' : 'mb-4'"
-              label="Email address"
+              :error-messages="emailErrors"
+              label="Email"
               required
               type="email"
-              validFeedback="Looks good!"/>
-          <!-- Password input -->
-          <MDBInput
-              id="password"
+              @blur="validateEmail"
+              @keypress="validateEmail"
+            ></v-text-field>
+          </v-card-item>
+
+          <v-card-item>
+            <v-text-field
               v-model="password"
-              :is-valid="isPasswordValid"
-              :is-validated="isValidated"
-              :maxlength=25
-              :wrapperClass="isValidated ? 'mb-5' : 'mb-4'"
-              counter
-              helper="Minimum 8 characters"
-              invalidFeedback="Password is too weak."
+              :error-messages="passwordErrors"
+              counter="25"
               label="Password"
               required
-              type="password">
-          </MDBInput>
-          <!-- Repeat Password input -->
-          <MDBInput
-              id="PasswordRepeat"
+              type="password"
+              @blur="validatePassword"
+              @keypress="validatePassword"
+            ></v-text-field>
+          </v-card-item>
+
+          <v-card-item>
+            <v-text-field
               v-model="passwordRepeat"
-              :is-valid="isPasswordRepeatValid"
-              :is-validated="isValidated"
-              :maxlength=25
-              :wrapperClass="isValidated ? 'mb-5' : 'mb-4'"
-              counter
-              invalidFeedback="Passwords don't match or empty."
-              label="Repeat password"
+              :error-messages="passwordRepeatErrors"
+              label="Repeat Password"
               required
               type="password"
-              validFeedback="Looks good!"/>
-          <!-- Submit button -->
-          <MDBContainer class="w-50">
-            <MDBBtn block color="primary" @click="submit">Sign up</MDBBtn>
-          </MDBContainer>
-        </MDBCardBody>
-      </MDBCard>
-    </MDBCol>
-  </MDBRow>
+              @blur="validatePasswordRepeat"
+              @keypress="validatePasswordRepeat"
+            ></v-text-field>
+          </v-card-item>
+
+          <v-divider/>
+
+          <v-card-actions>
+            <v-btn color="primary" type="submit" variant="outlined">Sign up</v-btn>
+
+            <v-btn v-bind:to="'/login'">Sign in</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
+    </v-col>
+  </v-row>
 </template>
-
 <script lang="ts" setup>
-import {
-  MDBBtn,
-  MDBCard,
-  MDBCardBody,
-  MDBCardHeader,
-  MDBCardTitle,
-  MDBCol,
-  MDBContainer,
-  MDBInput,
-  MDBRow
-} from "mdb-vue-ui-kit";
-import {computed, ref} from "vue";
-import {useAuthStore} from "../../stores/AuthStore";
-import {ToastManager} from "../../services/ToastManager";
+import toastManager from "@/services/ToastManager";
+import {ref} from "vue";
+import * as yup from 'yup';
+import authService from "@/services/AuthService";
 
-const authStore = useAuthStore()
-
-const firstName = ref("");
-const lastName = ref("");
-const email = ref("");
-const password = ref("");
+const firstName = ref("")
+const firstNameErrors = ref("")
+const lastName = ref("")
+const lastNameErrors = ref("")
+const email = ref("")
+const emailErrors = ref("")
+const password = ref("")
+const passwordErrors = ref("")
 const passwordRepeat = ref("")
-const isValidated = ref(false)
-const invalidEmailFeedback = ref("")
-const isEmailTaken = ref(false)
+const passwordRepeatErrors = ref("")
 
-const isFirstNameValid = computed(() => {
-  return firstName.value.length > 0
-})
-
-const isLastNameValid = computed(() => {
-  return lastName.value.length > 0
-})
-
-const isEmailValid = computed(() => {
-  const regexp: RegExp = /([-!#-'*+\/-9=?A-Z^-~]+(\.[-!#-'*+\/-9=?A-Z^-~]+)*|"([]!#-[^-~ \t]|(\\[\t -~]))+")@([-!#-'*+\/-9=?A-Z^-~]+(\.[-!#-'*+\/-9=?A-Z^-~]+)*|\[[\t -Z^-~]*])/
-  if (!regexp.test(email.value)) {
-    invalidEmailFeedback.value = 'Please provide your email'
-    return false;
-  }
-
-  if (isEmailTaken.value) {
-    invalidEmailFeedback.value = 'This email is already taken'
-    return false;
-  }
-
-  return true;
-})
-
-const isPasswordValid = computed(() => {
-  return password.value.length >= 8 && password.value.length < 25
-})
-
-const isPasswordRepeatValid = computed(() => {
-  return password.value === passwordRepeat.value && passwordRepeat.value.length > 0
-})
-
-function submit() {
-  isValidated.value = true
-  isEmailTaken.value = false
-  if (isFirstNameValid.value && isLastNameValid.value && isEmailValid.value && isPasswordValid.value && isPasswordRepeatValid.value) {
-    register()
+async function validateFirstName() {
+  try {
+    await yup.string().required().label('First Name').validate(firstName.value)
+    firstNameErrors.value = ""
+  } catch (err: any) {
+    firstNameErrors.value = err.message
   }
 }
 
-async function register() {
+async function validateLastName() {
   try {
-    let isUserRegistered: boolean = await authStore.verifyUserRegistered(email.value)
-    isEmailTaken.value = !isUserRegistered
-    if (!isEmailTaken.value) {
-      let toastManager: ToastManager = new ToastManager()
-      toastManager.showInfo('Registration', 'Registration in progress. Wait a second.')
-      await authStore.register(email.value, password.value, firstName.value, lastName.value)
-      toastManager.showSuccess('Verification email',
-          'We sent a verification email to your email address. Check it up to complete registration')
+    await yup.string().required().label('Last Name').validate(lastName.value)
+    lastNameErrors.value = ""
+  } catch (err: any) {
+    lastNameErrors.value = err.message
+  }
+}
+
+async function validateEmail() {
+  try {
+    await yup.string()
+      .required()
+      .email()
+      .label('Email')
+      .validate(email.value);
+
+    emailErrors.value = ""
+
+    try {
+      let response = await authService.verifyUserNotRegistered(email.value)
+      if (!response.data) {
+        emailErrors.value = "Email is already taken"
+      }
+    } catch (err: any) {
+      emailErrors.value = "Couldn't verify if email is taken"
     }
+
+  } catch (err: any) {
+    emailErrors.value = err.message
+  }
+}
+
+async function validatePassword() {
+  try {
+    await yup.string().required().min(8).max(25).label("Password").validate(password.value)
+    passwordErrors.value = ""
+  } catch (err: any) {
+    passwordErrors.value = err.message
+  }
+}
+
+async function validatePasswordRepeat() {
+  try {
+    const pass = [password.value]
+    await yup.string()
+      .required()
+      .label("Password Repeat")
+      .oneOf(pass, "Passwords do not match")
+      .validate(passwordRepeat.value)
+
+    passwordRepeatErrors.value = ""
+  } catch (err: any) {
+    passwordRepeatErrors.value = err.message
+  }
+}
+
+async function registerSubmit() {
+  await validateFirstName()
+  await validateLastName()
+  await validateEmail()
+  await validatePassword()
+  await validatePasswordRepeat()
+
+  if (firstNameErrors.value === "" &&
+    lastNameErrors.value === "" &&
+    emailErrors.value === "" &&
+    passwordErrors.value === "" &&
+    passwordRepeatErrors.value === "") {
+    await registerUser()
+  }
+}
+
+async function registerCompany() {
+  try {
+    toastManager.showInfo('Registration', 'Registration in progress. Wait a second.')
+    await authService.register(email.value, password.value, firstName.value, lastName.value)
+    toastManager.showSuccess('Verification email',
+      'We sent a verification email to your email address. Check it up to complete registration')
   } catch (error) {
     console.log('Something wrong happened during registration: ' + error)
-    let toastManager: ToastManager = new ToastManager()
     toastManager.showDefaultError("There was an error during registration request")
   }
 }

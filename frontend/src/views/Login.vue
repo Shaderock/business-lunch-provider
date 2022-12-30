@@ -1,65 +1,49 @@
 <template>
-  <MDBContainer>
-    <MDBRow center>
-      <MDBCol auto>
-        <MDBCard>
-          <MDBCardHeader>
-            <MDBCardTitle>Login</MDBCardTitle>
-          </MDBCardHeader>
-          <MDBCardBody>
-            <form>
-              <!-- Email input -->
-              <MDBInput
-                  id="email"
-                  v-model="email"
-                  label="Email address"
-                  type="email"
-                  wrapperClass="mb-4"/>
-              <!-- Password input -->
-              <MDBInput
-                  id="password"
-                  v-model="password"
-                  label="Password"
-                  type="password"
-                  wrapperClass="mb-4"/>
-              <!-- 2 column grid layout for inline styling -->
-              <!-- Submit button -->
-              <MDBBtn block color="primary" @click="login">Sign in</MDBBtn>
+  <v-row justify="center">
+    <v-col align-self="center" lg="4">
+      <v-form ref="loginForm" @submit="login">
+        <v-card>
+          <v-card-title>Login</v-card-title>
 
-              <!-- Register buttons -->
-              <div class="text-center mt-2">
-                <p>Not a member?
-                  <router-link to="/register">Register</router-link>
-                </p>
-              </div>
-            </form>
-          </MDBCardBody>
-        </MDBCard>
-      </MDBCol>
-    </MDBRow>
-  </MDBContainer>
+          <v-divider/>
+
+          <v-card-item>
+            <v-text-field
+              v-model="email"
+              label="Email"
+              required
+            >
+            </v-text-field>
+          </v-card-item>
+          <v-card-item>
+            <v-text-field
+              v-model="password"
+              label="Password"
+              required
+              type="password">
+            </v-text-field>
+          </v-card-item>
+
+          <v-divider/>
+
+          <v-card-actions>
+            <v-btn color="primary" variant="outlined" @click="login">Sign in</v-btn>
+
+            <v-btn v-bind:to="'/registration'">Sign up</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
+    </v-col>
+  </v-row>
 </template>
-
 <script lang="ts" setup>
-import {
-  MDBBtn,
-  MDBCard,
-  MDBCardBody,
-  MDBCardHeader,
-  MDBCardTitle,
-  MDBCol,
-  MDBContainer,
-  MDBInput,
-  MDBRow
-} from "mdb-vue-ui-kit";
 import {onMounted, ref} from "vue";
-import {useAuthStore} from "../stores/AuthStore";
-import {ToastManager} from "../services/ToastManager";
-import {useRouter} from "vue-router";
+import router from "@/router";
+import toastManager from "@/services/ToastManager";
+import {useAuthStore} from "@/store/app";
 
-const authStore = useAuthStore()
-const toastManager: ToastManager = new ToastManager()
-const router = useRouter()
+const email = ref("")
+const password = ref("")
 
 onMounted(() => {
   if (router.currentRoute.value.query.emailConfirmed) {
@@ -69,17 +53,15 @@ onMounted(() => {
 
 async function login() {
   try {
-    await authStore.login(email.value, password.value)
-    await router.push({name: 'Home'})
-    if (authStore.isAuthenticated)
-      toastManager.showSuccess("Login complete", "You are in the system. Enjoy!")
-    else
-      toastManager.showError("Sign in problem", "Couldn't login. Try again later.")
+    await useAuthStore().login(email.value, password.value)
+    await router.push("/")
   } catch (error) {
     console.log("Something wrong happened during login: ", error)
   }
-}
 
-const email = ref("");
-const password = ref("");
+  if (useAuthStore().isAuthenticated)
+    toastManager.showSuccess("Login complete", "You are in the system. Enjoy!")
+  else
+    toastManager.showError("Sign in problem", "Couldn't login. Try again later.")
+}
 </script>
