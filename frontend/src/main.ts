@@ -1,14 +1,22 @@
-import {createApp} from 'vue'
-import App from './App.vue'
-import {createPinia} from "pinia";
-import 'mdb-vue-ui-kit/css/mdb.min.css';
-import router from "./router/index";
-import configureAxios from "./api/axios-config";
+/**
+ * main.ts
+ *
+ * Bootstraps Vuetify and other plugins then mounts the App`
+ */
 
-const pinia = createPinia();
+// Components
+import App from './App.vue'
+
+// Composables
+import {createApp} from 'vue'
+
+// Plugins
+import {registerPlugins} from '@/plugins'
+import configureAxios from "@/axios";
+
+const app = createApp(App)
+
+registerPlugins(app)
 configureAxios()
 
-createApp(App)
-    .use(router)
-    .use(pinia)
-    .mount('#app')
+app.mount('#app')
