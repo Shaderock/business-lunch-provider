@@ -25,13 +25,13 @@ opportunity to reach a larger audience and streamline the negotiation process wi
 ## Current progress
 ### Done
 * Orientation (Determine three possible ideas for the future project)
+* Documentation (Select one idea for the future development, create FRs, NFRs, Backlog and Wiki page)
+* Design / UX / UI
 
 ### In Progress
-* Documentation (Select one idea for the future development, create FRs, NFRs, Backlog and Wiki page)
+* Backend
 
 ## Future plans
-* Design / UX / UI
-* Backend
 * Efficient Communication
 * Frontend
 * QA / Unit Testing
