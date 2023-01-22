@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.2</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>com.shaderock.business-lunch-provider</groupId>
@@ -13,9 +13,11 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>backend</name>
   <description>backend</description>
+
   <properties>
     <java.version>17</java.version>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -42,8 +44,9 @@
       <artifactId>spring-boot-starter-websocket</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.liquibase</groupId>
-      <artifactId>liquibase-core</artifactId>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+      <version>9.12.0</version>
     </dependency>
 
     <dependency>
@@ -95,7 +98,6 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>3.0.0</version>
         <configuration>
           <excludes>
             <exclude>
@@ -104,6 +106,12 @@
             </exclude>
           </excludes>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-maven-plugin</artifactId>
+        <version>8.5.13</version>
       </plugin>
     </plugins>
   </build>

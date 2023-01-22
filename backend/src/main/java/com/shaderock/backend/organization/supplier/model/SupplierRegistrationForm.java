@@ -9,12 +9,12 @@ import java.time.Duration;
 import java.time.LocalTime;
 
 public record SupplierRegistrationForm(
-        @NotBlank(message = "Name should be provided")
+        @NotNull(message = "Name should be provided")
+        @NotBlank(message = "Name can't be blank")
         String name,
         @NotBlank(message = "Email should be provided")
         @Email(message = "Wrong email")
         String email,
-        @NotBlank(message = "Description should be provided")
         String description,
         @NotNull(message = "Phone number should be provided")
         @Pattern(regexp = "^\\+?[1-9][0-9]{7,14}$", message = "Not a phone number (e.g. +37312345678)")
