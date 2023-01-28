@@ -3,6 +3,7 @@ package com.shaderock.backend.organization.company;
 import com.shaderock.backend.organization.company.model.CompanyDTO;
 import com.shaderock.backend.organization.company.model.CompanyRegistrationForm;
 import com.shaderock.backend.organization.company.model.entity.Company;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/company")
 public class CompanyController {
   private final CompanyService companyService;

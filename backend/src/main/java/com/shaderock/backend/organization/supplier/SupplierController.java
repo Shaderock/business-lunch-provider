@@ -3,6 +3,7 @@ package com.shaderock.backend.organization.supplier;
 import com.shaderock.backend.organization.supplier.model.SupplierDTO;
 import com.shaderock.backend.organization.supplier.model.SupplierRegistrationForm;
 import com.shaderock.backend.organization.supplier.model.entity.Supplier;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/supplier")
 public class SupplierController {
   private final SupplierService supplierService;

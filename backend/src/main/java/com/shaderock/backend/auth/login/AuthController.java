@@ -2,6 +2,7 @@ package com.shaderock.backend.auth.login;
 
 import com.shaderock.backend.auth.AuthService;
 import com.shaderock.backend.auth.login.model.LoginForm;
+import com.shaderock.backend.auth.login.model.TokenResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,5 @@ public class AuthController {
   public ResponseEntity<TokenResponse> login(@RequestBody @Valid final LoginForm form) {
     String token = authService.login(form);
     return ResponseEntity.ok(new TokenResponse(token));
-  }
-
-  private record TokenResponse(String token) {
-
   }
 }

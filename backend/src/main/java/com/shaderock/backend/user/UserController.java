@@ -5,6 +5,7 @@ import com.shaderock.backend.user.model.entity.AppUser;
 import com.shaderock.backend.user.preferences.EmployeePreferencesDtoConverter;
 import com.shaderock.backend.user.preferences.model.EmployeePreferencesDTO;
 import com.shaderock.backend.user.preferences.model.entity.EmployeePreferenceConfig;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/users")
 public class UserController {
   private final UserService userService;

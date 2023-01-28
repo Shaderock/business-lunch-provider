@@ -27,7 +27,7 @@ public class AppUser {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToOne(mappedBy = "appUser", fetch = FetchType.LAZY, optional = false)
+  @OneToOne(mappedBy = "appUser", optional = false)
   private AppUserDetails userDetails;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -38,6 +38,6 @@ public class AppUser {
   @JoinColumn(name = "organization_request_id")
   private Organization organizationRequest;
 
-  @OneToOne(mappedBy = "employee", fetch = FetchType.LAZY)
+  @OneToOne(mappedBy = "employee")
   private EmployeePreferenceConfig preferences;
 }
