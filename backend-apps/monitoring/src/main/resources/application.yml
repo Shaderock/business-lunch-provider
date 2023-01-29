@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: blp-spring-admin
+  main:
+    allow-bean-definition-overriding: true
+  security:
+    user:
+      name: ${lunch.monitoring.username}
+      password: ${lunch.monitoring.password}
+  cloud:
+    vault:
+      reactive.enabled: false
+      authentication: TOKEN
+      token: ${TOKEN_VAULT}
+      uri: http://localhost:8200
+      discovery:
+        enabled: true
+        service-id: BLP Vault
+  config:
+    import: vault://
+  boot:
+    admin:
+      instance-auth:
+        default-user-name: ${lunch.backend.actuator.username}
+        default-password: ${lunch.backend.actuator.password}
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${lunch.discovery.username}:${lunch.discovery.password}@${lunch.discovery.address}/eureka
+  instance:
+    hostname: localhost

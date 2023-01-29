@@ -1,0 +1,6 @@
+lunch:
+  discovery:
+    address: localhost:8761
+
+server:
+  port: 9999

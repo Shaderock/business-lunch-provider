@@ -1,0 +1,9 @@
+lunch:
+  backend:
+    url: ${BACKEND_URL}
+  frontend:
+    url: ${FRONTEND_URL}
+  discovery:
+    address: ${DISCOVERY_ADDRESS}
+  database:
+    address: ${DATABASE_ADDRESS}

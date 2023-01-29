@@ -1,0 +1,9 @@
+lunch:
+  backend:
+    url: http://localhost:8080
+  frontend:
+    url: http://localhost:3000
+  discovery:
+    address: localhost:8761
+  database:
+    address: localhost:5432

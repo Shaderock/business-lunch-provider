@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  ###########################################################################################
+  discovery:
+    image: com/shaderock/lunch/discovery
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+  ###########################################################################################
+  backend:
+    image: com/shaderock/lunch/backend
+    depends_on:
+      - discovery
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+  ###########################################################################################
+  spring-admin:
+    image: com/shaderock/lunch/monitoring
+    depends_on:
+      - discovery
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev

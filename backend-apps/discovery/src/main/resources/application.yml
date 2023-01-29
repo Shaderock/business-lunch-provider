@@ -1,0 +1,23 @@
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
+spring:
+  security:
+    user:
+      name: ${lunch.discovery.username}
+      password: ${lunch.discovery.password}
+  application:
+    name: blp-discovery
+  cloud:
+    vault:
+      reactive.enabled: false
+      authentication: TOKEN
+      token: ${TOKEN_VAULT}
+      uri: http://localhost:8200
+      discovery:
+        enabled: true
+        service-id: BLP Vault
+  config:
+    import: vault://

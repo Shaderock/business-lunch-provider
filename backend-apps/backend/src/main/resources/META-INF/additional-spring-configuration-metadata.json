@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "lunch.frontend.url",
+      "type": "java.lang.String",
+      "description": "Description for lunch.frontend.url."
+    },
+    {
+      "name": "lunch.backend.url",
+      "type": "java.lang.String",
+      "description": "Description for lunch.backend.url."
+    }
+  ]
+}

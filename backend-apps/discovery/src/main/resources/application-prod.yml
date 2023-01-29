@@ -1,0 +1,8 @@
+server:
+  port: ${DISCOVERY_PORT}
+
+spring:
+  cloud:
+    vault:
+      uri: ${VAULT_URI}
+      token: ${TOKEN_VAULT}

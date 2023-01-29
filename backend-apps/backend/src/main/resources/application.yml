@@ -1,0 +1,68 @@
+lunch:
+  backend:
+    url: http://localhost:8080
+  frontend:
+    url: http://localhost:3000
+
+spring:
+  datasource:
+    hikari:
+      schema: blp_schema
+    username: ${lunch.database.username}
+    password: ${lunch.database.password}
+    url: jdbc:postgresql://${lunch.database.address}/business-lunch-provider-db
+  flyway:
+    enabled: true
+    schemas: blp_schema
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  liquibase:
+    enabled: false
+  mail:
+    host: smtp.gmail.com
+    username: ${lunch.mail.username}
+    password: ${lunch.mail.password}
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  application:
+    name: blp-backend
+  cloud:
+    vault:
+      reactive.enabled: false
+      authentication: TOKEN
+      token: ${TOKEN_VAULT}
+      uri: http://localhost:8200
+  security:
+    user:
+      name: ${lunch.backend.actuator.password}
+      password: ${lunch.backend.actuator.password}
+  config:
+    import: vault://
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    info:
+      enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${lunch.discovery.username}:${lunch.discovery.password}@${lunch.discovery.address}/eureka/
