@@ -54,6 +54,7 @@ public class AuthService {
 
   @Transactional
   public void registerUser(@Valid UserRegistrationForm form) {
+    log.info("Attempting to register user with email=[{}]", form.email());
     if (isUserRegistered(form.email())) {
       throw new UserAlreadyRegisteredException(form.email());
     }
@@ -68,6 +69,7 @@ public class AuthService {
         .isEnabled(false)
         .build();
     AppUserDetails persistedDetails = userDetailsRepository.save(details);
+    log.info("Registered user [{}]", persistedDetails);
 
     AppUser appUser = new AppUser();
     appUser.setUserDetails(persistedDetails);
