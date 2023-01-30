@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.ToString.Exclude;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Setter
@@ -25,6 +26,7 @@ import lombok.ToString.Exclude;
 @AllArgsConstructor
 @Entity
 @ToString
+@Where(clause = "is_deleted=false")
 public class Category {
 
   @Id

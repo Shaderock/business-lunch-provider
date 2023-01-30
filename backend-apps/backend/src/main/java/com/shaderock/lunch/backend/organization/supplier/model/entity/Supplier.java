@@ -18,12 +18,14 @@ import lombok.Setter;
 
 import java.net.URI;
 import java.util.Set;
+import org.hibernate.annotations.Where;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity
+@Where(clause = "is_deleted=false")
 public class Supplier extends Organization {
   @Column(nullable = false)
   private URI websiteUrl;

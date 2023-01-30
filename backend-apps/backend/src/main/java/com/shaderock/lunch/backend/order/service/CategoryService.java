@@ -114,7 +114,8 @@ public class CategoryService {
               String.format("Category (id=[%s]) doesn't exist and can't be deleted", id));
         });
 
-    categoryRepository.delete(persistedCategory);
+    persistedCategory.setDeleted(true);
+    categoryRepository.save(persistedCategory);
   }
 
   private Supplier getSupplierForCrud() {
