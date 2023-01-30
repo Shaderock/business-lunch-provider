@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.user.order.model.entity;
 
-import com.shaderock.lunch.backend.order.model.menu.Option;
+import com.shaderock.lunch.backend.order.model.entity.Option;
 import com.shaderock.lunch.backend.order.model.type.EmployeeOrderStatus;
 import com.shaderock.lunch.backend.organization.company.model.entity.CompanyOrder;
 import jakarta.persistence.Column;

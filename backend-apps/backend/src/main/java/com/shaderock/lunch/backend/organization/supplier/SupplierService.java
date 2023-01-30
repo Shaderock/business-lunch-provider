@@ -1,5 +1,7 @@
 package com.shaderock.lunch.backend.organization.supplier;
 
+import com.shaderock.lunch.backend.order.model.entity.Menu;
+import com.shaderock.lunch.backend.order.repository.MenuRepository;
 import com.shaderock.lunch.backend.organization.company.model.error.exception.CompanyRegistrationValidationException;
 import com.shaderock.lunch.backend.organization.supplier.model.SupplierDTO;
 import com.shaderock.lunch.backend.organization.supplier.model.SupplierPreferencesDTO;
@@ -27,12 +29,16 @@ public class SupplierService {
   private final SupplierRepository<Supplier> supplierRepository;
   private final SupplierPreferencesRepository supplierPreferencesRepository;
   private final AppUserDetailsService userDetailsService;
+  private final MenuRepository menuRepository;
 
   @Transactional
   public Supplier register(SupplierRegistrationForm form, Principal principal) {
     validateSupplierRegistration(form, principal);
 
     AppUserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+
+    Menu menu = new Menu();
+
     Supplier supplier = new Supplier();
     supplier.setName(form.name());
     supplier.setEmail(form.email());
@@ -40,9 +46,13 @@ public class SupplierService {
     supplier.setWebsiteUrl(URI.create(form.websiteUrl()));
     supplier.setMenuUrl(URI.create(form.menuUrl()));
     supplier.setPhone(form.phone());
+    supplier.setMenu(new Menu());
     supplier.setDeleted(false);
 
     supplier = save(supplier);
+
+    menu.setSupplier(supplier);
+    menuRepository.save(menu);
 
     SupplierPreferenceConfig preferences = new SupplierPreferenceConfig();
     preferences.setRequestOffset(form.requestOffset());

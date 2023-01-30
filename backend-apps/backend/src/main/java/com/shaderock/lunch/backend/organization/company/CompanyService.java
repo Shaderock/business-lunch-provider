@@ -71,7 +71,7 @@ public class CompanyService {
           String.format("Organization with name [%s] already exists",
               form.name()));
     }
-    if (companyRepository.findByEmailAndDeletedIsFalse(form.email()).isPresent()) {
+    if (companyRepository.findByEmail(form.email()).isPresent()) {
       throw new CompanyRegistrationValidationException(
           String.format("Company with email [%s] already exists",
               form.email()));

@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.organization.supplier.model.entity;
 
-import com.shaderock.lunch.backend.order.model.menu.Menu;
+import com.shaderock.lunch.backend.order.model.entity.Menu;
 import com.shaderock.lunch.backend.organization.company.model.entity.Company;
 import com.shaderock.lunch.backend.organization.model.Organization;
 import com.shaderock.lunch.backend.organization.supplier.preference.model.entity.SupplierPreferenceConfig;
@@ -42,9 +42,9 @@ public class Supplier extends Organization {
   @ManyToMany(fetch = FetchType.LAZY)
   private Set<Company> subscriptionsRequests;
 
-  @OneToOne(mappedBy = "supplier", fetch = FetchType.LAZY)
+  @OneToOne(mappedBy = "supplier")
   private Menu menu;
 
-  @OneToOne(mappedBy = "supplier", fetch = FetchType.LAZY)
+  @OneToOne(mappedBy = "supplier")
   private SupplierPreferenceConfig preferences;
 }

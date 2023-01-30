@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.organization.supplier.preference.price.model.entity;
 
-import com.shaderock.lunch.backend.order.model.menu.Option;
+import com.shaderock.lunch.backend.order.model.entity.Option;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

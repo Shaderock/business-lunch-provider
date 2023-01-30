@@ -1,4 +1,4 @@
-package com.shaderock.lunch.backend.order.model.menu;
+package com.shaderock.lunch.backend.order.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package com.shaderock.lunch.backend.order.model.menu;
+package com.shaderock.lunch.backend.order.model.entity;
 
 import com.shaderock.lunch.backend.organization.supplier.preference.price.model.entity.PriceByOption;
 import com.shaderock.lunch.backend.user.order.model.entity.EmployeeOrder;

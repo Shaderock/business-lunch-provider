@@ -42,7 +42,7 @@ public class Organization {
   @Column
   private byte[] logo;
   @Column(nullable = false, columnDefinition = "boolean default false")
-  private boolean deleted;
+  private boolean isDeleted;
 
   @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
   private Set<AppUser> users;

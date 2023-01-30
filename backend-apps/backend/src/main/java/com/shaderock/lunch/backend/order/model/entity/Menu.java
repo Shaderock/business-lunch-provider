@@ -1,4 +1,4 @@
-package com.shaderock.lunch.backend.order.model.menu;
+package com.shaderock.lunch.backend.order.model.entity;
 
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import jakarta.persistence.Entity;
@@ -9,19 +9,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.Set;
-
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class Menu {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
