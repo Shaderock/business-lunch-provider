@@ -5,6 +5,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import static jakarta.mail.Message.RecipientType.TO;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MailService {
   private final JavaMailSender mailSender;
   @Value(value = "${spring.mail.username}")
@@ -28,11 +30,12 @@ public class MailService {
     message.setSubject(subject);
 
     message.setContent(htmlContent, "text/html; charset=utf-8");
-
+    log.info("Sending [{}]", message);
     mailSender.send(message);
   }
 
   public void sendConfirmationEmail(AppUserDetails userDetails) throws MessagingException {
+    log.info("Preparing confirmation email for [{}]", userDetails);
     String subject = "Please verify your registration";
     String content = "Dear " + userDetails.getFirstName() + " " + userDetails.getLastName() + ",<br>" +
             "Please click the link below to verify your registration:<br>" +

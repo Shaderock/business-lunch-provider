@@ -29,7 +29,7 @@ public class GeneralControllerAdvice {
   @ExceptionHandler(TransferableApplicationException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorMessage handleKnownException(TransferableApplicationException e) {
-    log.error("An exception happened", e);
+    log.warn("An exception happened, message=[{}]", e.getMessage());
     return new ErrorMessage(true, e.getMessage());
   }
 
@@ -38,7 +38,7 @@ public class GeneralControllerAdvice {
   public String handleValidationError(MethodArgumentNotValidException ex)
           throws JsonProcessingException {
     List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-
+    log.info("Adding field errors to response [{}]", fieldErrors);
     Map<String, String> errors = new HashMap<>();
     for (FieldError fieldError : fieldErrors) {
       errors.put(fieldError.getField(), fieldError.getDefaultMessage());

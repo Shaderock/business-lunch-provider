@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,6 +24,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 @Slf4j
 public class SecurityConfiguration {
+
   private final JWTRequestFilter jwtRequestFilter;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   @Value(value = "${lunch.backend.actuator.username}")
@@ -48,12 +47,6 @@ public class SecurityConfiguration {
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
         .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
-  }
-
-  @Bean
-  public AuthenticationManager authenticationManager(final AuthenticationConfiguration authenticationConfiguration)
-      throws Exception {
-    return authenticationConfiguration.getAuthenticationManager();
   }
 
   @Autowired

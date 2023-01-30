@@ -1,0 +1,38 @@
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>
+        %d{HH:mm:ss.SSSZ} %level traceId=[%X{traceId:-}], spanId=[%X{spanId:-}] [%t] %c --- %m%n%rEx
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender name="BACKEND-APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>
+        D:/business-lunch-provider/logs/%d{yyyy-MM-dd}/backend/backend.%i.log.zip
+      </fileNamePattern>
+      <maxFileSize>10MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>3GB</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+      <pattern>
+        %d{HH:mm:ss.SSSZ} %level traceId=[%X{traceId:-}], spanId=[%X{spanId:-}] [%t] %c --- %m%n%rEx
+      </pattern>
+    </encoder>
+  </appender>
+
+  <springProfile name="dev">
+    <root level="INFO">
+      <appender-ref ref="BACKEND-APP"/>
+      <appender-ref ref="STDOUT"/>
+    </root>
+  </springProfile>
+
+  <springProfile name="prod">
+    <root level="INFO">
+      <appender-ref ref="BACKEND-APP"/>
+    </root>
+  </springProfile>
+</configuration>
