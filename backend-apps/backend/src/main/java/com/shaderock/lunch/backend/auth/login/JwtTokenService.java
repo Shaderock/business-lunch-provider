@@ -4,17 +4,19 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class JwtTokenService {
+
   private final Algorithm hmac512;
   private final JWTVerifier verifier;
 
@@ -29,10 +31,13 @@ public class JwtTokenService {
     ZoneId zoneId = ZoneId.systemDefault();
     Instant instant = date.atStartOfDay(zoneId).toInstant();
 
+    log.info("Generating token for username=[{}] expiring at [{}]",
+        userDetails.getUsername(), date);
+
     return JWT.create()
-            .withSubject(userDetails.getUsername())
-            .withExpiresAt(instant)
-            .sign(this.hmac512);
+        .withSubject(userDetails.getUsername())
+        .withExpiresAt(instant)
+        .sign(this.hmac512);
   }
 
   public Optional<String> validateTokenAndGetUsername(final String token) {

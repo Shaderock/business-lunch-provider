@@ -29,7 +29,7 @@ public class GeneralControllerAdvice {
   @ExceptionHandler(TransferableApplicationException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorMessage handleKnownException(TransferableApplicationException e) {
-    log.error("An exception happened", e);
+    log.warn("An exception happened with message=[{}]", e.getMessage());
     return new ErrorMessage(true, e.getMessage());
   }
 

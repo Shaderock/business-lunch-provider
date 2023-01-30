@@ -16,19 +16,20 @@ import com.shaderock.lunch.backend.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import java.util.HashSet;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
-  private final AuthenticationManager authenticationManager;
+
   private final AppUserDetailsService appUserDetailsService;
   private final JwtTokenService jwtTokenService;
   private final UserDetailsRepository userDetailsRepository;
@@ -38,8 +39,16 @@ public class AuthService {
 
   @Transactional
   public String login(@Valid final LoginForm form) {
-    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(form.email(), form.password()));
-    AppUserDetails userDetails = appUserDetailsService.loadUserByUsername(form.email());
+    log.info("Trying to sign in user with email=[{}]", form.email());
+    AppUserDetails userDetails;
+
+    try {
+      userDetails = appUserDetailsService.loadUserByUsername(form.email());
+    } catch (UsernameNotFoundException ex) {
+      throw new BadCredentialsException("Bad Credentials");
+    }
+
+    log.info("User by [{}] found", form);
     return jwtTokenService.generateToken(userDetails);
   }
 
@@ -50,14 +59,14 @@ public class AuthService {
     }
 
     AppUserDetails details = AppUserDetails.builder()
-            .email(form.email())
-            .password(passwordEncoder.encode(form.password()))
-            .firstName(form.firstName())
-            .lastName(form.lastName())
-            .roles(new HashSet<>())
-            .registrationToken(UUID.randomUUID().toString())
-            .isEnabled(false)
-            .build();
+        .email(form.email())
+        .password(passwordEncoder.encode(form.password()))
+        .firstName(form.firstName())
+        .lastName(form.lastName())
+        .roles(new HashSet<>())
+        .registrationToken(UUID.randomUUID().toString())
+        .isEnabled(false)
+        .build();
     AppUserDetails persistedDetails = userDetailsRepository.save(details);
 
     AppUser appUser = new AppUser();
@@ -79,7 +88,7 @@ public class AuthService {
   @Transactional
   public void confirmEmail(String token) {
     AppUserDetails userDetails = userDetailsRepository.findByRegistrationToken(token)
-            .orElseThrow(() -> new TokenNotFoundException(token));
+        .orElseThrow(() -> new TokenNotFoundException(token));
 
     userDetails.setEnabled(true);
     userDetails.getRoles().add(Role.USER);

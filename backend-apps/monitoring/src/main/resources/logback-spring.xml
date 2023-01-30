@@ -1,0 +1,38 @@
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>
+        %d{HH:mm:ss.SSSZ} %level [%t] %c --- %m%n%rEx
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender name="DISCOVERY-APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>
+        D:/business-lunch-provider/logs/%d{yyyy-MM-dd}/backend/monitoring.%i.log.zip
+      </fileNamePattern>
+      <maxFileSize>10MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>3GB</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+      <pattern>
+        %d{HH:mm:ss.SSSZ} %level [%t] %c --- %m%n%rEx
+      </pattern>
+    </encoder>
+  </appender>
+
+  <springProfile name="dev">
+    <root level="INFO">
+      <appender-ref ref="MONITORING-APP"/>
+      <appender-ref ref="STDOUT"/>
+    </root>
+  </springProfile>
+
+  <springProfile name="prod">
+    <root level="INFO">
+      <appender-ref ref="MONITORING-APP"/>
+    </root>
+  </springProfile>
+</configuration>
