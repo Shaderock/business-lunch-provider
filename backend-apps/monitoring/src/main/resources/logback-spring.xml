@@ -7,7 +7,7 @@
     </encoder>
   </appender>
 
-  <appender name="DISCOVERY-APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  <appender name="MONITORING-APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
       <fileNamePattern>
         D:/business-lunch-provider/logs/%d{yyyy-MM-dd}/backend/monitoring.%i.log.zip
