@@ -47,7 +47,6 @@ public class CategoryService {
 
     Category newCategory = new Category();
     newCategory.setName(categoryDto.name());
-    newCategory.setMenu(getSupplierForCrud().getMenu());
 
     log.info("Created category [{}]", newCategory);
 
