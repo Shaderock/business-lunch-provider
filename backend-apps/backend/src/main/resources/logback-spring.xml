@@ -12,9 +12,9 @@
       <fileNamePattern>
         D:/business-lunch-provider/logs/%d{yyyy-MM-dd}/backend/backend.%i.log.zip
       </fileNamePattern>
-      <maxFileSize>10MB</maxFileSize>
+      <maxFileSize>50MB</maxFileSize>
       <maxHistory>30</maxHistory>
-      <totalSizeCap>3GB</totalSizeCap>
+      <totalSizeCap>10GB</totalSizeCap>
     </rollingPolicy>
     <encoder>
       <pattern>

@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 public class CategoryService {
 
   private final MenuRepository menuRepository;
-
   private final CategoryRepository categoryRepository;
   private final SupplierRepository<Supplier> supplierRepository;
 
@@ -64,11 +63,16 @@ public class CategoryService {
           c.getName()));
     });
 
-    Category persistedCategory = categoryRepository.save(newCategory);
-    Menu menu = persistedCategory.getMenu();
-    menuRepository.save(menu);
+    Supplier supplier = getSupplierForCrud();
+    Menu menu = menuRepository.findBySupplier(supplier).orElseThrow(() -> {
+      throw new IllegalStateException(
+          String.format("[%s] does not have a Menu initialized", supplier));
+    });
+    newCategory.setMenu(menu);
 
-    log.info("Created [{}]", newCategory);
+    Category persistedCategory = categoryRepository.save(newCategory);
+
+    log.info("Created [{}]", persistedCategory);
     return persistedCategory;
   }
 
