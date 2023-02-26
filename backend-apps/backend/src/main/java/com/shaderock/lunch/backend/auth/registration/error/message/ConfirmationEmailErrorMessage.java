@@ -4,6 +4,7 @@ import com.shaderock.lunch.backend.messaging.message.ErrorMessage;
 import lombok.Getter;
 
 public class ConfirmationEmailErrorMessage extends ErrorMessage {
+
   @Getter
   private static final boolean CONFIRMATION_EMAIL_SENT = false;
   @Getter

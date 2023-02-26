@@ -4,6 +4,7 @@ import com.shaderock.lunch.backend.messaging.message.ErrorMessage;
 import lombok.Getter;
 
 public class TokenNotFoundErrorMessage extends ErrorMessage {
+
   @Getter
   private static final boolean TOKEN_FOUND = false;
   @Getter

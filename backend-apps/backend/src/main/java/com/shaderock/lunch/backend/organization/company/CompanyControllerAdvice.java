@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class CompanyControllerAdvice {
+
   @ExceptionHandler(CompanyRegistrationValidationException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public InvalidCompanyMessage invalidCompanyRegistrationAttempt(CompanyRegistrationValidationException e) {
+  public InvalidCompanyMessage invalidCompanyRegistrationAttempt(
+      CompanyRegistrationValidationException e) {
     return new InvalidCompanyMessage(e.getMessage());
   }
 }

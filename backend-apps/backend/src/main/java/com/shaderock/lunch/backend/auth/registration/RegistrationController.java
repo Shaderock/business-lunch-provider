@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/register")
 @RequiredArgsConstructor
 public class RegistrationController {
+
   private final AuthService authService;
 
   @Value(value = "${lunch.frontend.url}")
@@ -39,7 +40,7 @@ public class RegistrationController {
   public ResponseEntity<Void> confirmEmail(@RequestParam @NotNull final String token) {
     authService.confirmEmail(token);
     return ResponseEntity.status(HttpStatus.FOUND)
-            .header("Location", frontendUrl + "/login?emailConfirmed=true")
-            .build();
+        .header("Location", frontendUrl + "/login?emailConfirmed=true")
+        .build();
   }
 }

@@ -9,6 +9,7 @@ import lombok.ToString;
 @RequiredArgsConstructor
 @ToString
 public class ErrorMessage implements Serializable {
+
   private final boolean displayToUser;
   private final String errMessage;
 }

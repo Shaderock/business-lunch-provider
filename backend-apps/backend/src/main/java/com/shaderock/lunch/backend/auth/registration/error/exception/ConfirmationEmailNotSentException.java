@@ -4,6 +4,7 @@ import com.shaderock.lunch.backend.messaging.exception.TransferableApplicationEx
 import lombok.Getter;
 
 public class ConfirmationEmailNotSentException extends TransferableApplicationException {
+
   @Getter
   private final String email;
 

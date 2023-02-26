@@ -7,24 +7,30 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import java.time.Duration;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.ToString.Exclude;
 
-import java.time.Duration;
-
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class OrderCapacity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   @OneToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "preference_config_id", nullable = false)
+  @Exclude
   private SupplierPreferenceConfig preferenceConfig;
   private Duration duration;
   private int employeesOrdersAmount;

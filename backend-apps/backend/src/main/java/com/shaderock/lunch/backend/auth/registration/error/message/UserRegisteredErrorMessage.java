@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class UserRegisteredErrorMessage extends ErrorMessage {
+
   private static final boolean USER_REGISTERED = true;
   private final String email;
 

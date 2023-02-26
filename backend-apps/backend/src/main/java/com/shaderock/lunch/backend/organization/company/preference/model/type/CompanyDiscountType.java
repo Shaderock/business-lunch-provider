@@ -10,8 +10,8 @@ public enum CompanyDiscountType {
    */
   SPECIFIC_AMOUNT_FIRST,
   /**
-   * A percentage discount is applied for any option but only for the first order, however it can't exceed maximum
-   * discount value
+   * A percentage discount is applied for any option but only for the first order, however it can't
+   * exceed maximum discount value
    */
   SPECIFIC_OVER_PERCENTAGE_FIRST
 }

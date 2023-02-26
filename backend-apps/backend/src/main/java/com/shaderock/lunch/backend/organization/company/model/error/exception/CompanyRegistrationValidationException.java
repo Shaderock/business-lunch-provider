@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class CompanyRegistrationValidationException extends TransferableApplicationException {
+
   public CompanyRegistrationValidationException(String message) {
     super(message);
   }

@@ -4,6 +4,7 @@ import com.shaderock.lunch.backend.messaging.exception.TransferableApplicationEx
 import lombok.Getter;
 
 public class TokenNotFoundException extends TransferableApplicationException {
+
   @Getter
   private final String token;
 

@@ -16,6 +16,7 @@ import lombok.Setter;
 @Setter
 @Entity
 public class CompanyNotificationConfig extends NotificationConfig {
+
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "preference_config_id", nullable = false)
   private CompanyPreferenceConfig preferenceConfig;

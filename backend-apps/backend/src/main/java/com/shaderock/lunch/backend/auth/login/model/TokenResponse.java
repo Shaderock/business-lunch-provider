@@ -1,3 +1,7 @@
 package com.shaderock.lunch.backend.auth.login.model;
 
-public record TokenResponse(String token) {}
+import java.io.Serializable;
+
+public record TokenResponse(String token) implements Serializable {
+
+}
