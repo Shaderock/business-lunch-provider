@@ -1,12 +1,12 @@
-import {User} from "@/models/User";
+import {UserDetails} from "@/models/UserDetails";
 import {Role} from "@/models/Role";
 
 export class RoleService {
-  hasRole(user: User | null, role: Role): boolean {
+  hasRole(user: UserDetails | null, role: Role): boolean {
     return user !== null && user.roles !== null && user.roles.includes(role);
   }
 
-  hasOnlyRole(user: User | null, role: Role): boolean {
+  hasOnlyRole(user: UserDetails | null, role: Role): boolean {
     return this.hasRole(user, role) && user?.roles.length === 1;
   }
 }

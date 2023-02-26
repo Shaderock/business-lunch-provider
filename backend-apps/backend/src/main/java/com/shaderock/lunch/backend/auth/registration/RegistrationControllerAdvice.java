@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice()
 @Slf4j
 public class RegistrationControllerAdvice {
+
   @ExceptionHandler(UserAlreadyRegisteredException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public UserRegisteredErrorMessage userAlreadyRegistered(UserAlreadyRegisteredException e) {
@@ -26,7 +27,8 @@ public class RegistrationControllerAdvice {
 
   @ExceptionHandler(ConfirmationEmailNotSentException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ConfirmationEmailErrorMessage confirmationEmailNotSent(ConfirmationEmailNotSentException e) {
+  public ConfirmationEmailErrorMessage confirmationEmailNotSent(
+      ConfirmationEmailNotSentException e) {
     return new ConfirmationEmailErrorMessage(e.getMessage(), e.getEmail());
   }
 
@@ -39,14 +41,14 @@ public class RegistrationControllerAdvice {
   @ExceptionHandler(DisabledException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ErrorMessage emailNotConfirmedForLoginAttempt(DisabledException e) {
-    log.error(e.getMessage());
+    LOGGER.error(e.getMessage());
     return new ErrorMessage(true, "Email is not confirmed yet");
   }
 
   @ExceptionHandler(BadCredentialsException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ErrorMessage badCredentials(BadCredentialsException e) {
-    log.error(e.getMessage());
+    LOGGER.error(e.getMessage());
     return new ErrorMessage(true, e.getMessage());
   }
 }

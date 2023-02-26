@@ -12,11 +12,11 @@ spring:
     password: ${lunch.database.password}
     url: jdbc:postgresql://${lunch.database.address}/business-lunch-provider-db
   flyway:
-    enabled: true
+    enabled: false
     schemas: blp_schema
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

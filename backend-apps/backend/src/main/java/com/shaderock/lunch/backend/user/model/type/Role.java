@@ -5,7 +5,11 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Role {
-  USER("USER"), EMPLOYEE("EMPLOYEE"), COMPANY_ADMIN("COMPANY_ADMIN"), SUPPLIER("SUPPLIER");
+  USER("USER"),
+  EMPLOYEE("EMPLOYEE"),
+  COMPANY_ADMIN("COMPANY_ADMIN"),
+  SUPPLIER("SUPPLIER"),
+  SYSTEM_ADMIN("SYSTEM_ADMIN");
 
   @Getter
   private final String name;

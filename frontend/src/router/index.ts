@@ -30,6 +30,18 @@ const routes = [
   {
     path: '/profile', name: 'User Profile',
     component: () => import('@/views/Profile.vue')
+  },
+  {
+    path: '/sysadm/companies', name: 'Companies',
+    component: () => import('@/views/sysadm/Companies.vue')
+  },
+  {
+    path: '/sysadm/suppliers', name: 'Suppliers',
+    component: () => import('@/views/sysadm/Suppliers.vue')
+  },
+  {
+    path: '/sysadm/users', name: 'Users',
+    component: () => import('@/views/sysadm/Users.vue')
   }
 ]
 const router = createRouter({
@@ -48,7 +60,7 @@ async function initializeStores() {
   if (useAuthStore().hasToken)
     await useUserStore().requestUserData()
   if (useUserStore().isEmployee) {
-    await useCompanyStore().requestData()
+    await useCompanyStore().requestFreshCompanyData()
   }
 }
 

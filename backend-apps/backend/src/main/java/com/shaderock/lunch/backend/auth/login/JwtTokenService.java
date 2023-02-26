@@ -31,7 +31,7 @@ public class JwtTokenService {
     ZoneId zoneId = ZoneId.systemDefault();
     Instant instant = date.atStartOfDay(zoneId).toInstant();
 
-    log.info("Generating token for username=[{}] expiring at [{}]",
+    LOGGER.info("Generating token for username=[{}] expiring at [{}]",
         userDetails.getUsername(), date);
 
     return JWT.create()

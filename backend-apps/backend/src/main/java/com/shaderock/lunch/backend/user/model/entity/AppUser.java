@@ -15,6 +15,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.ToString.Exclude;
 
 @Getter
 @Setter
@@ -22,7 +24,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString
 public class AppUser {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -32,10 +36,12 @@ public class AppUser {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "organization_id")
+  @Exclude
   private Organization organization;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "organization_request_id")
+  @Exclude
   private Organization organizationRequest;
 
   @OneToOne(mappedBy = "employee")

@@ -15,32 +15,36 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
+import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.ToString.Exclude;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Builder
 @Entity
 public class AppUserDetails implements UserDetails {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "app_user_id")
+  @Exclude
   private AppUser appUser;
 
   @Email
@@ -64,7 +68,7 @@ public class AppUserDetails implements UserDetails {
   @ElementCollection(targetClass = Role.class)
   @Enumerated(EnumType.STRING)
   @CollectionTable(name = "user_roles",
-          joinColumns = @JoinColumn(name = "user_id"))
+      joinColumns = @JoinColumn(name = "user_id"))
   @Column(name = "role", nullable = false)
   private Set<Role> roles;
 
@@ -72,8 +76,8 @@ public class AppUserDetails implements UserDetails {
   @Transactional
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return roles.stream()
-            .map(role -> new SimpleGrantedAuthority(role.getNameWithPrefix()))
-            .collect(Collectors.toSet());
+        .map(role -> new SimpleGrantedAuthority(role.getNameWithPrefix()))
+        .collect(Collectors.toSet());
   }
 
   @Override

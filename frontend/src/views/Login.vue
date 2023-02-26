@@ -54,7 +54,7 @@ onMounted(() => {
 async function login() {
   try {
     await useAuthStore().login(email.value, password.value)
-    await router.push("/")
+    await router.push({path: '/'})
   } catch (error) {
     console.log("Something wrong happened during login: ", error)
   }

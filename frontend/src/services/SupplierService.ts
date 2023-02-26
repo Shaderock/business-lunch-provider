@@ -1,9 +1,10 @@
 import {AppSettings} from "./AppSettings";
 import {OrganizationService} from "./OrganizationService";
-import axios, {AxiosResponse} from "axios";
+import axios from "axios";
 
 export class SupplierService extends OrganizationService {
   private supplierUrl = AppSettings.API_URL + '/supplier'
+  private sysAdmSuppliersUrl = AppSettings.API_URL + '/sysadm/supplier'
   private registerUrl = this.supplierUrl + "/registerCompany"
   private userSupplierUrl = this.supplierUrl + '/my'
 
@@ -16,8 +17,12 @@ export class SupplierService extends OrganizationService {
     });
   }
 
-  public getUserSupplier(): Promise<AxiosResponse<any, any>> {
+  public getUserSupplier(): Promise<any> {
     return axios.get(this.userSupplierUrl)
+  }
+
+  public getAllSuppliers(): Promise<any> {
+    return axios.get(this.sysAdmSuppliersUrl)
   }
 }
 

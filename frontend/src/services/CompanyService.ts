@@ -1,9 +1,10 @@
 import {AppSettings} from "./AppSettings";
 import {OrganizationService} from "./OrganizationService";
-import axios, {AxiosResponse} from "axios";
+import axios from "axios";
 
 export class CompanyService extends OrganizationService {
   private companyUrl = AppSettings.API_URL + '/company'
+  private sysAdmCompaniesUrl = AppSettings.API_URL + '/sysadm/company'
   private registerUrl = this.companyUrl + "/register"
   private userCompanyUrl = this.companyUrl + '/my'
 
@@ -15,8 +16,12 @@ export class CompanyService extends OrganizationService {
     });
   }
 
-  public getUserCompany(): Promise<AxiosResponse<any, any>> {
+  public getUserCompany(): Promise<any> {
     return axios.get(this.userCompanyUrl)
+  }
+
+  async getAllCompanies(): Promise<any> {
+    return axios.get(this.sysAdmCompaniesUrl)
   }
 }
 

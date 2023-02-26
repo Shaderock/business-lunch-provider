@@ -9,6 +9,11 @@
       "name": "lunch.backend.url",
       "type": "java.lang.String",
       "description": "Description for lunch.backend.url."
+    },
+    {
+      "name": "lunch.backend.users.generate.default",
+      "type": "java.lang.Boolean",
+      "description": "Description for lunch.backend.users.generate.default."
     }
   ]
 }

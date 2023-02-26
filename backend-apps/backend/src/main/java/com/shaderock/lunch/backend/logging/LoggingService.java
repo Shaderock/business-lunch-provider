@@ -30,7 +30,7 @@ public class LoggingService {
       stringBuilder.append("body=[").append(body).append("]");
     }
 
-    log.info(stringBuilder.toString());
+    LOGGER.info(stringBuilder.toString());
   }
 
   public void logResponse(HttpServletRequest httpServletRequest,
@@ -43,7 +43,7 @@ public class LoggingService {
         + "] "
         + "responseBody=[" + body + "] ";
 
-    log.info(stringBuilder);
+    LOGGER.info(stringBuilder);
   }
 
   private Map<String, String> buildParametersMap(HttpServletRequest httpServletRequest) {

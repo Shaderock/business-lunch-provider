@@ -39,9 +39,11 @@ services:
       lunch.mail.password="$BLP_EMAIL_PASS"
       lunch.backend.actuator.username=actuator lunch.backend.actuator.password=admin
       spring.security.user.name=actuator spring.security.user.password=admin
+      lunch.backend.system.admin.email=sysadm@adm.adm.adm
+      lunch.backend.system.admin.password=sysadm
       && vault kv put secret/blp-spring-admin 
       lunch.monitoring.username=admin lunch.monitoring.password=admin
       lunch.discovery.username=admin lunch.discovery.password=admin 
-      lunch.backend.actuator.username=actuator lunch.backend.actuator.password=admin
+      lunch.backend.actuator.username=actuator lunch.backend.actuator.password=admin     
       && date
       && exit'

@@ -2,7 +2,6 @@
   <v-app theme="dark">
     <the-app-bar></the-app-bar>
     <the-side-bar></the-side-bar>
-
     <v-main>
       <v-container>
         <router-view></router-view>

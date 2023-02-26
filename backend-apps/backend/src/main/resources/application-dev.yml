@@ -1,6 +1,9 @@
 lunch:
   backend:
     url: http://localhost:8080
+    users:
+      generate:
+        default: true
   frontend:
     url: http://localhost:3000
   discovery:

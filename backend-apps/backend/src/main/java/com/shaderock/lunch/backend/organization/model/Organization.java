@@ -11,22 +11,25 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
+import java.util.Set;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Set;
+import lombok.ToString;
+import lombok.ToString.Exclude;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@ToString
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@Where(clause = "is_deleted=false")
 public class Organization {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -45,8 +48,10 @@ public class Organization {
   private boolean isDeleted;
 
   @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
+  @Exclude
   private Set<AppUser> users;
 
   @OneToMany(mappedBy = "organizationRequest", fetch = FetchType.LAZY)
+  @Exclude
   private Set<AppUser> usersRequests;
 }

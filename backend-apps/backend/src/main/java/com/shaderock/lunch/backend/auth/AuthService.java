@@ -11,8 +11,8 @@ import com.shaderock.lunch.backend.user.AppUserDetailsService;
 import com.shaderock.lunch.backend.user.model.entity.AppUser;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.model.type.Role;
-import com.shaderock.lunch.backend.user.repository.UserDetailsRepository;
-import com.shaderock.lunch.backend.user.repository.UserRepository;
+import com.shaderock.lunch.backend.user.repository.AppUserDetailsRepository;
+import com.shaderock.lunch.backend.user.repository.AppUserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -32,14 +32,14 @@ public class AuthService {
 
   private final AppUserDetailsService appUserDetailsService;
   private final JwtTokenService jwtTokenService;
-  private final UserDetailsRepository userDetailsRepository;
-  private final UserRepository userRepository;
+  private final AppUserDetailsRepository appUserDetailsRepository;
+  private final AppUserRepository appUserRepository;
   private final MailService mailService;
   private final BCryptPasswordEncoder passwordEncoder;
 
   @Transactional
   public String login(@Valid final LoginForm form) {
-    log.info("Trying to sign in user with email=[{}]", form.email());
+    LOGGER.info("Trying to sign in user with email=[{}]", form.email());
     AppUserDetails userDetails;
 
     try {
@@ -48,13 +48,13 @@ public class AuthService {
       throw new BadCredentialsException("Bad Credentials");
     }
 
-    log.info("User by [{}] found", form);
+    LOGGER.info("User by [{}] found", form);
     return jwtTokenService.generateToken(userDetails);
   }
 
   @Transactional
   public void registerUser(@Valid UserRegistrationForm form) {
-    log.info("Attempting to register user with email=[{}]", form.email());
+    LOGGER.info("Attempting to register user with email=[{}]", form.email());
     if (isUserRegistered(form.email())) {
       throw new UserAlreadyRegisteredException(form.email());
     }
@@ -68,12 +68,12 @@ public class AuthService {
         .registrationToken(UUID.randomUUID().toString())
         .isEnabled(false)
         .build();
-    AppUserDetails persistedDetails = userDetailsRepository.save(details);
-    log.info("Registered user [{}]", persistedDetails);
+    AppUserDetails persistedDetails = appUserDetailsRepository.save(details);
+    LOGGER.info("Registered user [{}]", persistedDetails);
 
     AppUser appUser = new AppUser();
     appUser.setUserDetails(persistedDetails);
-    AppUser persistedUser = userRepository.save(appUser);
+    AppUser persistedUser = appUserRepository.save(appUser);
 
     persistedDetails.setAppUser(persistedUser);
     try {
@@ -84,12 +84,12 @@ public class AuthService {
   }
 
   public boolean isUserRegistered(String email) {
-    return userDetailsRepository.findByEmail(email).isPresent();
+    return appUserDetailsRepository.findByEmail(email).isPresent();
   }
 
   @Transactional
   public void confirmEmail(String token) {
-    AppUserDetails userDetails = userDetailsRepository.findByRegistrationToken(token)
+    AppUserDetails userDetails = appUserDetailsRepository.findByRegistrationToken(token)
         .orElseThrow(() -> new TokenNotFoundException(token));
 
     userDetails.setEnabled(true);

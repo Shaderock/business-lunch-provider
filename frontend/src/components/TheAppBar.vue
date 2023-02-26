@@ -1,9 +1,5 @@
 <template>
   <v-app-bar :elevation="3">
-    <v-btn>
-      <v-icon size="x-large">mdi-menu</v-icon>
-    </v-btn>
-
     <v-divider vertical></v-divider>
 
     <v-app-bar-title>Business Lunch Provider</v-app-bar-title>

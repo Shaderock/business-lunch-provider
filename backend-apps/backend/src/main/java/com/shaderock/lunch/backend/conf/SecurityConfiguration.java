@@ -3,6 +3,7 @@ package com.shaderock.lunch.backend.conf;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 import com.shaderock.lunch.backend.auth.login.JWTRequestFilter;
+import com.shaderock.lunch.backend.user.model.type.Role;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,7 @@ public class SecurityConfiguration {
         .requestMatchers("/swagger-ui.html", "/swagger-ui/**",
             "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
         .requestMatchers("/api/login/**", "/api/register/**", "/api/food/**").permitAll()
+        .requestMatchers("/api/sysdadmin/**").hasRole(Role.SYSTEM_ADMIN.getName())
         .requestMatchers("/actuator/**").authenticated().and().httpBasic()
         .and()
         .authorizeHttpRequests()

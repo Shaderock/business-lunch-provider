@@ -12,10 +12,12 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
+//@Builder
 @Getter
 @Setter
 @Entity
 public class EmployeeNotificationConfig extends NotificationConfig {
+
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "employee_id", nullable = false)
   private EmployeePreferenceConfig preferenceConfig;

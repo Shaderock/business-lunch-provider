@@ -26,6 +26,6 @@ import {onMounted} from "vue";
 import {useCompanyStore} from "@/store/app";
 
 onMounted(() => {
-  useCompanyStore().requestData()
+  useCompanyStore().requestFreshCompanyData()
 })
 </script>

@@ -1,13 +1,14 @@
 import {beforeEach, describe, expect, it} from "vitest";
 import {useAuthStore, useUserStore} from "../../src/store/app";
 import {createPinia, setActivePinia} from "pinia";
-import {User} from "../../src/models/User";
+import {UserDetails} from "../../src/models/UserDetails";
 import {Role} from "../../src/models/Role";
 
-describe('User Storage and Handling', () => {
+describe('UserDetails Storage and Handling', () => {
   const token: string = "asdf"
-  const user: User = {
+  const userDetails: UserDetails = {
     id: 1,
+    appUserId: 2,
     email: "testmail@mail.mail.mail",
     firstName: "firstName",
     lastName: "lastName",
@@ -17,7 +18,7 @@ describe('User Storage and Handling', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     useAuthStore().jwtToken = token
-    useUserStore().user = user
+    useUserStore().userDetails = userDetails
   })
 
   it('correctly validates user has token', async () => {
