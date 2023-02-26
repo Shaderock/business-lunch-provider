@@ -2,6 +2,7 @@ package com.shaderock.lunch.backend.messaging.advice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import com.shaderock.lunch.backend.messaging.exception.TransferableApplicationException;
 import com.shaderock.lunch.backend.messaging.message.ErrorMessage;
 import java.util.HashMap;
@@ -30,6 +31,13 @@ public class GeneralControllerAdvice {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorMessage handleKnownException(TransferableApplicationException e) {
     LOGGER.warn("An exception happened, message=[{}]", e.getMessage());
+    return new ErrorMessage(true, e.getMessage());
+  }
+
+  @ExceptionHandler(CrudValidationException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorMessage handleKnownException(CrudValidationException e) {
+    LOGGER.warn("A validation exception happened, message=[{}]", e.getMessage());
     return new ErrorMessage(true, e.getMessage());
   }
 

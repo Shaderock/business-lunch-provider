@@ -21,14 +21,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class EmployeePreferenceConfig implements PreferenceConfig {
+public class EmployeePreferences implements PreferenceConfig {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   @OneToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "notification_config_id", nullable = false)
-  private EmployeeNotificationConfig notificationConfig;
+  private EmployeeNotifications notificationConfig;
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "employee_id", nullable = false)

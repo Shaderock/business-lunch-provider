@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,8 +23,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
-public class CompanyPreferenceConfig implements PreferenceConfig {
+public class CompanyPreferences implements PreferenceConfig {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +39,6 @@ public class CompanyPreferenceConfig implements PreferenceConfig {
   @Enumerated(EnumType.STRING)
   private CompanyDiscountType companyDiscountType;
 
-  @Column(nullable = false)
+  @Column
   private String deliveryAddress;
 }

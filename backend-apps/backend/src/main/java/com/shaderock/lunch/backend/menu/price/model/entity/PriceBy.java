@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.menu.price.model.entity;
 
-import com.shaderock.lunch.backend.organization.supplier.preference.model.entity.SupplierPreferenceConfig;
+import com.shaderock.lunch.backend.organization.supplier.preference.model.entity.SupplierPreferences;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -29,5 +29,5 @@ public class PriceBy {
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "preference_config_id", nullable = false)
-  private SupplierPreferenceConfig preferenceConfig;
+  private SupplierPreferences preferenceConfig;
 }

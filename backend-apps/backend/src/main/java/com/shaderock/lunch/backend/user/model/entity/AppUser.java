@@ -1,7 +1,7 @@
 package com.shaderock.lunch.backend.user.model.entity;
 
-import com.shaderock.lunch.backend.organization.model.Organization;
-import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferenceConfig;
+import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
+import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferences;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -37,13 +37,13 @@ public class AppUser {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "organization_id")
   @Exclude
-  private Organization organization;
+  private OrganizationDetails organizationDetails;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "organization_request_id")
   @Exclude
-  private Organization organizationRequest;
+  private OrganizationDetails organizationDetailsRequest;
 
   @OneToOne(mappedBy = "employee")
-  private EmployeePreferenceConfig preferences;
+  private EmployeePreferences preferences;
 }

@@ -1,7 +1,7 @@
 package com.shaderock.lunch.backend.user.preferences;
 
 import com.shaderock.lunch.backend.user.preferences.model.dto.EmployeePreferencesDto;
-import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferenceConfig;
+import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferences;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmployeePreferencesService {
 
-  public static EmployeePreferencesDto mapToDto(EmployeePreferenceConfig employeePreferenceConfig) {
+  public static EmployeePreferencesDto mapToDto(EmployeePreferences employeePreferences) {
     return EmployeePreferencesDto.builder().build();
   }
 }

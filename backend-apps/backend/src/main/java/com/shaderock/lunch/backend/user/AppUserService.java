@@ -4,12 +4,11 @@ import com.shaderock.lunch.backend.user.mapper.AppUserMapper;
 import com.shaderock.lunch.backend.user.model.dto.AppUserDto;
 import com.shaderock.lunch.backend.user.model.entity.AppUser;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
-import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferenceConfig;
+import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferences;
 import com.shaderock.lunch.backend.user.repository.AppUserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,7 @@ public class AppUserService {
     return userDetails.getAppUser();
   }
 
-  public EmployeePreferenceConfig getUserProfilePreferences(Principal principal) {
+  public EmployeePreferences getUserProfilePreferences(Principal principal) {
     return readProfile(principal).getPreferences();
   }
 
@@ -60,11 +59,6 @@ public class AppUserService {
   }
 
   public List<AppUser> readAll() {
-    List<AppUser> result = new ArrayList<>();
-    for (AppUser appUser : appUserRepository.findAll()) {
-      result.add(appUser);
-    }
-
-    return result;
+    return appUserRepository.findAll();
   }
 }

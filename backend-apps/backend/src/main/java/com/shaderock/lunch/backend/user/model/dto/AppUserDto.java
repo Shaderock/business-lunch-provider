@@ -1,6 +1,7 @@
 package com.shaderock.lunch.backend.user.model.dto;
 
 import java.io.Serializable;
+import java.util.UUID;
 import lombok.Builder;
 
 /**
@@ -9,8 +10,8 @@ import lombok.Builder;
 @Builder
 public record AppUserDto(Long id,
                          Long detailsId,
-                         Long organizationId,
-                         Long organizationRequestId,
+                         UUID organizationId,
+                         UUID organizationRequestId,
                          Long preferencesId) implements Serializable {
 
 }

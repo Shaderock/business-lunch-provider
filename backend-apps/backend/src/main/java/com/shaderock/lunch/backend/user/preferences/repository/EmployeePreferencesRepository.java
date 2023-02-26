@@ -1,9 +1,9 @@
 package com.shaderock.lunch.backend.user.preferences.repository;
 
-import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferenceConfig;
-import org.springframework.data.repository.CrudRepository;
+import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferences;
+import org.springframework.data.repository.ListCrudRepository;
 
 public interface EmployeePreferencesRepository extends
-    CrudRepository<EmployeePreferenceConfig, Long> {
+    ListCrudRepository<EmployeePreferences, Long> {
 
 }

@@ -1,14 +1,14 @@
 package com.shaderock.lunch.backend.menu.service;
 
 
+import com.shaderock.lunch.backend.menu.mapper.CategoryMapper;
 import com.shaderock.lunch.backend.menu.model.dto.CategoryDto;
 import com.shaderock.lunch.backend.menu.model.entity.Category;
 import com.shaderock.lunch.backend.menu.model.entity.Menu;
-import com.shaderock.lunch.backend.menu.model.mapper.CategoryMapper;
 import com.shaderock.lunch.backend.menu.repository.CategoryRepository;
 import com.shaderock.lunch.backend.menu.repository.MenuRepository;
+import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import com.shaderock.lunch.backend.messaging.exception.TransferableApplicationException;
-import com.shaderock.lunch.backend.organization.repository.OrganizationRepository;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.repository.SupplierRepository;
 import jakarta.transaction.Transactional;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class CategoryService {
+
   private final MenuRepository menuRepository;
   private final CategoryRepository categoryRepository;
   private final SupplierRepository supplierRepository;
@@ -35,7 +36,7 @@ public class CategoryService {
   public Category read(String name) {
     LOGGER.info("Attempting to read Category by name=[{}]", name);
     return categoryRepository.findByName(name)
-        .orElseThrow(() -> new TransferableApplicationException(
+        .orElseThrow(() -> new CrudValidationException(
             String.format("Category(name=[%s]) not found", name)));
   }
 
@@ -61,14 +62,14 @@ public class CategoryService {
     LOGGER.info("Attempting to create [{}]", newCategory);
 
     categoryRepository.findByName(newCategory.getName()).ifPresent(c -> {
-      throw new TransferableApplicationException(String.format(
+      throw new CrudValidationException(String.format(
           "Category (name=[%s]) already exists and should be updated instead of created",
           c.getName()));
     });
 
     Supplier supplier = getSupplierForCrud();
     Menu menu = menuRepository.findBySupplier(supplier).orElseThrow(() -> {
-      throw new IllegalStateException(
+      throw new CrudValidationException(
           String.format("[%s] does not have a Menu initialized", supplier));
     });
     newCategory.setMenu(menu);
@@ -101,11 +102,11 @@ public class CategoryService {
     LOGGER.info("Attempting to update [{}]", categoryToUpdate);
 
     if (categoryToUpdate.getId() == null) {
-      throw new TransferableApplicationException("Category id not provided");
+      throw new CrudValidationException("Category id not provided");
     }
 
     Category persistedCategory = categoryRepository.findById(categoryToUpdate.getId())
-        .orElseThrow(() -> new TransferableApplicationException(
+        .orElseThrow(() -> new CrudValidationException(
             String.format(
                 "Category(id=[%s]) doesn't exist and should be created instead of updated",
                 categoryToUpdate.getId())
@@ -121,7 +122,7 @@ public class CategoryService {
   public void delete(long id) {
     Category persistedCategory = categoryRepository.findById(id)
         .orElseThrow(() -> {
-          throw new TransferableApplicationException(
+          throw new CrudValidationException(
               String.format("Category (id=[%s]) doesn't exist and can't be deleted", id));
         });
 
@@ -133,8 +134,9 @@ public class CategoryService {
     UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
         .getPrincipal();
 
-    return supplierRepository.findByUsers_UserDetails_Email(userDetails.getUsername())
-        .orElseThrow(() -> new TransferableApplicationException(
-            "User is not a part of supplier organization"));
+    return supplierRepository.findByOrganizationDetails_Users_UserDetails_Email(
+            userDetails.getUsername())
+        .orElseThrow(() -> new CrudValidationException(
+            "User is not a part of supplier organizationDetails"));
   }
 }

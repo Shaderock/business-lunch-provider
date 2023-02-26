@@ -11,8 +11,8 @@ import org.mapstruct.MappingConstants.ComponentModel;
 public interface AppUserMapper {
 
   @Mapping(target = "detailsId", source = "userDetails.id")
-  @Mapping(target = "organizationId", source = "organization.id")
-  @Mapping(target = "organizationRequestId", source = "organizationRequest.id")
+  @Mapping(target = "organizationId", source = "organizationDetails.id")
+  @Mapping(target = "organizationRequestId", source = "organizationDetailsRequest.id")
   @Mapping(target = "preferencesId", source = "preferences.id")
   AppUserDto toDto(AppUser appUser);
 

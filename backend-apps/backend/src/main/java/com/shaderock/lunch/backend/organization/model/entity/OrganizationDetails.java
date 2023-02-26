@@ -1,18 +1,16 @@
-package com.shaderock.lunch.backend.organization.company.model.entity;
+package com.shaderock.lunch.backend.organization.model.entity;
 
 import static com.shaderock.lunch.backend.utils.FilterManager.DELETED_FILTER;
 
-import com.shaderock.lunch.backend.organization.company.preference.model.entity.CompanyPreferences;
-import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
-import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
+import com.shaderock.lunch.backend.user.model.entity.AppUser;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.Set;
 import java.util.UUID;
@@ -33,32 +31,37 @@ import org.hibernate.type.descriptor.java.BooleanJavaType;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @ToString
+@Builder
 @Entity
-@Table(name = "companies")
-@SQLDelete(sql = "UPDATE companies SET deleted = true WHERE id=?")
+@Table(name = "organization_details")
+@SQLDelete(sql = "UPDATE organization_details SET deleted = true WHERE id=?")
 @FilterDef(name = DELETED_FILTER, parameters = @ParamDef(name = "isDeleted", type = BooleanJavaType.class))
 @Filter(name = DELETED_FILTER, condition = "deleted = :isDeleted")
-public class Company {
+public class OrganizationDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
+  @Column(nullable = false)
+  private String name;
+  @Column
+  private String description;
+  @Column
+  private String email;
+  @Column
+  private String phone;
+  @Lob
+  @Column
+  private byte[] logo;
+  @Column(nullable = false)
+  private boolean deleted = Boolean.FALSE;
 
+  @OneToMany(mappedBy = "organizationDetails", fetch = FetchType.LAZY)
   @Exclude
-  @OneToOne(optional = false, fetch = FetchType.LAZY)
-  @JoinColumn(name = "organization_details_id", nullable = false)
-  private OrganizationDetails organizationDetails;
+  private Set<AppUser> users;
 
-  @OneToOne(mappedBy = "company")
-  private CompanyPreferences preferences;
-
-  @ManyToMany(mappedBy = "subscribers", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "organizationDetailsRequest", fetch = FetchType.LAZY)
   @Exclude
-  private Set<Supplier> subscriptions;
-
-  @ManyToMany(mappedBy = "subscriptionsRequests", fetch = FetchType.LAZY)
-  @Exclude
-  private Set<Supplier> subscriptionsRequests;
+  private Set<AppUser> usersRequests;
 }

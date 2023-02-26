@@ -1,13 +1,13 @@
 package com.shaderock.lunch.backend.menu.service;
 
+import com.shaderock.lunch.backend.menu.mapper.OptionMapper;
 import com.shaderock.lunch.backend.menu.model.dto.OptionDto;
 import com.shaderock.lunch.backend.menu.model.entity.Menu;
 import com.shaderock.lunch.backend.menu.model.entity.Option;
-import com.shaderock.lunch.backend.menu.model.mapper.OptionMapper;
 import com.shaderock.lunch.backend.menu.repository.MenuRepository;
 import com.shaderock.lunch.backend.menu.repository.OptionRepository;
 import com.shaderock.lunch.backend.messaging.exception.TransferableApplicationException;
-import com.shaderock.lunch.backend.organization.repository.OrganizationRepository;
+import com.shaderock.lunch.backend.organization.repository.OrganizationDetailsRepository;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.repository.SupplierRepository;
 import jakarta.transaction.Transactional;
@@ -27,7 +27,7 @@ public class OptionService {
 
   private final MenuRepository menuRepository;
   private final OptionRepository optionRepository;
-  private final OrganizationRepository organizationRepository;
+  private final OrganizationDetailsRepository organizationDetailsRepository;
   private final OptionMapper optionMapper;
 
   public OptionDto readAndMapToDto(String name) {
@@ -137,7 +137,8 @@ public class OptionService {
     UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
         .getPrincipal();
 
-    return supplierRepository.findByUsers_UserDetails_Email(userDetails.getUsername())
+    return supplierRepository.findByOrganizationDetails_Users_UserDetails_Email(
+            userDetails.getUsername())
         .orElseThrow(() -> new TransferableApplicationException(
             "User is not a part of supplier organization"));
   }

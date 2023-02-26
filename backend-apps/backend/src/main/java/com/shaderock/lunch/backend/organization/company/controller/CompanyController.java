@@ -1,10 +1,10 @@
 package com.shaderock.lunch.backend.organization.company.controller;
 
 import com.shaderock.lunch.backend.organization.company.CompanyService;
-import com.shaderock.lunch.backend.organization.company.model.CompanyRegistrationForm;
+import com.shaderock.lunch.backend.organization.company.mapper.CompanyMapper;
 import com.shaderock.lunch.backend.organization.company.model.dto.CompanyDto;
 import com.shaderock.lunch.backend.organization.company.model.entity.Company;
-import com.shaderock.lunch.backend.organization.company.model.mapper.CompanyMapper;
+import com.shaderock.lunch.backend.organization.supplier.model.form.OrganizationRegistrationForm;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.security.Principal;
@@ -27,9 +27,8 @@ public class CompanyController {
 
   @PostMapping("/register")
   public ResponseEntity<CompanyDto> registerCompany(
-      @RequestBody @Valid final CompanyRegistrationForm companyRegistrationForm,
-      Principal principal) {
-    Company registeredCompany = companyService.register(companyRegistrationForm, principal);
+      @RequestBody @Valid final OrganizationRegistrationForm form, Principal principal) {
+    Company registeredCompany = companyService.register(form, principal);
     CompanyDto responseCompany = companyMapper.toDto(registeredCompany);
     return ResponseEntity.ok(responseCompany);
   }

@@ -1,9 +1,9 @@
 package com.shaderock.lunch.backend.organization.supplier.preference.repository;
 
-import com.shaderock.lunch.backend.organization.supplier.preference.model.entity.SupplierPreferenceConfig;
-import org.springframework.data.repository.CrudRepository;
+import com.shaderock.lunch.backend.organization.supplier.preference.model.entity.SupplierPreferences;
+import org.springframework.data.repository.ListCrudRepository;
 
 public interface SupplierPreferencesRepository extends
-    CrudRepository<SupplierPreferenceConfig, Long> {
+    ListCrudRepository<SupplierPreferences, Long> {
 
 }

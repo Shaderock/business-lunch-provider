@@ -1,25 +1,23 @@
 package com.shaderock.lunch.backend.organization.supplier.service;
 
 import com.shaderock.lunch.backend.menu.model.entity.Menu;
-import com.shaderock.lunch.backend.menu.repository.MenuRepository;
-import com.shaderock.lunch.backend.organization.company.model.error.exception.CompanyRegistrationValidationException;
-import com.shaderock.lunch.backend.organization.supplier.mapper.SupplierMapper;
-import com.shaderock.lunch.backend.organization.supplier.model.dto.SupplierDto;
+import com.shaderock.lunch.backend.menu.service.MenuService;
+import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
+import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
+import com.shaderock.lunch.backend.organization.service.OrganizationDetailsService;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
-import com.shaderock.lunch.backend.organization.supplier.model.exception.SupplierRegistrationValidationException;
-import com.shaderock.lunch.backend.organization.supplier.model.form.SupplierRegistrationForm;
-import com.shaderock.lunch.backend.organization.supplier.preference.model.entity.SupplierPreferenceConfig;
-import com.shaderock.lunch.backend.organization.supplier.preference.model.type.OrderType;
-import com.shaderock.lunch.backend.organization.supplier.preference.repository.SupplierPreferencesRepository;
+import com.shaderock.lunch.backend.organization.supplier.model.form.OrganizationRegistrationForm;
+import com.shaderock.lunch.backend.organization.supplier.preference.model.entity.SupplierPreferences;
 import com.shaderock.lunch.backend.organization.supplier.repository.SupplierRepository;
 import com.shaderock.lunch.backend.user.AppUserDetailsService;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.model.type.Role;
+import com.shaderock.lunch.backend.utils.FilterManager;
 import jakarta.transaction.Transactional;
-import java.net.URI;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,83 +28,108 @@ import org.springframework.stereotype.Service;
 public class SupplierService {
 
   private final SupplierRepository supplierRepository;
-  private final SupplierPreferencesRepository supplierPreferencesRepository;
+  private final OrganizationDetailsService organizationDetailsService;
   private final AppUserDetailsService userDetailsService;
-  private final MenuRepository menuRepository;
-  private final SupplierMapper supplierMapper;
+  private final MenuService menuService;
+  private final SupplierPreferencesService supplierPreferencesService;
+  private final FilterManager filterManager;
 
   @Transactional
-  public Supplier register(SupplierRegistrationForm form, Principal principal) {
-    validateSupplierRegistration(form, principal);
+  public Supplier register(OrganizationRegistrationForm form, Principal principal) {
+    organizationDetailsService.validateOrganizationRegistration(form, principal);
 
     AppUserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+    OrganizationDetails organizationDetails = OrganizationDetails.builder()
+        .name(form.name())
+        .build();
 
-    Menu menu = new Menu();
+    Supplier persistedSupplier = create(organizationDetails);
+    userDetails.getAppUser().setOrganizationDetails(persistedSupplier.getOrganizationDetails());
+    userDetails.getRoles().add(Role.SUPPLIER);
 
-    Supplier supplier = new Supplier();
-    supplier.setName(form.name());
-    supplier.setEmail(form.email());
-    supplier.setDescription(form.description());
-    supplier.setWebsiteUrl(URI.create(form.websiteUrl()));
-    supplier.setMenuUrl(URI.create(form.menuUrl()));
-    supplier.setPhone(form.phone());
-    supplier.setMenu(new Menu());
-    supplier.setDeleted(false);
-
-    supplier = save(supplier);
-
-    menu.setSupplier(supplier);
-    menuRepository.save(menu);
-
-    SupplierPreferenceConfig preferences = new SupplierPreferenceConfig();
-    preferences.setRequestOffset(form.requestOffset());
-    preferences.setDeliveryPeriodStartTime(form.deliveryPeriodStartTime());
-    preferences.setDeliveryPeriodEndTime(form.deliveryPeriodEndTime());
-    preferences.setOrderType(OrderType.UNLIMITED_OPTIONS);
-    preferences.setSupplier(supplier);
-
-    preferences = supplierPreferencesRepository.save(preferences);
-
-    supplier.setPreferences(preferences);
-    userDetails.getAppUser().setOrganization(supplier);
-    return supplier;
-  }
-
-  private void validateSupplierRegistration(SupplierRegistrationForm form, Principal principal) {
-    LOGGER.info("Validating supplier registration by [{}]", form);
-
-    if (supplierRepository.findByName(form.name()).isPresent()) {
-      throw new SupplierRegistrationValidationException(
-          String.format("Supplier [%s] already exists", form.name()));
-    }
-
-    AppUserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-
-    if (userDetails.getRoles().size() > 1 && !userDetails.getRoles().contains(Role.USER)) {
-      throw new CompanyRegistrationValidationException(
-          String.format("User(email=[%s]) can not create companies",
-              form.email()));
-    }
-
-    LOGGER.info("Supplier is valid for registration");
+    return persistedSupplier;
   }
 
   @Transactional
-  public Supplier save(Supplier supplier) {
-    return supplierRepository.save(supplier);
+  public Supplier create(Supplier supplier, OrganizationDetails details) {
+    if (Objects.isNull(supplier)) {
+      throw new CrudValidationException("Can not create null");
+    }
+
+    Supplier persistedSupplier = create(details);
+    supplier.setId(persistedSupplier.getId());
+
+    update(supplier);
+    return persistedSupplier;
   }
 
-  public List<SupplierDto> readAllAsDto() {
-    List<Supplier> suppliers = readAll();
-    return suppliers.stream().map(supplierMapper::toDto).toList();
+  @Transactional
+  public Supplier create(OrganizationDetails details) {
+    OrganizationDetails organizationDetails = organizationDetailsService.create(details);
+
+    Supplier supplier = Supplier.builder()
+        .organizationDetails(organizationDetails)
+        .build();
+    Supplier persistedSupplier = supplierRepository.save(supplier);
+
+    Menu menu = Menu.builder().supplier(persistedSupplier).build();
+    Menu persistedMenu = menuService.create(menu);
+    persistedSupplier.setMenu(persistedMenu);
+
+    SupplierPreferences preferences = SupplierPreferences.builder()
+        .supplier(persistedSupplier).build();
+    SupplierPreferences persistedPreferences = supplierPreferencesService.create(preferences);
+    persistedSupplier.setPreferences(persistedPreferences);
+
+    return persistedSupplier;
   }
 
   public List<Supplier> readAll() {
-    List<Supplier> result = new ArrayList<>();
-    for (Supplier supplier : supplierRepository.findAll()) {
-      result.add(supplier);
+    return readAll(false);
+  }
+
+  public List<Supplier> readAll(boolean includeDeleted) {
+    if (includeDeleted) {
+      filterManager.enableDeleteFilter();
+    }
+    List<Supplier> all = supplierRepository.findAll();
+    filterManager.disableDeleteFilter();
+    return all;
+  }
+
+  public Supplier read(UUID supplierId) {
+    return supplierRepository.findById(supplierId).orElseThrow(() -> new CrudValidationException(
+        String.format("Supplier(id=[%s] not found", supplierId)));
+  }
+
+  @Transactional
+  public Supplier update(Supplier supplier) {
+    LOGGER.info("Attempting to update {}", supplier);
+    if (Objects.isNull(supplier)) {
+      throw new CrudValidationException("Can not update null");
     }
 
-    return result;
+    Supplier persistedSupplier = read(supplier.getId());
+    persistedSupplier.setWebsiteUrl(supplier.getWebsiteUrl());
+    persistedSupplier.setMenuUrl(supplier.getMenuUrl());
+
+    LOGGER.info("Updated {}", persistedSupplier);
+    return persistedSupplier;
+  }
+
+  @Transactional
+  public void delete(Supplier supplier) {
+    LOGGER.info("Attempting to delete {}", supplier);
+    if (Objects.isNull(supplier)) {
+      throw new CrudValidationException("Can not delete null");
+    }
+
+    Supplier persistedSupplier = read(supplier.getId());
+    menuService.delete(persistedSupplier.getMenu());
+    supplierPreferencesService.delete(persistedSupplier.getPreferences());
+    supplierRepository.delete(persistedSupplier);
+    organizationDetailsService.delete(persistedSupplier.getOrganizationDetails());
+
+    LOGGER.info("Deleted {}", persistedSupplier);
   }
 }

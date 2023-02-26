@@ -8,7 +8,7 @@ import com.shaderock.lunch.backend.user.model.entity.AppUser;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.preferences.mapper.EmployeePreferencesMapper;
 import com.shaderock.lunch.backend.user.preferences.model.dto.EmployeePreferencesDto;
-import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferenceConfig;
+import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferences;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class UserController {
 
   @GetMapping("/profile/preferences")
   public ResponseEntity<EmployeePreferencesDto> getProfilePreferences(Principal principal) {
-    EmployeePreferenceConfig preferences = appUserService.getUserProfilePreferences(principal);
+    EmployeePreferences preferences = appUserService.getUserProfilePreferences(principal);
     return ResponseEntity.ok(employeePreferencesMapper.toDto(preferences));
   }
 }

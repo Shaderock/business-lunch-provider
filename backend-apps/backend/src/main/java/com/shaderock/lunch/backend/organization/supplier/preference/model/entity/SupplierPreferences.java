@@ -19,22 +19,28 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Set;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.ToString.Exclude;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@ToString
 @Entity
-public class SupplierPreferenceConfig implements PreferenceConfig {
+public class SupplierPreferences implements PreferenceConfig {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  @OneToOne(fetch = FetchType.LAZY, optional = false)
+  @OneToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "supplier_id", nullable = false)
+  @Exclude
   private Supplier supplier;
   @Column(nullable = false)
   private Duration requestOffset;
@@ -53,6 +59,7 @@ public class SupplierPreferenceConfig implements PreferenceConfig {
   private OrderType orderType;
 
   @OneToMany(mappedBy = "preferenceConfig", fetch = FetchType.LAZY)
+  @Exclude
   private Set<PriceBy> prices; // todo should be one and not set
 
   @OneToOne(mappedBy = "preferenceConfig")

@@ -47,7 +47,7 @@ create table if not exists employee_notification_config
 
 
 
-create table if not exists organization
+create table if not exists organizationDetails
 (
     id          bigserial
         primary key,
@@ -71,10 +71,10 @@ create table if not exists app_user
         primary key,
     organization_id         bigint
         constraint fkfl8n74ioc02b9cpjqdlpi0m9f
-            references organization,
+            references organizationDetails,
     organization_request_id bigint
         constraint fkghwdwdvb4fi9r6x8n6ttj37ud
-            references organization
+            references organizationDetails
 );
 
 
@@ -103,7 +103,7 @@ create table if not exists company
     id bigint not null
         primary key
         constraint fk7ro8b2esd1xq6ro8xhx6m6hcf
-            references organization
+            references organizationDetails
 );
 
 
@@ -163,7 +163,7 @@ create table if not exists supplier
     id          bigint not null
         primary key
         constraint fkds7b6bobtxgfomiiojrlo5a4a
-            references organization
+            references organizationDetails
 );
 
 

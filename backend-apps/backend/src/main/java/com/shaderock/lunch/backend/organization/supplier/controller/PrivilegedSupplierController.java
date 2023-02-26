@@ -1,6 +1,8 @@
 package com.shaderock.lunch.backend.organization.supplier.controller;
 
+import com.shaderock.lunch.backend.organization.supplier.mapper.SupplierMapper;
 import com.shaderock.lunch.backend.organization.supplier.model.dto.SupplierDto;
+import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.service.SupplierService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
@@ -18,9 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PrivilegedSupplierController {
 
   private final SupplierService supplierService;
+  private final SupplierMapper supplierMapper;
 
   @GetMapping
   public ResponseEntity<List<SupplierDto>> readAll() {
-    return ResponseEntity.ok(supplierService.readAllAsDto());
+    List<Supplier> suppliers = supplierService.readAll(true);
+    return ResponseEntity.ok(suppliers.stream().map(supplierMapper::toDto).toList());
   }
 }

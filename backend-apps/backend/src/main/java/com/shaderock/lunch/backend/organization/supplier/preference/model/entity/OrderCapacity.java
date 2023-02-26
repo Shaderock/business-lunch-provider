@@ -31,7 +31,7 @@ public class OrderCapacity {
   @OneToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "preference_config_id", nullable = false)
   @Exclude
-  private SupplierPreferenceConfig preferenceConfig;
+  private SupplierPreferences preferenceConfig;
   private Duration duration;
   private int employeesOrdersAmount;
 }

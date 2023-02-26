@@ -1,4 +1,4 @@
-package com.shaderock.lunch.backend.organization.company.preference.model.entity;
+package com.shaderock.lunch.backend.user.preferences.model.entity;
 
 import com.shaderock.lunch.backend.organization.preference.notification.model.entity.NotificationConfig;
 import jakarta.persistence.Entity;
@@ -12,12 +12,13 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
+//@Builder
 @Getter
 @Setter
 @Entity
-public class CompanyNotificationConfig extends NotificationConfig {
+public class EmployeeNotifications extends NotificationConfig {
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "preference_config_id", nullable = false)
-  private CompanyPreferenceConfig preferenceConfig;
+  @JoinColumn(name = "employee_id", nullable = false)
+  private EmployeePreferences preferenceConfig;
 }

@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.organization.controller;
 
-import com.shaderock.lunch.backend.organization.service.OrganizationService;
+import com.shaderock.lunch.backend.organization.service.OrganizationDetailsService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/organization")
 public class OrganizationController {
 
-  private final OrganizationService organizationService;
+  private final OrganizationDetailsService organizationDetailsService;
 
   @GetMapping("/verify-name")
   public ResponseEntity<Boolean> isOrganizationNameValid(@RequestParam @NotNull final String name) {
-    return ResponseEntity.ok(!organizationService.existsByName(name));
+    return ResponseEntity.ok(!organizationDetailsService.existsByName(name));
   }
 
   @GetMapping("/verify-email")
   public ResponseEntity<Boolean> isOrganizationEmailValid(
       @RequestParam @NotNull final String email) {
-    return ResponseEntity.ok(!organizationService.existsByEmail(email));
+    return ResponseEntity.ok(!organizationDetailsService.existsByEmail(email));
   }
 }

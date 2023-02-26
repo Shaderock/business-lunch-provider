@@ -1,4 +1,4 @@
-package com.shaderock.lunch.backend.menu.model.mapper;
+package com.shaderock.lunch.backend.menu.mapper;
 
 import com.shaderock.lunch.backend.menu.model.dto.OptionDto;
 import com.shaderock.lunch.backend.menu.model.entity.Option;
