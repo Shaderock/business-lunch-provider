@@ -1,25 +1,21 @@
 // Utilities
 import {defineStore} from 'pinia'
-import {AuthService} from "@/services/AuthService";
-import {CompanyService} from "@/services/CompanyService";
-import {RoleService} from "@/services/RoleService";
+import authService from "@/services/AuthService";
+import companyService from "@/services/CompanyService";
+import roleService from "@/services/RoleService";
 import {Company} from "@/models/Company";
 import {CompanyPreferences} from "@/models/CompanyPreferences";
 import {UserDetails} from "@/models/UserDetails";
 import {Role} from "@/models/Role";
-import {UserService} from "@/services/UserService";
-import {ToastManager} from "@/services/ToastManager";
+import userService from "@/services/UserService";
+import toastManager from "@/services/ToastManager";
 import {User} from "@/models/User";
 import {isEqual} from "lodash";
 import {Supplier} from "@/models/Supplier";
 import {SupplierPreferences} from "@/models/SupplierPreferences";
 import supplierService from "@/services/SupplierService";
-
-const authService: AuthService = new AuthService()
-const companyService: CompanyService = new CompanyService()
-const roleService: RoleService = new RoleService()
-const userService: UserService = new UserService()
-const toastManager: ToastManager = new ToastManager()
+import {OrganizationDetails} from "@/models/OrganizationDetails";
+import organizationService from "@/services/OrganizationService";
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -106,54 +102,6 @@ export const useCompanyStore = defineStore('company', {
   }
 })
 
-export const useSysAdmCompanyStore = defineStore('sysAdmCompany', {
-  state: () => ({
-    companies: [] as Company[],
-    companiesPreferences: [] as CompanyPreferences[]
-  }),
-  getters: {
-    getCompanies(): Company[] {
-      return this.companies
-    },
-    getCompaniesPreferences(): CompanyPreferences {
-      return this.companiesPreferences
-    },
-  },
-  actions: {
-    async requestFreshCompaniesData() {
-      const companiesResponse = await companyService.getAllCompanies()
-      if (!isEqual(companiesResponse.data, this.companies)) {
-        this.companies = companiesResponse.data
-      }
-      //     todo load preferences
-    }
-  }
-})
-
-export const useSysAdmSupplierStore = defineStore('sysAdmSupplier', {
-  state: () => ({
-    suppliers: [] as Supplier[],
-    supplierPreferences: [] as SupplierPreferences[]
-  }),
-  getters: {
-    getSuppliers(): Supplier[] {
-      return this.suppliers
-    },
-    getSuppliersPreferences(): CompanyPreferences[] {
-      return this.supplierPreferences
-    },
-  },
-  actions: {
-    async requestFreshSuppliersData() {
-      const suppliersResponse = await supplierService.getAllSuppliers()
-      if (!isEqual(suppliersResponse.data, this.suppliers)) {
-        this.suppliers = suppliersResponse.data
-      }
-      //     todo load preferences
-    }
-  }
-})
-
 export const useUserStore = defineStore('user', {
   state: () => ({
     userDetails: null as UserDetails | null,
@@ -232,5 +180,57 @@ export const useSysAdmUserStore = defineStore('sysAdmUser', {
       }
       //     todo load preferences
     }
+  }
+})
+
+export const useSysAdmOrganizationStore = defineStore('sysAdmOrganization', {
+  state: () => ({
+    organizationsDetails: [] as OrganizationDetails[],
+    suppliers: [] as Supplier[],
+    supplierPreferences: [] as SupplierPreferences[],
+    companies: [] as Company[],
+    companiesPreferences: [] as CompanyPreferences[]
+  }),
+  getters: {
+    getOrganizationsDetails(): OrganizationDetails[] {
+      return this.organizationsDetails
+    },
+    getSuppliers(): Supplier[] {
+      return this.suppliers
+    },
+    getSuppliersPreferences(): SupplierPreferences[] {
+      return this.supplierPreferences
+    },
+    getCompanies(): Company[] {
+      return this.companies
+    },
+    getCompaniesPreferences(): CompanyPreferences {
+      return this.companiesPreferences
+    }
+  },
+  actions: {
+    async requestFreshOrganizationsData() {
+      const organizationsResponse = await organizationService.getAllOrganizations()
+      if (!isEqual(organizationsResponse.data, this.organizationsDetails)) {
+        this.organizationsDetails = organizationsResponse.data
+      }
+    },
+    async requestFreshSuppliersData() {
+      await this.requestFreshOrganizationsData();
+      const suppliersResponse = await supplierService.getAllSuppliers()
+      if (!isEqual(suppliersResponse.data, this.suppliers)) {
+        this.suppliers = suppliersResponse.data
+      }
+      //     todo load preferences
+    },
+    async requestFreshCompaniesData() {
+      await this.requestFreshOrganizationsData();
+      const companiesResponse = await companyService.getAllCompanies()
+      if (!isEqual(companiesResponse.data, this.companies)) {
+        this.companies = companiesResponse.data
+      }
+      //     todo load preferences
+    }
+
   }
 })

@@ -1,10 +1,10 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="useSysAdmSupplierStore().getSuppliers"
+    :items="suppliersOrganizationDetails"
     class="elevation-1" const
     item-value="name"
-    search=ref()
+    :search="search"
   >
     <template v-slot:top>
       <v-toolbar flat>
@@ -20,8 +20,10 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, ref} from "vue";
-import {useSysAdmSupplierStore} from "@/store/app";
+import {computed, onMounted, ref} from "vue";
+import {useSysAdmOrganizationStore} from "@/store/app";
+import {OrganizationDetails} from "@/models/OrganizationDetails";
+import {Supplier} from "@/models/Supplier";
 
 const headers = [
   {title: 'id', sortable: true, key: 'id'},
@@ -36,8 +38,14 @@ const headers = [
 ]
 
 const search = ref()
+const suppliers = computed(() => useSysAdmOrganizationStore().getSuppliers)
+const organizationDetails = computed(() => useSysAdmOrganizationStore().getOrganizationsDetails)
+const suppliersOrganizationDetails = computed(() => {
+  const companyIds: string[] = suppliers.value.map((supplier: Supplier) => supplier.organizationDetailsId);
+  return organizationDetails.value.filter((org: OrganizationDetails) => companyIds.includes(org.id));
+})
 
 onMounted(() => {
-  useSysAdmSupplierStore().requestFreshSuppliersData()
+  useSysAdmOrganizationStore().requestFreshSuppliersData()
 })
 </script>

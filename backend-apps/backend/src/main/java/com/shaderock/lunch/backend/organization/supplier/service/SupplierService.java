@@ -85,14 +85,12 @@ public class SupplierService {
   }
 
   public List<Supplier> readAll() {
-    return readAll(false);
+    return supplierRepository.findAll();
   }
 
-  public List<Supplier> readAll(boolean includeDeleted) {
-    if (includeDeleted) {
-      filterManager.enableDeleteFilter();
-    }
-    List<Supplier> all = supplierRepository.findAll();
+  public List<Supplier> readAllDeleted() {
+    filterManager.enableDeleteFilter();
+    List<Supplier> all = readAll();
     filterManager.disableDeleteFilter();
     return all;
   }

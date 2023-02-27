@@ -2,7 +2,9 @@
   <v-app-bar :elevation="3">
     <v-divider vertical></v-divider>
 
-    <v-app-bar-title>Business Lunch Provider</v-app-bar-title>
+    <v-app-bar-title>
+      Business Lunch Provider
+    </v-app-bar-title>
 
     <v-spacer/>
 

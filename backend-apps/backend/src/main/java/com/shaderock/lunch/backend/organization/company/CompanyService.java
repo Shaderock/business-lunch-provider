@@ -93,14 +93,12 @@ public class CompanyService {
   }
 
   public List<Company> readAll() {
-    return readAll(false);
+    return companyRepository.findAll();
   }
 
-  public List<Company> readAll(boolean includeDeleted) {
-    if (includeDeleted) {
-      filterManager.enableDeleteFilter();
-    }
-    List<Company> all = companyRepository.findAll();
+  public List<Company> readAllDeleted() {
+    filterManager.enableDeleteFilter();
+    List<Company> all = readAll();
     filterManager.disableDeleteFilter();
     return all;
   }

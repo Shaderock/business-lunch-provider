@@ -66,6 +66,14 @@
           v-bind:to="'/sysadm/suppliers'">
         </v-list-item>
         <v-list-item
+          prepend-icon="mdi-domain"
+          title="Organizaitons"
+          v-bind:to="'/sysadm/organizations'"
+          value="organizations">
+        </v-list-item>
+        <v-divider></v-divider>
+
+        <v-list-item
           prepend-icon="mdi-account-multiple"
           title="Users"
           value="users"

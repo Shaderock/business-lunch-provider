@@ -87,14 +87,12 @@ public class OrganizationDetailsService {
   }
 
   public List<OrganizationDetails> readAll() {
-    return readAll(false);
+    return organizationDetailsRepository.findAll();
   }
 
-  public List<OrganizationDetails> readAll(boolean isDeleted) {
-    if (isDeleted) {
-      filterManager.enableDeleteFilter();
-    }
-    List<OrganizationDetails> allDetails = organizationDetailsRepository.findAll();
+  public List<OrganizationDetails> readAllDeleted() {
+    filterManager.enableDeleteFilter();
+    List<OrganizationDetails> allDetails = readAll();
     filterManager.disableDeleteFilter();
     return allDetails;
   }

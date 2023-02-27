@@ -24,7 +24,9 @@ public class PrivilegedSupplierController {
 
   @GetMapping
   public ResponseEntity<List<SupplierDto>> readAll() {
-    List<Supplier> suppliers = supplierService.readAll(true);
+    List<Supplier> suppliers = supplierService.readAll();
+    List<Supplier> deletedSuppliers = supplierService.readAllDeleted();
+    suppliers.addAll(deletedSuppliers);
     return ResponseEntity.ok(suppliers.stream().map(supplierMapper::toDto).toList());
   }
 }

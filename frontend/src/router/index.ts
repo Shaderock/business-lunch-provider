@@ -40,6 +40,10 @@ const routes = [
     component: () => import('@/views/sysadm/Suppliers.vue')
   },
   {
+    path: '/sysadm/organizations', name: 'Organizations',
+    component: () => import('@/views/sysadm/Organizations.vue')
+  },
+  {
     path: '/sysadm/users', name: 'Users',
     component: () => import('@/views/sysadm/Users.vue')
   }

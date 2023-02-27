@@ -5,6 +5,7 @@ import static com.shaderock.lunch.backend.utils.FilterManager.DELETED_FILTER;
 import com.shaderock.lunch.backend.organization.company.preference.model.entity.CompanyPreferences;
 import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -45,6 +46,9 @@ public class Company {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
+
+  @Column(nullable = false)
+  private boolean deleted = Boolean.FALSE;
 
   @Exclude
   @OneToOne(optional = false, fetch = FetchType.LAZY)
