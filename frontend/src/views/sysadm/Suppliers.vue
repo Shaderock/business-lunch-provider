@@ -1,7 +1,7 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="suppliersOrganizationDetails"
+    :items="suppliers"
     class="elevation-1" const
     item-value="name"
     :search="search"
@@ -22,15 +22,9 @@
 <script lang="ts" setup>
 import {computed, onMounted, ref} from "vue";
 import {useSysAdmOrganizationStore} from "@/store/app";
-import {OrganizationDetails} from "@/models/OrganizationDetails";
-import {Supplier} from "@/models/Supplier";
 
 const headers = [
   {title: 'id', sortable: true, key: 'id'},
-  {title: 'name', sortable: true, key: 'name'},
-  {title: 'description', sortable: true, key: 'description'},
-  {title: 'email', sortable: true, key: 'email'},
-  {title: 'phone', sortable: true, key: 'phone'},
   {title: 'websiteUrl', sortable: false, key: 'websiteUrl'},
   {title: 'menuUrl', sortable: false, key: 'menuUrl'},
   {title: 'preferencesId', sortable: false, key: 'preferencesId'},
@@ -39,11 +33,6 @@ const headers = [
 
 const search = ref()
 const suppliers = computed(() => useSysAdmOrganizationStore().getSuppliers)
-const organizationDetails = computed(() => useSysAdmOrganizationStore().getOrganizationsDetails)
-const suppliersOrganizationDetails = computed(() => {
-  const companyIds: string[] = suppliers.value.map((supplier: Supplier) => supplier.organizationDetailsId);
-  return organizationDetails.value.filter((org: OrganizationDetails) => companyIds.includes(org.id));
-})
 
 onMounted(() => {
   useSysAdmOrganizationStore().requestFreshSuppliersData()

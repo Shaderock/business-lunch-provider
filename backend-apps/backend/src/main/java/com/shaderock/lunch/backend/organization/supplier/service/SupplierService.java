@@ -95,6 +95,7 @@ public class SupplierService {
     return all;
   }
 
+  // todo refactor to return optional
   public Supplier read(UUID supplierId) {
     return supplierRepository.findById(supplierId).orElseThrow(() -> new CrudValidationException(
         String.format("Supplier(id=[%s] not found", supplierId)));

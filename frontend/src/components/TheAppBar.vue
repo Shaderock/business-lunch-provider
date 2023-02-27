@@ -1,7 +1,5 @@
 <template>
   <v-app-bar :elevation="3">
-    <v-divider vertical></v-divider>
-
     <v-app-bar-title>
       Business Lunch Provider
     </v-app-bar-title>
@@ -28,12 +26,6 @@
       variant="outlined"
     >
       Sign in
-    </v-btn>
-
-    <v-divider vertical/>
-
-    <v-btn v-if="useAuthStore().isAuthenticated">
-      <v-icon>mdi-dots-vertical</v-icon>
     </v-btn>
   </v-app-bar>
 </template>

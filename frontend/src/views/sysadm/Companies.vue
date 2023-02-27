@@ -1,10 +1,10 @@
 <template>
   <v-data-table
-    :headers="headers"
-    :items="companyOrganizationDetails"
-    :search="search"
-    class="elevation-1"
-    item-value="name">
+      :headers="headers"
+      :items="companies"
+      :search="search"
+      class="elevation-1"
+      item-value="name">
     <template v-slot:top>
       <v-card>
         <v-card-title>Companies</v-card-title>
@@ -42,15 +42,9 @@
 <script lang="ts" setup>
 import {computed, onMounted, ref} from "vue";
 import {useSysAdmOrganizationStore} from "@/store/app";
-import {Company} from "@/models/Company";
-import {OrganizationDetails} from "@/models/OrganizationDetails";
 
 const headers = [
   {title: 'id', sortable: true, key: 'id'},
-  {title: 'name', sortable: true, key: 'name'},
-  {title: 'description', sortable: true, key: 'description'},
-  {title: 'email', sortable: true, key: 'email'},
-  {title: 'phone', sortable: true, key: 'phone'},
   {title: 'preferencesId', sortable: false, key: 'preferencesId'},
   {title: 'Actions', sortable: false, key: 'actions'}
 ]
@@ -58,11 +52,6 @@ const headers = [
 // datatable
 const search = ref()
 const companies = computed(() => useSysAdmOrganizationStore().getCompanies)
-const organizationDetails = computed(() => useSysAdmOrganizationStore().getOrganizationsDetails)
-const companyOrganizationDetails = computed(() => {
-  const companyIds: string[] = companies.value.map((company: Company) => company.organizationDetailsId);
-  return organizationDetails.value.filter((org: OrganizationDetails) => companyIds.includes(org.id));
-})
 
 // crud-dialogs
 const isCreateDialogShown = ref(false)
