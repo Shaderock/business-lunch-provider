@@ -4,6 +4,7 @@ import com.shaderock.lunch.backend.menu.model.dto.CategoryDto;
 import com.shaderock.lunch.backend.menu.model.entity.Category;
 import com.shaderock.lunch.backend.menu.model.entity.Option;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -20,13 +21,13 @@ public interface CategoryMapper {
   @InheritInverseConfiguration
   Category toEntity(CategoryDto categoryDto);
 
-  default Set<Long> optionsToIds(Set<Option> options) {
+  default Set<UUID> optionsToIds(Set<Option> options) {
     return options.stream()
         .map(Option::getId)
         .collect(Collectors.toSet());
   }
 
-  default Set<Option> idsToOptions(Set<Long> optionsIds) {
+  default Set<Option> idsToOptions(Set<UUID> optionsIds) {
     return optionsIds.stream()
         .map(id -> Option.builder().id(id).build())
         .collect(Collectors.toSet());

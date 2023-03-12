@@ -5,19 +5,20 @@ import com.shaderock.lunch.backend.menu.service.MenuService;
 import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.organization.service.OrganizationDetailsService;
+import com.shaderock.lunch.backend.organization.supplier.mapper.SupplierMapper;
+import com.shaderock.lunch.backend.organization.supplier.model.dto.SupplierDto;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.model.form.OrganizationRegistrationForm;
 import com.shaderock.lunch.backend.organization.supplier.preference.model.entity.SupplierPreferences;
 import com.shaderock.lunch.backend.organization.supplier.repository.SupplierRepository;
-import com.shaderock.lunch.backend.user.AppUserDetailsService;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.model.type.Role;
 import com.shaderock.lunch.backend.utils.FilterManager;
 import jakarta.transaction.Transactional;
-import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,16 +30,16 @@ public class SupplierService {
 
   private final SupplierRepository supplierRepository;
   private final OrganizationDetailsService organizationDetailsService;
-  private final AppUserDetailsService userDetailsService;
   private final MenuService menuService;
   private final SupplierPreferencesService supplierPreferencesService;
   private final FilterManager filterManager;
+  private final SupplierMapper supplierMapper;
 
   @Transactional
-  public Supplier register(OrganizationRegistrationForm form, Principal principal) {
-    organizationDetailsService.validateOrganizationRegistration(form, principal);
+  public Supplier register(@NonNull OrganizationRegistrationForm form,
+      @NonNull AppUserDetails userDetails) {
+    organizationDetailsService.validateOrganizationRegistration(form, userDetails);
 
-    AppUserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
     OrganizationDetails organizationDetails = OrganizationDetails.builder()
         .name(form.name())
         .build();
@@ -51,11 +52,7 @@ public class SupplierService {
   }
 
   @Transactional
-  public Supplier create(Supplier supplier, OrganizationDetails details) {
-    if (Objects.isNull(supplier)) {
-      throw new CrudValidationException("Can not create null");
-    }
-
+  public Supplier create(@NonNull Supplier supplier, @NonNull OrganizationDetails details) {
     Supplier persistedSupplier = create(details);
     supplier.setId(persistedSupplier.getId());
 
@@ -64,7 +61,7 @@ public class SupplierService {
   }
 
   @Transactional
-  public Supplier create(OrganizationDetails details) {
+  public Supplier create(@NonNull OrganizationDetails details) {
     OrganizationDetails organizationDetails = organizationDetailsService.create(details);
 
     Supplier supplier = Supplier.builder()
@@ -76,8 +73,8 @@ public class SupplierService {
     Menu persistedMenu = menuService.create(menu);
     persistedSupplier.setMenu(persistedMenu);
 
-    SupplierPreferences preferences = SupplierPreferences.builder()
-        .supplier(persistedSupplier).build();
+    SupplierPreferences preferences = SupplierPreferences.builder().supplier(persistedSupplier)
+        .build();
     SupplierPreferences persistedPreferences = supplierPreferencesService.create(preferences);
     persistedSupplier.setPreferences(persistedPreferences);
 
@@ -95,18 +92,24 @@ public class SupplierService {
     return all;
   }
 
-  // todo refactor to return optional
-  public Supplier read(UUID supplierId) {
+  public Supplier read(@NonNull UUID supplierId) {
     return supplierRepository.findById(supplierId).orElseThrow(() -> new CrudValidationException(
         String.format("Supplier(id=[%s] not found", supplierId)));
   }
 
+  public Supplier read(@NonNull String userEmail) {
+    return supplierRepository.findByOrganizationDetails_Users_UserDetails_Email(userEmail)
+        .orElseThrow(() -> new CrudValidationException("Supplier organization not found for user"));
+  }
+
+  public Supplier update(@NonNull SupplierDto supplierDto) {
+    Supplier supplier = supplierMapper.toEntity(supplierDto);
+    return update(supplier);
+  }
+
   @Transactional
-  public Supplier update(Supplier supplier) {
+  public Supplier update(@NonNull Supplier supplier) {
     LOGGER.info("Attempting to update {}", supplier);
-    if (Objects.isNull(supplier)) {
-      throw new CrudValidationException("Can not update null");
-    }
 
     Supplier persistedSupplier = read(supplier.getId());
     persistedSupplier.setWebsiteUrl(supplier.getWebsiteUrl());

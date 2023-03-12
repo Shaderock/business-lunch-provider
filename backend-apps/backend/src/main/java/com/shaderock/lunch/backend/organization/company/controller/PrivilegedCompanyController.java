@@ -1,9 +1,9 @@
 package com.shaderock.lunch.backend.organization.company.controller;
 
-import com.shaderock.lunch.backend.organization.company.CompanyService;
 import com.shaderock.lunch.backend.organization.company.mapper.CompanyMapper;
 import com.shaderock.lunch.backend.organization.company.model.dto.CompanyDto;
 import com.shaderock.lunch.backend.organization.company.model.entity.Company;
+import com.shaderock.lunch.backend.organization.company.service.CompanyService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

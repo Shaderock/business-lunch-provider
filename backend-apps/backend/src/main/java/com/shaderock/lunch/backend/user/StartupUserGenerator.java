@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,6 +22,7 @@ public class StartupUserGenerator implements
     ApplicationListener<ContextRefreshedEvent> {
 
   private static final String DEFAULT_USER_EMAIL = "user@test.test.test";
+  private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final AuthService authService;
   private final AppUserService appUserService;
   @Value(value = "${lunch.backend.system.admin.email}")
@@ -53,7 +55,7 @@ public class StartupUserGenerator implements
     try {
       AppUserDetails appUserDetails = AppUserDetails.builder()
           .email(DEFAULT_USER_EMAIL)
-          .password("test")
+          .password(bCryptPasswordEncoder.encode("test"))
           .roles(Set.of(Role.USER))
           .isEnabled(true)
           .firstName("user")

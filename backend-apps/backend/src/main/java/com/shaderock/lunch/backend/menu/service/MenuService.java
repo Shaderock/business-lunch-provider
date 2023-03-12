@@ -5,6 +5,7 @@ import com.shaderock.lunch.backend.menu.repository.MenuRepository;
 import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import jakarta.transaction.Transactional;
 import java.util.Objects;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class MenuService {
     return persistedMenu;
   }
 
-  public Menu read(Long id) {
+  public Menu read(UUID id) {
     return menuRepository.findById(id).orElseThrow(
         () -> new CrudValidationException(String.format("Menu(id=[%s] not found", id)));
   }

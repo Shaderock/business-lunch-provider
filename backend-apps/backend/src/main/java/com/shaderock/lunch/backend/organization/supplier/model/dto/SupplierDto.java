@@ -15,7 +15,7 @@ public record SupplierDto(UUID id,
                           URI menuUrl,
                           Set<UUID> subscribersIds,
                           Set<UUID> subscriptionsRequestsIds,
-                          Long menuId,
-                          Long preferencesId) implements Serializable {
+                          UUID menuId,
+                          UUID preferencesId) implements Serializable {
 
 }

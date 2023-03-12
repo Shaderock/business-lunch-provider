@@ -1,5 +1,6 @@
 package com.shaderock.lunch.backend.user;
 
+import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import com.shaderock.lunch.backend.user.mapper.AppUserMapper;
 import com.shaderock.lunch.backend.user.model.dto.AppUserDto;
 import com.shaderock.lunch.backend.user.model.entity.AppUser;
@@ -7,7 +8,6 @@ import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferences;
 import com.shaderock.lunch.backend.user.repository.AppUserRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ValidationException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
@@ -49,7 +49,7 @@ public class AppUserService {
 
   private void validateCreate(AppUser appUser) {
     if (Objects.isNull(appUser)) {
-      throw new ValidationException("Provided user is [null]");
+      throw new CrudValidationException("Provided user is [null]");
     }
   }
 

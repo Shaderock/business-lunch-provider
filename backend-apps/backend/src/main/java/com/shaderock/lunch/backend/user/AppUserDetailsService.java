@@ -1,16 +1,15 @@
 package com.shaderock.lunch.backend.user;
 
+import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import com.shaderock.lunch.backend.user.mapper.AppUserDetailsMapper;
 import com.shaderock.lunch.backend.user.model.dto.AppUserDetailsDto;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.repository.AppUserDetailsRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ValidationException;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,13 +49,9 @@ public class AppUserDetailsService implements UserDetailsService {
     return persistedDetails;
   }
 
-  private void validateCreate(AppUserDetails details) {
-    if (Objects.isNull(details)) {
-      throw new ValidationException("Provided user details are [null]");
-    }
-
+  private void validateCreate(@NonNull AppUserDetails details) {
     if (appUserDetailsRepository.findByEmail(details.getEmail()).isPresent()) {
-      throw new ValidationException(String.format("%s already exists", details));
+      throw new CrudValidationException(String.format("%s already exists", details));
     }
   }
 
@@ -70,11 +65,6 @@ public class AppUserDetailsService implements UserDetailsService {
   }
 
   public List<AppUserDetails> readAll() {
-    List<AppUserDetails> result = new ArrayList<>();
-    for (AppUserDetails appUserDetails : appUserDetailsRepository.findAll()) {
-      result.add(appUserDetails);
-    }
-
-    return result;
+    return appUserDetailsRepository.findAll();
   }
 }

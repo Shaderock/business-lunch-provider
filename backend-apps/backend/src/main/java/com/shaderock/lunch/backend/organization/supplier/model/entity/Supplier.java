@@ -55,8 +55,9 @@ public class Supplier {
   private URI menuUrl;
 
   @Column(nullable = false)
-  private boolean deleted = Boolean.FALSE;
-
+  private boolean deleted = false;
+  @Column(nullable = false)
+  private boolean isOrderingEnabled = false;
   @Exclude
   @OneToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "organization_details_id", nullable = false)

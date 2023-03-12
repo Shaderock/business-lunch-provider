@@ -54,8 +54,9 @@ public class OrganizationDetails {
   @Lob
   @Column
   private byte[] logo;
+
   @Column(nullable = false)
-  private boolean deleted = Boolean.FALSE;
+  private boolean deleted = false;
 
   @OneToMany(mappedBy = "organizationDetails", fetch = FetchType.LAZY)
   @Exclude

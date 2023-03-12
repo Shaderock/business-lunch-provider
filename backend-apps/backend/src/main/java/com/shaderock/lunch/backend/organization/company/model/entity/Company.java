@@ -48,7 +48,7 @@ public class Company {
   private UUID id;
 
   @Column(nullable = false)
-  private boolean deleted = Boolean.FALSE;
+  private boolean deleted = false;
 
   @Exclude
   @OneToOne(optional = false, fetch = FetchType.LAZY)

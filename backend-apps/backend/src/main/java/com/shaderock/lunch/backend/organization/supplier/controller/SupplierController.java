@@ -5,6 +5,8 @@ import com.shaderock.lunch.backend.organization.supplier.model.dto.SupplierDto;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.model.form.OrganizationRegistrationForm;
 import com.shaderock.lunch.backend.organization.supplier.service.SupplierService;
+import com.shaderock.lunch.backend.user.AppUserDetailsService;
+import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.security.Principal;
@@ -23,11 +25,13 @@ public class SupplierController {
 
   private final SupplierService supplierService;
   private final SupplierMapper supplierMapper;
+  private final AppUserDetailsService userDetailsService;
 
   @PostMapping("/register")
   public ResponseEntity<SupplierDto> register(
       @RequestBody @Valid final OrganizationRegistrationForm form, Principal principal) {
-    Supplier registeredSupplier = supplierService.register(form, principal);
+    AppUserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
+    Supplier registeredSupplier = supplierService.register(form, userDetails);
     SupplierDto responseSupplier = supplierMapper.toDto(registeredSupplier);
     return ResponseEntity.ok(responseSupplier);
   }

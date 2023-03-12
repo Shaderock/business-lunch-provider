@@ -8,10 +8,10 @@ import lombok.Builder;
  * A DTO for the {@link com.shaderock.lunch.backend.user.model.entity.AppUser} entity
  */
 @Builder
-public record AppUserDto(Long id,
-                         Long detailsId,
+public record AppUserDto(UUID id,
+                         UUID detailsId,
                          UUID organizationId,
                          UUID organizationRequestId,
-                         Long preferencesId) implements Serializable {
+                         UUID preferencesId) implements Serializable {
 
 }

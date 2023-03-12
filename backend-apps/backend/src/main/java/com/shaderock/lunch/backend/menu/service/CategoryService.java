@@ -4,18 +4,17 @@ package com.shaderock.lunch.backend.menu.service;
 import com.shaderock.lunch.backend.menu.mapper.CategoryMapper;
 import com.shaderock.lunch.backend.menu.model.dto.CategoryDto;
 import com.shaderock.lunch.backend.menu.model.entity.Category;
-import com.shaderock.lunch.backend.menu.model.entity.Menu;
 import com.shaderock.lunch.backend.menu.repository.CategoryRepository;
-import com.shaderock.lunch.backend.menu.repository.MenuRepository;
 import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import com.shaderock.lunch.backend.messaging.exception.TransferableApplicationException;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
-import com.shaderock.lunch.backend.organization.supplier.repository.SupplierRepository;
+import com.shaderock.lunch.backend.utils.FilterManager;
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.UUID;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,120 +22,111 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CategoryService {
 
-  private final MenuRepository menuRepository;
   private final CategoryRepository categoryRepository;
-  private final SupplierRepository supplierRepository;
   private final CategoryMapper categoryMapper;
 
-  public CategoryDto readAndMapToDto(String name) {
-    Category category = read(name);
-    return categoryMapper.toDto(category);
-  }
-
-  public Category read(String name) {
-    LOGGER.info("Attempting to read Category by name=[{}]", name);
-    return categoryRepository.findByName(name)
-        .orElseThrow(() -> new CrudValidationException(
-            String.format("Category(name=[%s]) not found", name)));
-  }
-
-  public CategoryDto createAndMapToDto(CategoryDto categoryDto) {
-    Category newCategory = create(categoryDto);
-    return categoryMapper.toDto(newCategory);
-  }
+  private final FilterManager filterManager;
 
   @Transactional
-  public Category create(CategoryDto categoryDto) throws TransferableApplicationException {
+  public Category create(@NonNull CategoryDto categoryDto, @NonNull Supplier supplier)
+      throws TransferableApplicationException {
     LOGGER.info("Converting [{}] to Category", categoryDto);
 
-    Category newCategory = new Category();
-    newCategory.setName(categoryDto.name());
+    Category newCategory = categoryMapper.toEntity(categoryDto);
 
     LOGGER.info("Converted [{}]", newCategory);
 
-    return create(newCategory);
+    return create(newCategory, supplier);
   }
 
   @Transactional
-  public Category create(Category newCategory) {
+  public Category create(@NonNull Category newCategory, @NonNull Supplier supplier) {
     LOGGER.info("Attempting to create [{}]", newCategory);
 
-    categoryRepository.findByName(newCategory.getName()).ifPresent(c -> {
-      throw new CrudValidationException(String.format(
-          "Category (name=[%s]) already exists and should be updated instead of created",
-          c.getName()));
-    });
+    validateCreate(newCategory, supplier);
 
-    Supplier supplier = getSupplierForCrud();
-    Menu menu = menuRepository.findBySupplier(supplier).orElseThrow(() -> {
-      throw new CrudValidationException(
-          String.format("[%s] does not have a Menu initialized", supplier));
-    });
-    newCategory.setMenu(menu);
+    newCategory.setMenu(supplier.getMenu());
 
     Category persistedCategory = categoryRepository.save(newCategory);
+    supplier.getMenu().getCategories().add(persistedCategory);
 
     LOGGER.info("Created [{}]", persistedCategory);
     return persistedCategory;
   }
 
-  @Transactional
-  public CategoryDto updateAndMapToDto(CategoryDto categoryDto) {
-    Category updatedCategory = update(categoryDto);
-    return categoryMapper.toDto(updatedCategory);
+  private void validateCreate(Category newCategory, Supplier supplier) {
+    categoryRepository.findByNameAndMenu_Supplier_Id(
+        newCategory.getName(), supplier.getId()).ifPresent(c -> {
+      throw new CrudValidationException(String.format(
+          "Category (name=[%s]) already exists and should be updated instead of created",
+          c.getName()));
+    });
+  }
+
+  public Category read(@NonNull UUID id) {
+    LOGGER.info("Attempting to read Category by id=[{}]", id);
+
+    return categoryRepository.findById(id)
+        .orElseThrow(() -> new CrudValidationException(
+            String.format("Category(id=[%s]) not found", id)));
+  }
+
+  public Category read(@NonNull UUID id, @NonNull Supplier supplier) {
+    return categoryRepository.findByIdAndMenu_Supplier_Id(id, supplier.getId()).orElseThrow(
+        () -> new CrudValidationException(
+            String.format("Category(id=[%s]) not found for Supplier(id=[%s])", id,
+                supplier.getOrganizationDetails().getId())));
+  }
+
+  //todo move to privileged section
+  public List<Category> readAll() {
+    return categoryRepository.findAll();
+  }
+
+  public List<Category> readAll(@NonNull Supplier supplier) {
+    return categoryRepository.findByMenu_Supplier_Id(supplier.getId());
+  }
+
+  public List<Category> readAllOrderingEnabled() {
+    return categoryRepository.findByIsOrderingAllowedTrue();
+  }
+
+  public List<Category> readAllDeleted() {
+    filterManager.enableDeleteFilter();
+    List<Category> all = readAll();
+    filterManager.disableDeleteFilter();
+    return all;
   }
 
   @Transactional
-  public Category update(CategoryDto categoryDto) {
+  public Category update(@NonNull CategoryDto categoryDto, @NonNull Supplier supplier) {
     LOGGER.info("Converting [{}] to Category", categoryDto);
-    Category categoryToUpdate = new Category();
-    categoryToUpdate.setName(categoryDto.name());
-    categoryToUpdate.setId(categoryDto.id());
+
+    Category categoryToUpdate = categoryMapper.toEntity(categoryDto);
+
     LOGGER.info("Converted [{}]", categoryToUpdate);
 
-    return update(categoryToUpdate);
+    return update(categoryToUpdate, supplier);
   }
 
   @Transactional
-  public Category update(Category categoryToUpdate) {
+  public Category update(@NonNull Category categoryToUpdate, @NonNull Supplier supplier) {
     LOGGER.info("Attempting to update [{}]", categoryToUpdate);
 
-    if (categoryToUpdate.getId() == null) {
-      throw new CrudValidationException("Category id not provided");
-    }
-
-    Category persistedCategory = categoryRepository.findById(categoryToUpdate.getId())
-        .orElseThrow(() -> new CrudValidationException(
-            String.format(
-                "Category(id=[%s]) doesn't exist and should be created instead of updated",
-                categoryToUpdate.getId())
-        ));
+    Category persistedCategory = read(categoryToUpdate.getId(), supplier);
 
     persistedCategory.setName(categoryToUpdate.getName());
+    persistedCategory.setOrderingAllowed(categoryToUpdate.isOrderingAllowed());
+    persistedCategory.setOptions(categoryToUpdate.getOptions());
+
     persistedCategory = categoryRepository.save(persistedCategory);
     LOGGER.info("Updated [{}]", persistedCategory);
     return persistedCategory;
   }
 
   @Transactional
-  public void delete(long id) {
-    Category persistedCategory = categoryRepository.findById(id)
-        .orElseThrow(() -> {
-          throw new CrudValidationException(
-              String.format("Category (id=[%s]) doesn't exist and can't be deleted", id));
-        });
-
-    persistedCategory.setDeleted(true);
-    categoryRepository.save(persistedCategory);
-  }
-
-  private Supplier getSupplierForCrud() {
-    UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
-        .getPrincipal();
-
-    return supplierRepository.findByOrganizationDetails_Users_UserDetails_Email(
-            userDetails.getUsername())
-        .orElseThrow(() -> new CrudValidationException(
-            "User is not a part of supplier organizationDetails"));
+  public void delete(@NonNull UUID id, @NonNull Supplier supplier) {
+    Category persistedCategory = read(id, supplier);
+    categoryRepository.delete(persistedCategory);
   }
 }

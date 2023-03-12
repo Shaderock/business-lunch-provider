@@ -11,6 +11,7 @@ import com.shaderock.lunch.backend.organization.repository.OrganizationDetailsRe
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.repository.SupplierRepository;
 import jakarta.transaction.Transactional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -122,7 +123,7 @@ public class OptionService {
   }
 
   @Transactional
-  public void delete(long id) {
+  public void delete(UUID id) {
     Option persistedOption = optionRepository.findById(id)
         .orElseThrow(() -> {
           throw new TransferableApplicationException(

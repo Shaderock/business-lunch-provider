@@ -12,6 +12,6 @@ public record CompanyDto(UUID id,
                          UUID organizationDetailsId,
                          Set<UUID> subscriptionsIds,
                          Set<UUID> subscriptionsRequestsIds,
-                         Long preferencesId) implements Serializable {
+                         UUID preferencesId) implements Serializable {
 
 }

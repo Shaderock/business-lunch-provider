@@ -1,28 +1,26 @@
 package com.shaderock.lunch.backend.organization.company.service;
 
+import com.shaderock.lunch.backend.organization.company.preference.model.dto.CompanyPreferencesDto;
 import com.shaderock.lunch.backend.organization.company.preference.model.entity.CompanyPreferences;
-import com.shaderock.lunch.backend.organization.company.preference.repository.CompanyPreferenceRepository;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
+import java.util.UUID;
+import lombok.NonNull;
 
-@Service
-@RequiredArgsConstructor
-@Slf4j
-public class CompanyPreferencesService {
+public interface CompanyPreferencesService {
 
-  private final CompanyPreferenceRepository companyPreferenceRepository;
+  CompanyPreferences create(@NonNull CompanyPreferencesDto preferencesDto);
 
-  @Transactional
-  public CompanyPreferences create(CompanyPreferences preferences) {
-    // todo validate
-    return companyPreferenceRepository.save(preferences);
-  }
+  CompanyPreferences create(@NonNull CompanyPreferences preferences);
 
-  @Transactional
-  public void delete(CompanyPreferences preferences) {
-    // todo validate
-    companyPreferenceRepository.delete(preferences);
-  }
+  CompanyPreferences read(@NonNull UUID id);
+
+  CompanyPreferences read(AppUserDetails userDetails);
+
+  CompanyPreferences update(@NonNull CompanyPreferencesDto preferencesDto,
+      AppUserDetails userDetails);
+
+  CompanyPreferences update(@NonNull CompanyPreferences companyPreferences,
+      AppUserDetails userDetails);
+
+  void delete(@NonNull CompanyPreferences preferences);
 }

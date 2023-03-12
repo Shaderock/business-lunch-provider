@@ -5,6 +5,7 @@ import com.shaderock.lunch.backend.menu.service.OptionService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,7 +44,7 @@ public class OptionController {
   }
 
   @DeleteMapping
-  public ResponseEntity<Void> delete(@RequestParam @NotNull long id) {
+  public ResponseEntity<Void> delete(@RequestParam @NotNull UUID id) {
     optionService.delete(id);
     return ResponseEntity.noContent().build();
   }

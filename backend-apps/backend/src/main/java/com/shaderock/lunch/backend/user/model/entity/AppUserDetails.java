@@ -20,6 +20,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,8 +52,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class AppUserDetails implements UserDetails {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "app_user_id")

@@ -1,0 +1,57 @@
+lunch:
+  backend:
+    url: http://localhost:8080
+    users:
+      generate:
+        default: true
+    actuator:
+      username: test
+      password: test
+    system:
+      admin:
+        email: test@dummy.test.mail
+        password: test
+  frontend:
+    url: http://localhost:3000
+  discovery:
+    address: localhost:8761
+  database:
+    address: localhost:5432
+  jwt:
+    secret: testSecret
+
+
+spring:
+  application:
+    name: blp-backend
+  datasource:
+    url: jdbc:h2:mem:test
+    username: test
+    password: test
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  liquibase:
+    enabled: false
+  mail:
+    host: smtp.gmail.com
+    username: test
+    password: test
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  cloud:
+    vault:
+      enabled: false
