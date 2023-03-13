@@ -14,6 +14,7 @@ import com.shaderock.lunch.backend.organization.service.OrganizationDetailsServi
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.model.form.OrganizationRegistrationForm;
 import com.shaderock.lunch.backend.organization.supplier.preference.model.entity.SupplierPreferences;
+import com.shaderock.lunch.backend.organization.supplier.preference.service.SupplierPreferencesService;
 import com.shaderock.lunch.backend.organization.supplier.repository.SupplierRepository;
 import com.shaderock.lunch.backend.user.model.entity.AppUser;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
@@ -92,7 +93,8 @@ class SupplierServiceTests {
   @Test
   void RegisterSupplier_OnValidFormAndPrincipal_SupplierCreatedAndUserIsGrantedWithSupplierRole() {
     when(supplierRepository.save(any())).thenReturn(supplier);
-    when(supplierPreferencesService.create(any())).thenReturn(supplierPreferences);
+    when(supplierPreferencesService.create(any(SupplierPreferences.class))).thenReturn(
+        supplierPreferences);
 
     Supplier createdSupplier = supplierService.register(organizationRegistrationForm, userDetails);
 
@@ -151,4 +153,5 @@ class SupplierServiceTests {
     assertEquals(supplierUpdate.getWebsiteUrl(), updatedSupplier.getWebsiteUrl());
     assertEquals(supplierUpdate.getMenuUrl(), updatedSupplier.getMenuUrl());
   }
+
 }

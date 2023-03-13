@@ -1,6 +1,5 @@
 package com.shaderock.lunch.backend.menu.model.entity;
 
-import com.shaderock.lunch.backend.menu.price.model.entity.PriceByOption;
 import com.shaderock.lunch.backend.user.order.model.entity.EmployeeOrder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +11,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -33,23 +31,18 @@ public class Option {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
-
   @Column
   private String name;
-
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "category_id", nullable = false)
-  private Category category;
-
+  @Column
+  private Double price;
   @Column
   private boolean isDeleted;
 
   @ManyToMany(mappedBy = "options", fetch = FetchType.LAZY)
   private Set<EmployeeOrder> employeesOrders;
-
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "category_id", nullable = false)
+  private Category category;
   @OneToMany(mappedBy = "option", fetch = FetchType.LAZY)
   private List<OptionDescription> optionDescriptions;
-
-  @OneToOne(mappedBy = "option")
-  private PriceByOption price;
 }

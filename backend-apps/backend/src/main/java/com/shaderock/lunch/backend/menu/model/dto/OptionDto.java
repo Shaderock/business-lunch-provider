@@ -11,6 +11,7 @@ import java.util.UUID;
 public record OptionDto(UUID id,
                         String name,
                         UUID categoryId,
+                        Double price,
                         Set<UUID> employeesOrderIds,
                         List<UUID> optionDescriptionIds,
                         UUID priceId) implements Serializable {

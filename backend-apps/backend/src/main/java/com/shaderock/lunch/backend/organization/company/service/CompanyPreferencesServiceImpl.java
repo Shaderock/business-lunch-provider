@@ -21,7 +21,6 @@ public class CompanyPreferencesServiceImpl implements CompanyPreferencesService 
   private final CompanyPreferenceRepository companyPreferenceRepository;
   private final CompanyPreferencesMapper companyPreferencesMapper;
 
-  @Transactional
   public CompanyPreferences create(@NonNull CompanyPreferencesDto preferencesDto) {
     CompanyPreferences preferences = companyPreferencesMapper.toEntity(preferencesDto);
     return create(preferences);

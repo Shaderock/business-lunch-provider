@@ -10,13 +10,13 @@ import com.shaderock.lunch.backend.organization.supplier.model.dto.SupplierDto;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.model.form.OrganizationRegistrationForm;
 import com.shaderock.lunch.backend.organization.supplier.preference.model.entity.SupplierPreferences;
+import com.shaderock.lunch.backend.organization.supplier.preference.service.SupplierPreferencesService;
 import com.shaderock.lunch.backend.organization.supplier.repository.SupplierRepository;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.model.type.Role;
 import com.shaderock.lunch.backend.utils.FilterManager;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -120,15 +120,12 @@ public class SupplierService {
   }
 
   @Transactional
-  public void delete(Supplier supplier) {
-    LOGGER.info("Attempting to delete {}", supplier);
-    if (Objects.isNull(supplier)) {
-      throw new CrudValidationException("Can not delete null");
-    }
+  public void delete(@NonNull AppUserDetails userDetails) {
+    LOGGER.info("Attempting to delete {}", userDetails);
 
-    Supplier persistedSupplier = read(supplier.getId());
+    Supplier persistedSupplier = read(userDetails.getId());
     menuService.delete(persistedSupplier.getMenu());
-    supplierPreferencesService.delete(persistedSupplier.getPreferences());
+    supplierPreferencesService.delete(userDetails);
     supplierRepository.delete(persistedSupplier);
     organizationDetailsService.delete(persistedSupplier.getOrganizationDetails());
 

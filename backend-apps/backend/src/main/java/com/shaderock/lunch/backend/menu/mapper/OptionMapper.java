@@ -49,7 +49,6 @@ public interface OptionMapper {
   @Mapping(target = "categoryId", source = "category.id")
   @Mapping(target = "employeesOrderIds", source = "employeesOrders")
   @Mapping(target = "optionDescriptionIds", source = "optionDescriptions")
-  @Mapping(target = "priceId", source = "price.id")
   OptionDto toDto(Option option);
 
   @InheritInverseConfiguration

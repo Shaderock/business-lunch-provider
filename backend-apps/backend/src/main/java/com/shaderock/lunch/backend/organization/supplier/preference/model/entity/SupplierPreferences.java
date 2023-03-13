@@ -1,9 +1,12 @@
 package com.shaderock.lunch.backend.organization.supplier.preference.model.entity;
 
-import com.shaderock.lunch.backend.menu.price.model.entity.PriceBy;
+import static com.shaderock.lunch.backend.utils.FilterManager.DELETED_FILTER;
+
+import com.shaderock.lunch.backend.menu.price.model.entity.PriceForCategories;
 import com.shaderock.lunch.backend.organization.preference.model.PreferenceConfig;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.preference.model.type.OrderType;
+import com.shaderock.lunch.backend.organization.supplier.preference.model.type.PriceByType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Set;
@@ -26,19 +30,30 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.ToString.Exclude;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.type.descriptor.java.BooleanJavaType;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 @ToString
 @Entity
+@Table(name = "companies_preferences")
+@SQLDelete(sql = "UPDATE companies_preferences SET deleted = true WHERE id=?")
+@FilterDef(name = DELETED_FILTER, parameters = @ParamDef(name = "isDeleted", type = BooleanJavaType.class))
+@Filter(name = DELETED_FILTER, condition = "deleted = :isDeleted")
 public class SupplierPreferences implements PreferenceConfig {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
+  @Column(nullable = false)
+  private boolean deleted = false;
   @OneToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "supplier_id", nullable = false)
   @Exclude
@@ -59,9 +74,12 @@ public class SupplierPreferences implements PreferenceConfig {
   @Enumerated(EnumType.STRING)
   private OrderType orderType;
 
-  @OneToMany(mappedBy = "preferenceConfig", fetch = FetchType.LAZY)
-  @Exclude
-  private Set<PriceBy> prices; // todo should be one and not set
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private PriceByType priceByType;
+
+  @OneToMany(mappedBy = "supplierPreferences", fetch = FetchType.LAZY)
+  private Set<PriceForCategories> priceForCategories;
 
   @OneToOne(mappedBy = "preferenceConfig")
   private OrderCapacity orderCapacity;

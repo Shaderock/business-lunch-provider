@@ -46,6 +46,8 @@ public class CompanyPreferences implements PreferenceConfig {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
+  @Column(nullable = false)
+  private boolean deleted = false;
 
   @OneToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "company_id", nullable = false)
