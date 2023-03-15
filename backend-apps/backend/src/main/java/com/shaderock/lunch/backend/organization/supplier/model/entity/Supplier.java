@@ -57,7 +57,7 @@ public class Supplier {
   @Column(nullable = false)
   private boolean deleted = false;
   @Column(nullable = false)
-  private boolean isOrderingEnabled = false;
+  private boolean isPublic = false;
   @Exclude
   @OneToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "organization_details_id", nullable = false)

@@ -67,7 +67,7 @@ class CategoryServiceTests {
 
     categoryDto = new CategoryDto(category.getId(), category.getName(),
         category.getOptions().stream().map(Option::getId).collect(Collectors.toSet()),
-        category.isOrderingAllowed(), category.getMenu().getId());
+        category.isPublic(), category.getMenu().getId());
 
   }
 
@@ -136,7 +136,7 @@ class CategoryServiceTests {
     assertNotNull(updated);
     assertEquals(categoryDto.id(), updated.getId());
     assertEquals(categoryDto.name(), updated.getName());
-    assertEquals(categoryDto.isOrderingAllowed(), updated.isOrderingAllowed());
+    assertEquals(categoryDto.isPublic(), updated.isPublic());
     assertEquals(categoryDto.optionIds().size(), updated.getOptions().size());
   }
 }

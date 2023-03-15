@@ -12,6 +12,7 @@ public record OptionDto(UUID id,
                         String name,
                         UUID categoryId,
                         Double price,
+                        boolean isPublic,
                         Set<UUID> employeesOrderIds,
                         List<UUID> optionDescriptionIds,
                         UUID priceId) implements Serializable {

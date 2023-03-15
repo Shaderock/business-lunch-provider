@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -50,12 +51,12 @@ public class Category {
   @Column(nullable = false)
   private boolean deleted = false;
 
-  @Column
-  private boolean isOrderingAllowed = false;
+  @Column(nullable = false)
+  private boolean isPublic = false;
 
   @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
   @Exclude
-  private Set<Option> options;
+  private Set<Option> options = new HashSet<>();
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "menu_id", nullable = false)

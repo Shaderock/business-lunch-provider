@@ -20,6 +20,7 @@ import com.shaderock.lunch.backend.organization.supplier.repository.SupplierRepo
 import com.shaderock.lunch.backend.user.model.entity.AppUser;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.model.type.Role;
+import com.shaderock.lunch.backend.utils.ApiConstants;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Optional;
@@ -127,7 +128,7 @@ class CategoryControllerIntegrationTests {
 
     categoryDto = new CategoryDto(category.getId(), category.getName(),
         category.getOptions().stream().map(Option::getId).collect(Collectors.toSet()),
-        category.isOrderingAllowed(), category.getMenu().getId());
+        category.isPublic(), category.getMenu().getId());
   }
 
   @Test
@@ -137,7 +138,7 @@ class CategoryControllerIntegrationTests {
     when(supplierRepository.findByOrganizationDetails_Users_UserDetails_Email(
         anyString())).thenReturn(Optional.empty());
 
-    mockMvc.perform(post("/api/category")
+    mockMvc.perform(post(ApiConstants.SUPPLIER_ADM_CATEGORY)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(categoryDto))
             .principal(mockPrincipal))
@@ -154,7 +155,7 @@ class CategoryControllerIntegrationTests {
     when(categoryRepository.findByNameAndMenu_Supplier_Id(anyString(), any())).thenReturn(
         Optional.of(category));
 
-    mockMvc.perform(post("/api/category")
+    mockMvc.perform(post(ApiConstants.SUPPLIER_ADM_CATEGORY)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(categoryDto))
             .principal(mockPrincipal))
@@ -163,7 +164,7 @@ class CategoryControllerIntegrationTests {
   }
 
   @Test
-  void CreateCategory_OnValidRequest_ReturnsBadRequest() throws Exception {
+  void CreateCategory_OnValidRequest_ReturnsCreatedDto() throws Exception {
     Principal mockPrincipal = Mockito.mock(Principal.class);
     when(mockPrincipal.getName()).thenReturn("test");
     when(supplierRepository.findByOrganizationDetails_Users_UserDetails_Email(
@@ -172,14 +173,14 @@ class CategoryControllerIntegrationTests {
         Optional.empty());
     when(categoryRepository.save(any())).thenReturn(category);
 
-    mockMvc.perform(post("/api/category")
+    mockMvc.perform(post(ApiConstants.SUPPLIER_ADM_CATEGORY)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(categoryDto))
             .principal(mockPrincipal))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(categoryDto.name()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.isOrderingAllowed")
-            .value(categoryDto.isOrderingAllowed()));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.isPublic")
+            .value(categoryDto.isPublic()));
   }
 }

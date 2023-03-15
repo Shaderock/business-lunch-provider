@@ -2,6 +2,7 @@ package com.shaderock.lunch.backend.auth.registration;
 
 import com.shaderock.lunch.backend.auth.AuthService;
 import com.shaderock.lunch.backend.auth.registration.model.UserRegistrationForm;
+import com.shaderock.lunch.backend.utils.ApiConstants;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController()
-@RequestMapping("/api/register")
+@RequestMapping(ApiConstants.REGISTER)
 @RequiredArgsConstructor
 public class RegistrationController {
 

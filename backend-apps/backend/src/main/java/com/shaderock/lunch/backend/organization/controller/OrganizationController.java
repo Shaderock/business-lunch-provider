@@ -1,6 +1,7 @@
 package com.shaderock.lunch.backend.organization.controller;
 
 import com.shaderock.lunch.backend.organization.service.OrganizationDetailsService;
+import com.shaderock.lunch.backend.utils.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping("/api/organization")
+@RequestMapping(ApiConstants.ORGANIZATION)
 public class OrganizationController {
 
   private final OrganizationDetailsService organizationDetailsService;

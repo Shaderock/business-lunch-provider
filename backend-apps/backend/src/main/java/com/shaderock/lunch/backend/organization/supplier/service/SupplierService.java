@@ -97,6 +97,12 @@ public class SupplierService {
         String.format("Supplier(id=[%s] not found", supplierId)));
   }
 
+  public Supplier readPublic(@NonNull UUID supplierId) {
+    return supplierRepository.findByIdAndIsPublicTrue(supplierId)
+        .orElseThrow(() -> new CrudValidationException(
+            String.format("Public Supplier(id=[%s] not found", supplierId)));
+  }
+
   public Supplier read(@NonNull String userEmail) {
     return supplierRepository.findByOrganizationDetails_Users_UserDetails_Email(userEmail)
         .orElseThrow(() -> new CrudValidationException("Supplier organization not found for user"));

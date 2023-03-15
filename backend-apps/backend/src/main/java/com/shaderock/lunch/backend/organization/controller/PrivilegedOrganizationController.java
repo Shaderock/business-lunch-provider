@@ -4,6 +4,7 @@ import com.shaderock.lunch.backend.organization.mapper.OrganizationDetailsMapper
 import com.shaderock.lunch.backend.organization.model.dto.OrganizationDetailsDto;
 import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.organization.service.OrganizationDetailsService;
+import com.shaderock.lunch.backend.utils.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping("/api/sysadm/organization/details")
+@RequestMapping(ApiConstants.SYS_ADM_ORGANIZATION_DETAILS)
 public class PrivilegedOrganizationController {
 
   private final OrganizationDetailsService organizationDetailsService;

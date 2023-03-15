@@ -9,7 +9,11 @@ import org.springframework.data.repository.ListCrudRepository;
 
 public interface CategoryRepository extends ListCrudRepository<Category, UUID> {
 
-  List<Category> findByIsOrderingAllowedTrue();
+  List<Category> findByMenu_Supplier_IdAndIsPublicTrue(UUID id);
+
+  Optional<Category> findByIsPublicTrueAndId(UUID id);
+
+  List<Category> findByIsPublicTrue();
 
   List<Category> findByMenu_Supplier_Id(UUID id);
 

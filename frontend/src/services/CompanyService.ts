@@ -4,7 +4,7 @@ import axios from "axios";
 
 export class CompanyService extends OrganizationService {
   private companyUrl = AppSettings.API_URL + '/company'
-  private sysAdmCompaniesUrl = AppSettings.API_URL + '/sysadm/company'
+  private sysAdmCompaniesUrl = AppSettings.API_URL + '/sys-adm/company'
   private registerUrl = this.companyUrl + "/register"
   private userCompanyUrl = this.companyUrl + '/my'
 

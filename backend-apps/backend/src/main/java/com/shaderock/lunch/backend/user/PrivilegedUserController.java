@@ -2,6 +2,7 @@ package com.shaderock.lunch.backend.user;
 
 import com.shaderock.lunch.backend.user.model.dto.AppUserDetailsDto;
 import com.shaderock.lunch.backend.user.model.dto.AppUserDto;
+import com.shaderock.lunch.backend.utils.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping("/api/sysadm/user")
+@RequestMapping(ApiConstants.SYS_ADM_USER)
 public class PrivilegedUserController {
 
   private final AppUserService appUserService;

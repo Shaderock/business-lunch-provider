@@ -40,7 +40,9 @@ public class SecurityConfiguration {
         .requestMatchers("/swagger-ui.html", "/swagger-ui/**",
             "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
         .requestMatchers("/api/login/**", "/api/register/**", "/api/food/**").permitAll()
-        .requestMatchers("/api/sysdadmin/**").hasRole(Role.SYSTEM_ADMIN.getName())
+        .requestMatchers("/api/sys-adm/**").hasRole(Role.SYSTEM_ADMIN.getName())
+        .requestMatchers("/api/supplier-adm/**").hasRole(Role.SUPPLIER.getName())
+        .requestMatchers("/api/company-adm/**").hasRole(Role.SUPPLIER.getName())
         .requestMatchers("/actuator/**").authenticated().and().httpBasic()
         .and()
         .authorizeHttpRequests()

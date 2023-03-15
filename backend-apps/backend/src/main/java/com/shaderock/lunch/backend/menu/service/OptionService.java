@@ -2,146 +2,103 @@ package com.shaderock.lunch.backend.menu.service;
 
 import com.shaderock.lunch.backend.menu.mapper.OptionMapper;
 import com.shaderock.lunch.backend.menu.model.dto.OptionDto;
-import com.shaderock.lunch.backend.menu.model.entity.Menu;
+import com.shaderock.lunch.backend.menu.model.entity.Category;
 import com.shaderock.lunch.backend.menu.model.entity.Option;
-import com.shaderock.lunch.backend.menu.repository.MenuRepository;
 import com.shaderock.lunch.backend.menu.repository.OptionRepository;
-import com.shaderock.lunch.backend.messaging.exception.TransferableApplicationException;
-import com.shaderock.lunch.backend.organization.repository.OrganizationDetailsRepository;
+import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
-import com.shaderock.lunch.backend.organization.supplier.repository.SupplierRepository;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-// todo fix
 public class OptionService {
 
-  private final SupplierRepository supplierRepository;
-
-  private final MenuRepository menuRepository;
   private final OptionRepository optionRepository;
-  private final OrganizationDetailsRepository organizationDetailsRepository;
   private final OptionMapper optionMapper;
 
-  public OptionDto readAndMapToDto(String name) {
-    Option option = read(name);
-    return optionMapper.toDto(option);
-  }
-
-  public Option read(String name) {
-    LOGGER.info("Attempting to read Option by name=[{}]", name);
-    return optionRepository.findByName(name)
-        .orElseThrow(() -> new TransferableApplicationException(
-            String.format("Option(name=[%s]) not found", name)));
-  }
-
-  public OptionDto createAndMapToDto(OptionDto optionDto) {
-    Option newOption = create(optionDto);
-    return optionMapper.toDto(newOption);
+  @Transactional
+  public Option create(OptionDto optionDto, Category category) {
+    Option option = optionMapper.toEntity(optionDto);
+    return create(option, category);
   }
 
   @Transactional
-  public Option create(OptionDto optionDto) throws TransferableApplicationException {
-    LOGGER.info("Converting [{}] to Option", optionDto);
+  public Option create(Option option, Category category) {
+    validateVisibility(option, category);
 
-    Option newOption = new Option();
-    newOption.setName(optionDto.name());
+    option.setCategory(category);
+    Option persistedOption = optionRepository.save(option);
+    category.getOptions().add(persistedOption);
+    return persistedOption;
+  }
 
-    LOGGER.info("Converted [{}]", newOption);
+  public Option read(UUID id) {
+    return optionRepository.findById(id).orElseThrow(
+        () -> new CrudValidationException(String.format("Option(id=[%s]) not found", id)));
+  }
 
-    return create(newOption);
+  public List<Option> read(Category category) {
+    return optionRepository.findByCategory_Id(category.getId());
+  }
+
+  public Option read(UUID id, Supplier supplier) {
+    return optionRepository.findByIdAndCategory_Menu_Supplier_Id(id, supplier.getId()).orElseThrow(
+        () -> new CrudValidationException(
+            String.format("Option(id=[%s]) for Supplier(id=[%s]) not found", id,
+                supplier.getId())));
+  }
+
+  public Option readPublic(UUID id) {
+    return optionRepository.findByIdAndIsPublicTrue(id).orElseThrow(
+        () -> new CrudValidationException(String.format("Public Option(id=[%s]) not found", id)));
+  }
+
+  public List<Option> readPublic(Supplier supplier) {
+    return optionRepository.findByIsPublicTrueAndCategory_Menu_Supplier_Id(supplier.getId());
+  }
+
+  public List<Option> readPublic(Supplier supplier, Category category) {
+    return optionRepository.findByIsPublicTrueAndCategoryAndCategory_Menu_Supplier(category,
+        supplier);
+  }
+
+  public List<Option> readAll(Supplier supplier) {
+    return optionRepository.findByCategory_Menu_Supplier_Id(supplier.getId());
+  }
+
+  public Option update(OptionDto optionDto, Supplier supplier) {
+    Option option = optionMapper.toEntity(optionDto);
+    return update(option, supplier);
   }
 
   @Transactional
-  public Option create(Option newOption) {
-    LOGGER.info("Attempting to create [{}]", newOption);
-
-    optionRepository.findByName(newOption.getName()).ifPresent(c -> {
-      throw new TransferableApplicationException(String.format(
-          "Option (name=[%s]) already exists and should be updated instead of created",
-          c.getName()));
-    });
-
-    Supplier supplier = getSupplierForCrud();
-    Menu menu = menuRepository.findBySupplier(supplier).orElseThrow(() -> {
-      throw new IllegalStateException(
-          String.format("[%s] does not have a Menu initialized", supplier));
-    });
-//    newOption.setMenu(menu);
-
-    Option persistedOption = optionRepository.save(newOption);
-
-    LOGGER.info("Created [{}]", persistedOption);
+  public Option update(Option option, Supplier supplier) {
+    Option persistedOption = read(option.getId(), supplier);
+    validateVisibility(persistedOption, persistedOption.getCategory());
+    persistedOption.setName(option.getName());
+    persistedOption.setPublic(option.isPublic());
+    persistedOption.setPrice(option.getPrice());
     return persistedOption;
   }
 
   @Transactional
-  public OptionDto updateAndMapToDto(OptionDto optionDto) {
-    Option updatedOption = update(optionDto);
-//    return toDto(updatedOption);
-    return optionMapper.toDto(updatedOption);
+  public void delete(UUID id, Supplier supplier) {
+    Option persistedOption = read(id, supplier);
+    optionRepository.delete(persistedOption);
   }
 
-  @Transactional
-  public Option update(OptionDto optionDto) {
-    LOGGER.info("Converting [{}] to Option", optionDto);
-    Option optionToUpdate = new Option();
-    optionToUpdate.setName(optionDto.name());
-    optionToUpdate.setId(optionDto.id());
-    LOGGER.info("Converted [{}]", optionToUpdate);
-
-    return update(optionToUpdate);
-  }
-
-  @Transactional
-  public Option update(Option optionToUpdate) {
-    LOGGER.info("Attempting to update [{}]", optionToUpdate);
-
-    if (optionToUpdate.getId() == null) {
-      throw new TransferableApplicationException("Option id not provided");
+  private void validateVisibility(Option option, Category category) {
+    if (!category.isPublic() && option.isPublic()) {
+      throw new CrudValidationException(
+          String.format(
+              "Can not set public Option(id=[%s]) because Category(id=[%s]) is not public",
+              category.getId(), category.getId()));
     }
-
-    Option persistedOption = optionRepository.findById(optionToUpdate.getId())
-        .orElseThrow(() -> new TransferableApplicationException(
-            String.format(
-                "Option(id=[%s]) doesn't exist and should be created instead of updated",
-                optionToUpdate.getId())
-        ));
-
-    persistedOption.setName(optionToUpdate.getName());
-    persistedOption = optionRepository.save(persistedOption);
-    LOGGER.info("Updated [{}]", persistedOption);
-    return persistedOption;
   }
-
-  @Transactional
-  public void delete(UUID id) {
-    Option persistedOption = optionRepository.findById(id)
-        .orElseThrow(() -> {
-          throw new TransferableApplicationException(
-              String.format("Option (id=[%s]) doesn't exist and can't be deleted", id));
-        });
-
-    persistedOption.setDeleted(true);
-    optionRepository.save(persistedOption);
-  }
-
-  private Supplier getSupplierForCrud() {
-    UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
-        .getPrincipal();
-
-    return supplierRepository.findByOrganizationDetails_Users_UserDetails_Email(
-            userDetails.getUsername())
-        .orElseThrow(() -> new TransferableApplicationException(
-            "User is not a part of supplier organization"));
-  }
-
 }

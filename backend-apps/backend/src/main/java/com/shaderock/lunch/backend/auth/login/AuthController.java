@@ -3,6 +3,7 @@ package com.shaderock.lunch.backend.auth.login;
 import com.shaderock.lunch.backend.auth.AuthService;
 import com.shaderock.lunch.backend.auth.login.model.LoginForm;
 import com.shaderock.lunch.backend.auth.login.model.TokenResponse;
+import com.shaderock.lunch.backend.utils.ApiConstants;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/login")
+@RequestMapping(ApiConstants.LOGIN)
 @RequiredArgsConstructor
 public class AuthController {
 

@@ -9,6 +9,7 @@ import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.preferences.mapper.EmployeePreferencesMapper;
 import com.shaderock.lunch.backend.user.preferences.model.dto.EmployeePreferencesDto;
 import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferences;
+import com.shaderock.lunch.backend.utils.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping("/api/user")
+@RequestMapping(ApiConstants.USER)
 public class UserController {
 
   private final AppUserService appUserService;

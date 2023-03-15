@@ -4,6 +4,7 @@ import com.shaderock.lunch.backend.organization.company.mapper.CompanyMapper;
 import com.shaderock.lunch.backend.organization.company.model.dto.CompanyDto;
 import com.shaderock.lunch.backend.organization.company.model.entity.Company;
 import com.shaderock.lunch.backend.organization.company.service.CompanyService;
+import com.shaderock.lunch.backend.utils.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping("/api/sysadm/company")
+@RequestMapping(ApiConstants.SYS_ADM_COMPANY)
 public class PrivilegedCompanyController {
 
   private final CompanyService companyService;

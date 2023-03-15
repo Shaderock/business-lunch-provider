@@ -7,6 +7,7 @@ import com.shaderock.lunch.backend.organization.supplier.model.form.Organization
 import com.shaderock.lunch.backend.organization.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.user.AppUserDetailsService;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
+import com.shaderock.lunch.backend.utils.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.security.Principal;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping("/api/supplier")
+@RequestMapping(ApiConstants.SUPPLIER)
 public class SupplierController {
 
   private final SupplierService supplierService;

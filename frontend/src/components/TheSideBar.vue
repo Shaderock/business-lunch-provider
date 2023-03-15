@@ -57,18 +57,18 @@
           prepend-icon="mdi-silverware"
           title="Companies"
           value="companies"
-          v-bind:to="'/sysadm/companies'">
+          v-bind:to="'/sys-adm/companies'">
         </v-list-item>
         <v-list-item
           prepend-icon="mdi-food"
           title="Suppliers"
           value="suppliers"
-          v-bind:to="'/sysadm/suppliers'">
+          v-bind:to="'/sys-adm/suppliers'">
         </v-list-item>
         <v-list-item
           prepend-icon="mdi-domain"
           title="Organizaitons"
-          v-bind:to="'/sysadm/organizations'"
+          v-bind:to="'/sys-adm/organizations'"
           value="organizations">
         </v-list-item>
         <v-divider></v-divider>
@@ -77,7 +77,7 @@
           prepend-icon="mdi-account-multiple"
           title="Users"
           value="users"
-          v-bind:to="'/sysadm/users'">
+          v-bind:to="'/sys-adm/users'">
         </v-list-item>
       </div>
     </v-list>

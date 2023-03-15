@@ -14,7 +14,7 @@ public record CategoryDto(UUID id,
                           @NotBlank(message = "Name can't be blank")
                           String name,
                           Set<UUID> optionIds,
-                          boolean isOrderingAllowed,
+                          boolean isPublic,
                           UUID menuId) implements Serializable {
 
 }

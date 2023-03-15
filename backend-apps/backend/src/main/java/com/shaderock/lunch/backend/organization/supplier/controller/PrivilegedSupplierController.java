@@ -4,6 +4,7 @@ import com.shaderock.lunch.backend.organization.supplier.mapper.SupplierMapper;
 import com.shaderock.lunch.backend.organization.supplier.model.dto.SupplierDto;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.service.SupplierService;
+import com.shaderock.lunch.backend.utils.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping("/api/sysadm/supplier")
+@RequestMapping(ApiConstants.SYS_ADM_SUPPLIER)
 
 public class PrivilegedSupplierController {
 

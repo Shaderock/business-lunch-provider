@@ -3,8 +3,8 @@ import {AppSettings} from "./AppSettings";
 
 export class UserService {
   private profileUrl = AppSettings.API_URL + '/user/profile';
-  private sysAdmUsersUrl = AppSettings.API_URL + '/sysadm/user';
-  private sysAdmUsersDetailsUrl = AppSettings.API_URL + '/sysadm/user/details';
+  private sysAdmUsersUrl = AppSettings.API_URL + '/sys-adm/user';
+  private sysAdmUsersDetailsUrl = AppSettings.API_URL + '/sys-adm/user/details';
   private profileDetailsUrl = AppSettings.API_URL + '/user/profile/details';
   private profilePreferencesUrl = AppSettings.API_URL + '/user/profile/preferences';
 

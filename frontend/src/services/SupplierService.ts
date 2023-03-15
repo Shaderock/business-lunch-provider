@@ -4,7 +4,7 @@ import axios from "axios";
 
 export class SupplierService extends OrganizationService {
   private supplierUrl = AppSettings.API_URL + '/supplier'
-  private sysAdmSuppliersUrl = AppSettings.API_URL + '/sysadm/supplier'
+  private sysAdmSuppliersUrl = AppSettings.API_URL + '/sys-adm/supplier'
   private registerUrl = this.supplierUrl + "/registerCompany"
   private userSupplierUrl = this.supplierUrl + '/my'
 

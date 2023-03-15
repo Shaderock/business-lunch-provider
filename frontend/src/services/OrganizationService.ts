@@ -3,7 +3,7 @@ import axios from "axios";
 
 export class OrganizationService {
   protected organizationUrl = AppSettings.API_URL + '/organization'
-  protected sysAdmOrganizationUrl = AppSettings.API_URL + '/sysadm/organization/details'
+  protected sysAdmOrganizationUrl = AppSettings.API_URL + '/sys-adm/organization/details'
   protected organizationNameVerifyUrl = this.organizationUrl + '/verify-name'
   protected organizationEmailVerifyUrl = this.organizationUrl + '/verify-email'
 

@@ -7,6 +7,8 @@ import org.springframework.data.repository.ListCrudRepository;
 
 public interface SupplierRepository extends ListCrudRepository<Supplier, UUID> {
 
+  Optional<Supplier> findByIdAndIsPublicTrue(UUID id);
+
   Optional<Supplier> findByOrganizationDetails_Users_UserDetails_Email(String email);
 
 }
