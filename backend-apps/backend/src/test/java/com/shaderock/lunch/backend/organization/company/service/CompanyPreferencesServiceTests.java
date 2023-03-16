@@ -4,12 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.shaderock.lunch.backend.doubles.FakeCompanyPreferenceRepository;
 import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import com.shaderock.lunch.backend.organization.company.preference.model.dto.CompanyPreferencesDto;
 import com.shaderock.lunch.backend.organization.company.preference.model.entity.CompanyPreferences;
 import com.shaderock.lunch.backend.organization.company.preference.model.mapper.CompanyPreferencesMapper;
+import com.shaderock.lunch.backend.organization.company.preference.model.mapper.CompanyPreferencesMapperImpl;
 import com.shaderock.lunch.backend.organization.company.preference.model.type.CompanyDiscountType;
 import com.shaderock.lunch.backend.organization.company.preference.repository.CompanyPreferenceRepository;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
@@ -99,5 +104,52 @@ class CompanyPreferencesServiceTests {
     assertNotNull(updated);
     assertEquals(preferencesDto.deliveryAddress(), updated.getDeliveryAddress());
     assertEquals(preferencesDto.companyDiscountType(), updated.getCompanyDiscountType());
+  }
+
+  @Test
+  void CreatePreferences_OnValidPreferencesAndDummyMapper_ReturnsCreatedPreferences() {
+    when(companyPreferenceRepository.save(any())).thenReturn(preferences);
+    CompanyPreferencesService companyPreferencesService1 = new CompanyPreferencesServiceImpl(
+        companyPreferenceRepository, new CompanyPreferencesMapper() {
+      @Override
+      public CompanyPreferencesDto toDto(CompanyPreferences companyPreferences) {
+        return null;
+      }
+
+      @Override
+      public CompanyPreferences toEntity(CompanyPreferencesDto companyPreferencesDto) {
+        return null;
+      }
+    });
+
+    CompanyPreferences created = companyPreferencesService1.create(preferences);
+    assertNotNull(created);
+  }
+
+  @Test
+  void CreatePreferences_OnValidPreferencesAndFakeRepository_ReturnsCreatedPreferences() {
+    FakeCompanyPreferenceRepository fakeRepository = new FakeCompanyPreferenceRepository();
+
+    CompanyPreferencesService companyPreferencesService1 = new CompanyPreferencesServiceImpl(
+        fakeRepository,
+        companyPreferencesMapper);
+    CompanyPreferences created = companyPreferencesService1.create(preferences);
+    assertNotNull(created);
+  }
+
+  @Test
+  void UpdatePreferencesByDto_WithSpyMapper_ReturnsUpdatedPreferences() {
+    CompanyPreferencesMapper spyMapper = spy(new CompanyPreferencesMapperImpl());
+    companyPreferencesService = new CompanyPreferencesServiceImpl(companyPreferenceRepository,
+        spyMapper);
+    when(companyPreferenceRepository.findByCompany_OrganizationDetails_Users_UserDetails_Id(any()))
+        .thenReturn(Optional.of(preferences));
+
+    CompanyPreferences updated = companyPreferencesService.update(preferencesDto, userDetails);
+    assertNotNull(updated);
+    assertEquals(preferencesDto.deliveryAddress(), updated.getDeliveryAddress());
+    assertEquals(preferencesDto.companyDiscountType(), updated.getCompanyDiscountType());
+
+    verify(spyMapper, times(1)).toEntity(any());
   }
 }

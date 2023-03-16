@@ -2,9 +2,9 @@ package com.shaderock.lunch.backend.doubles;
 
 import com.shaderock.lunch.backend.organization.company.preference.model.entity.CompanyPreferences;
 
-public class CompanyPreferencesMock {
+public class CompanyPreferencesServiceMock {
 
-  public void save(CompanyPreferences companyPreferences) {
+  public void create(CompanyPreferences companyPreferences) {
 
   }
 }

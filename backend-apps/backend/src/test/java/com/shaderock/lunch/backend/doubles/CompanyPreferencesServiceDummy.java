@@ -25,7 +25,7 @@ public class CompanyPreferencesServiceDummy implements CompanyPreferencesService
   }
 
   @Override
-  public CompanyPreferences read(AppUserDetails userDetails) {
+  public CompanyPreferences read(@NonNull AppUserDetails userDetails) {
     return null;
   }
 
