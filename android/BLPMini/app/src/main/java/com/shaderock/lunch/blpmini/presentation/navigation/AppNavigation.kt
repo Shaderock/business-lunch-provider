@@ -22,7 +22,7 @@ import com.shaderock.lunch.blpmini.feature.profile.ProfileScreen
 fun AppNavigation(
     navController: NavHostController,
     bottomBarState: MutableState<Boolean>,
-    networkViewModel: NetworkViewModel,
+    networkViewModel: NetworkViewModel = hiltViewModel(),
     topBarState: MutableState<Boolean>
 ) {
     NavHost(navController = navController,
@@ -64,7 +64,7 @@ fun AppNavigation(
         }
     }
 
-    val isAuthorized: Boolean? by networkViewModel.isUnauthorized.observeAsState()
+    val isAuthorized: Boolean? by networkViewModel.isAuthorizedState.observeAsState()
     LaunchedEffect(key1 = isAuthorized, block = {
         when (isAuthorized) {
             false -> {

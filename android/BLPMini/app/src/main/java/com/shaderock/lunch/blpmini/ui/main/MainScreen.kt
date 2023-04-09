@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import com.shaderock.lunch.blpmini.feature.network.MonitorNetwork
 import com.shaderock.lunch.blpmini.presentation.navigation.AppNavigation
 import com.shaderock.lunch.blpmini.presentation.navigation.BottomNavigationBar
 import com.shaderock.lunch.blpmini.presentation.navigation.SetupTopAppBar
@@ -22,6 +22,8 @@ internal fun MainScreen() {
     val bottomBarState = remember { (mutableStateOf(false)) }
     val topBarState = remember { (mutableStateOf(false)) }
     val navController = rememberNavController()
+
+    MonitorNetwork()
 
     Scaffold(
         topBar = {
@@ -38,8 +40,7 @@ internal fun MainScreen() {
                 AppNavigation(
                     navController = navController,
                     bottomBarState = bottomBarState,
-                    topBarState = topBarState,
-                    networkViewModel = hiltViewModel()
+                    topBarState = topBarState
                 )
             }
         },

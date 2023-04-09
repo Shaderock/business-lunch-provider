@@ -6,14 +6,14 @@ import androidx.lifecycle.ViewModel
 import javax.inject.Inject
 
 class NetworkViewModel @Inject constructor() : ViewModel() {
-    private val _isAuthorized: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true)
-    val isUnauthorized: LiveData<Boolean> get() = _isAuthorized
+    private val _isAuthorizedState: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true)
+    val isAuthorizedState: LiveData<Boolean> get() = _isAuthorizedState
 
     fun onUnauthorized() {
-        _isAuthorized.value = false
+        _isAuthorizedState.value = false
     }
 
     fun onAuthorized() {
-        _isAuthorized.value = true
+        _isAuthorizedState.value = true
     }
 }
