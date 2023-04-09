@@ -15,12 +15,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.ToString.Exclude;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Entity
 public class Menu {
 
@@ -29,6 +32,7 @@ public class Menu {
   private UUID id;
 
   @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
+  @Exclude
   private Set<Category> categories;
 
   @OneToOne(mappedBy = "menu", optional = false)

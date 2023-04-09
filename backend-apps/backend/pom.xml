@@ -4,6 +4,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>backend</artifactId>
+  <description>backend</description>
+  <groupId>com.shaderock.lunch</groupId>
+  <name>backend</name>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -48,12 +52,6 @@
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-tracing-bridge-brave</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-devtools</artifactId>
-      <scope>runtime</scope>
-      <optional>true</optional>
     </dependency>
 
     <!--    <dependency>-->
@@ -154,15 +152,12 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <description>backend</description>
-  <groupId>com.shaderock.lunch</groupId>
-  <name>backend</name>
 
   <parent>
     <artifactId>spring-boot-starter-parent</artifactId>
     <groupId>org.springframework.boot</groupId>
     <relativePath/>
-    <version>3.0.4</version> <!-- lookup parent from repository -->
+    <version>3.0.5</version> <!-- lookup parent from repository -->
   </parent>
 
   <properties>

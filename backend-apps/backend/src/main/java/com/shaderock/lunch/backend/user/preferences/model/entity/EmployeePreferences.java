@@ -1,6 +1,5 @@
 package com.shaderock.lunch.backend.user.preferences.model.entity;
 
-import com.shaderock.lunch.backend.organization.preference.model.PreferenceConfig;
 import com.shaderock.lunch.backend.user.model.entity.AppUser;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,7 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class EmployeePreferences implements PreferenceConfig {
+public class EmployeePreferences {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)

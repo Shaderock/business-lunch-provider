@@ -3,13 +3,13 @@ lunch:
     url: http://localhost:8080
     users:
       generate:
-        default: true
+        default: false
     actuator:
       username: test
       password: test
     system:
       admin:
-        email: test@dummy.test.mail
+        email: sysadm@dummy
         password: test
   frontend:
     url: http://localhost:3000

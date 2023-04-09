@@ -3,7 +3,6 @@ package com.shaderock.lunch.backend.organization.supplier.preference.model.entit
 import static com.shaderock.lunch.backend.utils.FilterManager.DELETED_FILTER;
 
 import com.shaderock.lunch.backend.menu.price.model.entity.PriceForCategories;
-import com.shaderock.lunch.backend.organization.preference.model.PreferenceConfig;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.preference.model.type.OrderType;
 import com.shaderock.lunch.backend.organization.supplier.preference.model.type.PriceByType;
@@ -43,11 +42,11 @@ import org.hibernate.type.descriptor.java.BooleanJavaType;
 @Builder
 @ToString
 @Entity
-@Table(name = "companies_preferences")
-@SQLDelete(sql = "UPDATE companies_preferences SET deleted = true WHERE id=?")
+@Table(name = "supplier_preferences")
+@SQLDelete(sql = "UPDATE supplier_preferences SET deleted = true WHERE id=?")
 @FilterDef(name = DELETED_FILTER, parameters = @ParamDef(name = "isDeleted", type = BooleanJavaType.class))
 @Filter(name = DELETED_FILTER, condition = "deleted = :isDeleted")
-public class SupplierPreferences implements PreferenceConfig {
+public class SupplierPreferences  {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -58,27 +57,28 @@ public class SupplierPreferences implements PreferenceConfig {
   @JoinColumn(name = "supplier_id", nullable = false)
   @Exclude
   private Supplier supplier;
-  @Column(nullable = false)
+  @Column
   private Duration requestOffset;
 
-  @Column(nullable = false)
+  @Column
   private LocalTime deliveryPeriodStartTime;
 
-  @Column(nullable = false)
+  @Column
   private LocalTime deliveryPeriodEndTime;
 
   @Column(columnDefinition = "int default 1")
   private int minimumOrdersPerRequest;
 
-  @Column(nullable = false)
+  @Column
   @Enumerated(EnumType.STRING)
   private OrderType orderType;
 
-  @Column(nullable = false)
+  @Column
   @Enumerated(EnumType.STRING)
   private PriceByType priceByType;
 
   @OneToMany(mappedBy = "supplierPreferences", fetch = FetchType.LAZY)
+  @Exclude
   private Set<PriceForCategories> priceForCategories;
 
   @OneToOne(mappedBy = "preferenceConfig")

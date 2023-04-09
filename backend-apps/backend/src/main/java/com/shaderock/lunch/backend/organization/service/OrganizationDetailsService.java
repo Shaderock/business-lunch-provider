@@ -11,6 +11,7 @@ import com.shaderock.lunch.backend.utils.FilterManager;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -49,8 +50,7 @@ public class OrganizationDetailsService {
 
     validateCreate(details);
 
-    OrganizationDetails persistedDetails = organizationDetailsRepository.save(
-        details);
+    OrganizationDetails persistedDetails = organizationDetailsRepository.save(details);
 
     LOGGER.info("Created {}", persistedDetails);
     return persistedDetails;
@@ -61,7 +61,7 @@ public class OrganizationDetailsService {
       throw new CrudValidationException("Can not create organization without name");
     }
 
-    if (existsByName(details.getName())) {
+    if (findByName(details.getName()).isPresent()) {
       throw new CrudValidationException(String.format("Organization(name=[%s]) already exists",
           details.getName()));
     }
@@ -142,6 +142,10 @@ public class OrganizationDetailsService {
 
   public boolean existsByName(@NonNull String name) {
     return organizationDetailsRepository.existsByName(name);
+  }
+
+  public Optional<OrganizationDetails> findByName(String name) {
+    return organizationDetailsRepository.findByName(name);
   }
 
   public boolean existsByEmail(@NonNull String email) {

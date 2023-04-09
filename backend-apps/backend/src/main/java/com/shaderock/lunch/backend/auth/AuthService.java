@@ -53,7 +53,7 @@ public class AuthService {
   }
 
   @Transactional
-  public void registerUser(@Valid UserRegistrationForm form) {
+  public void registerUser(@Valid UserRegistrationForm form, boolean sendConfirmationEmail) {
     LOGGER.info("Attempting to register user with email=[{}]", form.email());
     if (isUserRegistered(form.email())) {
       throw new UserAlreadyRegisteredException(form.email());
@@ -77,10 +77,18 @@ public class AuthService {
 
     persistedDetails.setAppUser(persistedUser);
     try {
-      mailService.sendConfirmationEmail(persistedDetails);
+      if (sendConfirmationEmail) {
+        mailService.sendConfirmationEmail(persistedDetails);
+      } else {
+        confirmEmail(details.getRegistrationToken());
+      }
     } catch (MessagingException e) {
       throw new ConfirmationEmailNotSentException(details.getEmail());
     }
+  }
+
+  public void registerUser(@Valid UserRegistrationForm userRegistrationForm) {
+    registerUser(userRegistrationForm, true);
   }
 
   public boolean isUserRegistered(String email) {
@@ -94,5 +102,6 @@ public class AuthService {
 
     userDetails.setEnabled(true);
     userDetails.getRoles().add(Role.USER);
+    LOGGER.info("Confirmed email for {}", userDetails);
   }
 }

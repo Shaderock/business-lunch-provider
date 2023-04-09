@@ -4,7 +4,6 @@ import static com.shaderock.lunch.backend.utils.FilterManager.DELETED_FILTER;
 
 import com.shaderock.lunch.backend.organization.company.model.entity.Company;
 import com.shaderock.lunch.backend.organization.company.preference.model.type.CompanyDiscountType;
-import com.shaderock.lunch.backend.organization.preference.model.PreferenceConfig;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,7 +40,7 @@ import org.hibernate.type.descriptor.java.BooleanJavaType;
 @SQLDelete(sql = "UPDATE companies_preferences SET deleted = true WHERE id=?")
 @FilterDef(name = DELETED_FILTER, parameters = @ParamDef(name = "isDeleted", type = BooleanJavaType.class))
 @Filter(name = DELETED_FILTER, condition = "deleted = :isDeleted")
-public class CompanyPreferences implements PreferenceConfig {
+public class CompanyPreferences  {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)

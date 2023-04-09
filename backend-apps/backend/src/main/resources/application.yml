@@ -66,3 +66,4 @@ eureka:
   client:
     service-url:
       defaultZone: http://${lunch.discovery.username}:${lunch.discovery.password}@${lunch.discovery.address}/eureka/
+    enabled: false

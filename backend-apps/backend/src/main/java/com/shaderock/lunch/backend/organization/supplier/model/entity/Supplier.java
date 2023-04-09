@@ -49,32 +49,39 @@ public class Supplier {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
-  @Column(nullable = false)
+
+  @Column
   private URI websiteUrl;
-  @Column(nullable = false)
+
+  @Column
   private URI menuUrl;
 
   @Column(nullable = false)
   private boolean deleted = false;
+
   @Column(nullable = false)
   private boolean isPublic = false;
   @Exclude
   @OneToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "organization_details_id", nullable = false)
   private OrganizationDetails organizationDetails;
+
   @Exclude
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "menu_id")
   private Menu menu;
+
   @Exclude
   @OneToOne(mappedBy = "supplier")
   private SupplierPreferences preferences;
+
   @JoinTable(name = "lunch_subscriptions",
       joinColumns = @JoinColumn(name = "supplier_id"),
       inverseJoinColumns = @JoinColumn(name = "company_id"))
   @ManyToMany(fetch = FetchType.LAZY)
   @Exclude
   private Set<Company> subscribers;
+
   @JoinTable(name = "lunch_subscriptions_requests",
       joinColumns = @JoinColumn(name = "supplier_id"),
       inverseJoinColumns = @JoinColumn(name = "company_id"))
