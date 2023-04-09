@@ -66,13 +66,15 @@ fun RadioButtonGroup(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.small,
         content = {
-            Column(verticalArrangement = Arrangement.SpaceBetween,
+            Column(
+                verticalArrangement = Arrangement.SpaceBetween,
                 content = {
                     Text(
                         text = title,
                         modifier = Modifier.padding(start = 25.dp),
-                        style = MaterialTheme.typography.subtitle2
+                        style = MaterialTheme.typography.h6
                     )
                     Divider(
                         modifier = Modifier
@@ -85,7 +87,11 @@ fun RadioButtonGroup(
                                 selected = option == selectedOption,
                                 onClick = { onSelectionChange(option) }
                             )
-                            Text(text = option, textAlign = TextAlign.Center)
+                            Text(
+                                text = option,
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.subtitle2
+                            )
                         }
                     }
                 })
