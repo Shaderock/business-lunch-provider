@@ -10,8 +10,8 @@
   <string name="something_went_wrong">Something went wrong…</string>
   <string name="notifications">Notifications</string>
   <string name="search">Search</string>
-  <string name="preferencesTab">Preferences</string>
-  <string name="detailsTab">Details</string>
+  <string name="filtersTab">Filters</string>
+  <string name="suppliersTab">Suppliers</string>
   <string name="top_bar_menu">Top bar menu</string>
   <string name="edit_profile">Edit profile</string>
   <string name="logout">Logout</string>
