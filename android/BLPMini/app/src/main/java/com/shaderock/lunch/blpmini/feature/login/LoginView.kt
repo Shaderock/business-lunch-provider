@@ -33,12 +33,10 @@ import com.shaderock.lunch.blpmini.presentation.navigation.Screen
 
 @Composable
 fun LoginScreen(
-    bottomBarState: MutableState<Boolean>,
     authViewModel: AuthViewModel,
     networkViewModel: NetworkViewModel,
     navController: NavHostController
 ) {
-    bottomBarState.value = false
 
     val authenticationState by authViewModel.authenticationState.observeAsState()
     val authorizationState by authViewModel.authorizationState.observeAsState()

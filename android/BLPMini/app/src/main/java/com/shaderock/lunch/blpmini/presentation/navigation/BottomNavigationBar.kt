@@ -37,6 +37,5 @@ fun BottomNavigationBar(
 val screens = listOf(
     BottomNavigationItem.Food,
     BottomNavigationItem.Orders,
-    BottomNavigationItem.Lunch,
     BottomNavigationItem.Profile
 )

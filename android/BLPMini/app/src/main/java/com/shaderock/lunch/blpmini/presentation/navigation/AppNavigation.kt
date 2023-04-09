@@ -14,6 +14,7 @@ import com.shaderock.lunch.blpmini.feature.food.FoodScreen
 import com.shaderock.lunch.blpmini.feature.login.LoginScreen
 import com.shaderock.lunch.blpmini.feature.lunch.LunchScreen
 import com.shaderock.lunch.blpmini.feature.network.NetworkViewModel
+import com.shaderock.lunch.blpmini.feature.notifications.NotificationsScreen
 import com.shaderock.lunch.blpmini.feature.orders.OrdersScreen
 import com.shaderock.lunch.blpmini.feature.profile.ProfileScreen
 
@@ -21,14 +22,14 @@ import com.shaderock.lunch.blpmini.feature.profile.ProfileScreen
 fun AppNavigation(
     navController: NavHostController,
     bottomBarState: MutableState<Boolean>,
-    networkViewModel: NetworkViewModel
+    networkViewModel: NetworkViewModel,
+    topBarState: MutableState<Boolean>
 ) {
     NavHost(navController = navController,
         startDestination = Screen.Login.route,
         builder = {
             composable(route = Screen.Login.route) {
                 LoginScreen(
-                    bottomBarState = bottomBarState,
                     authViewModel = hiltViewModel(),
                     networkViewModel = networkViewModel,
                     navController = navController
@@ -38,13 +39,16 @@ fun AppNavigation(
                 FoodScreen()
             }
             composable(route = Screen.Orders.route) {
-                OrdersScreen(bottomBarState = bottomBarState)
+                OrdersScreen()
             }
             composable(route = Screen.Lunch.route) {
-                LunchScreen(bottomBarState = bottomBarState)
+                LunchScreen()
+            }
+            composable(route = Screen.Notifications.route) {
+                NotificationsScreen()
             }
             composable(route = Screen.Profile.route) {
-                ProfileScreen(bottomBarState = bottomBarState)
+                ProfileScreen()
             }
         })
 
@@ -52,9 +56,11 @@ fun AppNavigation(
     when (navBackStackEntry?.destination?.route) {
         Screen.Login.route -> {
             bottomBarState.value = false
+            topBarState.value = false
         }
         else -> {
             bottomBarState.value = true
+            topBarState.value = true
         }
     }
 

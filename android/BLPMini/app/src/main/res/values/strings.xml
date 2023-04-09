@@ -8,4 +8,15 @@
   <string name="login_failed">Could not sign in.</string>
   <string name="login_success">Bon appetit!</string>
   <string name="something_went_wrong">Something went wrong…</string>
+  <string name="notifications">Notifications</string>
+  <string name="search">Search</string>
+  <string name="preferencesTab">Preferences</string>
+  <string name="detailsTab">Details</string>
+  <string name="top_bar_menu">Top bar menu</string>
+  <string name="edit_profile">Edit profile</string>
+  <string name="logout">Logout</string>
+  <string name="notifications_amount">Notifications Amount</string>
+  <string name="notifications_interval">Notifications Interval</string>
+  <string name="notifications_start">Notifications Start</string>
+  <string name="profile_image">Profile image</string>
 </resources>

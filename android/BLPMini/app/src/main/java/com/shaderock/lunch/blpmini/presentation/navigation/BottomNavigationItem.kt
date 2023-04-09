@@ -3,7 +3,6 @@ package com.shaderock.lunch.blpmini.presentation.navigation
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -24,12 +23,6 @@ sealed class BottomNavigationItem(
         label = R.string.orders,
         icon = Icons.Filled.ShoppingCart,
         route = Screen.Orders.route
-    )
-
-    object Lunch : BottomNavigationItem(
-        label = R.string.lunch,
-        icon = Icons.Filled.MailOutline,
-        route = Screen.Lunch.route
     )
 
     object Profile : BottomNavigationItem(
