@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.organization.company.preference.model.entity;
 
-import static com.shaderock.lunch.backend.utils.FilterManager.DELETED_FILTER;
+import static com.shaderock.lunch.backend.utils.FilterManager.SOFT_DELETE_FILTER;
 
 import com.shaderock.lunch.backend.organization.company.model.entity.Company;
 import com.shaderock.lunch.backend.organization.company.preference.model.type.CompanyDiscountType;
@@ -38,8 +38,8 @@ import org.hibernate.type.descriptor.java.BooleanJavaType;
 @Entity
 @Table(name = "companies_preferences")
 @SQLDelete(sql = "UPDATE companies_preferences SET deleted = true WHERE id=?")
-@FilterDef(name = DELETED_FILTER, parameters = @ParamDef(name = "isDeleted", type = BooleanJavaType.class))
-@Filter(name = DELETED_FILTER, condition = "deleted = :isDeleted")
+@FilterDef(name = SOFT_DELETE_FILTER, parameters = @ParamDef(name = "isDeleted", type = BooleanJavaType.class))
+@Filter(name = SOFT_DELETE_FILTER, condition = "deleted = :isDeleted")
 public class CompanyPreferences  {
 
   @Id

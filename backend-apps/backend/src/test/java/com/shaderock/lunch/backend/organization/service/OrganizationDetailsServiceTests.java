@@ -56,9 +56,9 @@ class OrganizationDetailsServiceTests {
         .build();
 
     userDetails = AppUserDetails.builder()
-        .id(UUID.fromString("0b566090-69b2-48ef-ba4f-6788248bfdb7"))
         .email("user@dummy.email.test")
         .build();
+    userDetails.setId(UUID.fromString("0b566090-69b2-48ef-ba4f-6788248bfdb7"));
 
     appUser = AppUser.builder()
         .id(UUID.fromString("d18489b8-b959-4189-94c3-371a4d1498a2"))

@@ -60,9 +60,9 @@ class SupplierServiceTests {
         .build();
 
     supplier = Supplier.builder()
-        .id(UUID.fromString("25074925-f6b6-4c2a-a943-a5bdef2234f2"))
         .organizationDetails(organizationDetails)
         .build();
+    supplier.setId(UUID.fromString("25074925-f6b6-4c2a-a943-a5bdef2234f2"));
 
     supplierPreferences = SupplierPreferences.builder()
         .supplier(supplier)
@@ -76,10 +76,10 @@ class SupplierServiceTests {
     roles.add(Role.USER);
 
     userDetails = AppUserDetails.builder()
-        .id(UUID.randomUUID())
         .email("user@dummy.email.test")
         .roles(roles)
         .build();
+    userDetails.setId(UUID.randomUUID());
 
     AppUser appUser = AppUser.builder()
         .id(UUID.randomUUID())
@@ -142,11 +142,11 @@ class SupplierServiceTests {
     supplier.setWebsiteUrl(URI.create("http://first"));
     supplier.setMenuUrl(URI.create("http://second"));
     Supplier supplierUpdate = Supplier.builder()
-        .id(supplier.getId())
         .organizationDetails(supplier.getOrganizationDetails())
         .websiteUrl(URI.create("http://third"))
         .menuUrl(URI.create("http://fourth"))
         .build();
+    supplierUpdate.setId(supplier.getId());
     Supplier updatedSupplier = supplierService.update(supplierUpdate);
 
     assertNotNull(updatedSupplier);

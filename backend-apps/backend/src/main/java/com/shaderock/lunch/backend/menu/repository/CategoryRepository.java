@@ -1,13 +1,13 @@
 package com.shaderock.lunch.backend.menu.repository;
 
+import com.shaderock.lunch.backend.data.DeletableEntityRepository;
 import com.shaderock.lunch.backend.menu.model.entity.Category;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.data.repository.ListCrudRepository;
 
 
-public interface CategoryRepository extends ListCrudRepository<Category, UUID> {
+public interface CategoryRepository extends DeletableEntityRepository<Category> {
 
   List<Category> findByMenu_Supplier_IdAndIsPublicTrue(UUID id);
 

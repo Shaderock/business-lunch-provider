@@ -81,12 +81,12 @@ class CategoryControllerIntegrationTests {
         .build();
 
     supplier = Supplier.builder()
-        .id(UUID.randomUUID())
         .organizationDetails(OrganizationDetails.builder()
             .id(UUID.randomUUID())
             .name("supplier")
             .build())
         .build();
+    supplier.setId(UUID.randomUUID());
 
     SupplierPreferences supplierPreferences = SupplierPreferences.builder()
         .supplier(supplier)
@@ -106,10 +106,10 @@ class CategoryControllerIntegrationTests {
     roles.add(Role.SUPPLIER);
 
     AppUserDetails userDetails = AppUserDetails.builder()
-        .id(UUID.randomUUID())
         .email("user@dummy.email.test")
         .roles(roles)
         .build();
+    userDetails.setId(UUID.randomUUID());
 
     AppUser appUser = AppUser.builder()
         .id(UUID.randomUUID())
@@ -120,15 +120,15 @@ class CategoryControllerIntegrationTests {
     userDetails.setAppUser(appUser);
 
     category = Category.builder()
-        .id(UUID.randomUUID())
         .name("category")
         .menu(menu)
         .options(new HashSet<>())
         .build();
+    category.setId(UUID.randomUUID());
 
     categoryDto = new CategoryDto(category.getId(), category.getName(),
         category.getOptions().stream().map(Option::getId).collect(Collectors.toSet()),
-        category.isPublic(), category.getMenu().getId());
+        category.isPublic());
   }
 
   @Test

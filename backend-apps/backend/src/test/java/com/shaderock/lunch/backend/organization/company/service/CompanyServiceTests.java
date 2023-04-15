@@ -56,9 +56,10 @@ class CompanyServiceTests {
         .build();
 
     company = Company.builder()
-        .id(UUID.fromString("25074925-f6b6-4c2a-a943-a5bdef2234f2"))
         .organizationDetails(organizationDetails)
         .build();
+
+    company.setId(UUID.fromString("25074925-f6b6-4c2a-a943-a5bdef2234f2"));
 
     companyPreferences = CompanyPreferences.builder()
         .company(company)
@@ -72,10 +73,10 @@ class CompanyServiceTests {
     roles.add(Role.USER);
 
     userDetails = AppUserDetails.builder()
-        .id(UUID.randomUUID())
         .email("user@dummy.email.test")
         .roles(roles)
         .build();
+    userDetails.setId(UUID.randomUUID());
 
     AppUser appUser = AppUser.builder()
         .id(UUID.randomUUID())
@@ -140,12 +141,12 @@ class CompanyServiceTests {
   void UpdateCompany_OnNullCompany_CrudValidationExceptionThrown() {
     when(companyRepository.findById(any())).thenReturn(Optional.of(company));
     Company companyUpdate = Company.builder()
-        .id(company.getId())
         .preferences(new CompanyPreferences())
         .organizationDetails(new OrganizationDetails())
         .subscriptions(new HashSet<>())
         .subscriptionsRequests(new HashSet<>())
         .build();
+    companyUpdate.setId(company.getId());
 
     Company updated = companyService.update(companyUpdate);
 

@@ -27,7 +27,6 @@ public class CategoryService {
 
   private final CategoryRepository categoryRepository;
   private final CategoryMapper categoryMapper;
-
   private final FilterManager filterManager;
 
   @Transactional
@@ -105,14 +104,16 @@ public class CategoryService {
   }
 
   public List<CategoryDto> readAllDefault() {
-    return Stream.of(DefaultCategory.values()).map(defaultCategory -> new CategoryDto(null,
-        defaultCategory.getName(), Collections.emptySet(), true, null)).toList();
+    return Stream.of(DefaultCategory.values())
+        .map(defaultCategory ->
+            new CategoryDto(null, defaultCategory.getName(), Collections.emptySet(), true))
+        .toList();
   }
 
   public List<Category> readAllDeleted() {
-    filterManager.enableDeleteFilter();
+    filterManager.switchSoftDeleteFilterToReturnAll();
     List<Category> all = read();
-    filterManager.disableDeleteFilter();
+    filterManager.switchSoftDeleteFilterToReturnNotDeleted();
     return all;
   }
 

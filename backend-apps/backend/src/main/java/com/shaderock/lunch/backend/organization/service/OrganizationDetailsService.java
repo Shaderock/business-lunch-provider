@@ -86,9 +86,9 @@ public class OrganizationDetailsService {
   }
 
   public List<OrganizationDetails> readAllDeleted() {
-    filterManager.enableDeleteFilter();
+    filterManager.switchSoftDeleteFilterToReturnNotDeleted();
     List<OrganizationDetails> allDetails = readAll();
-    filterManager.disableDeleteFilter();
+    filterManager.switchSoftDeleteFilterToReturnAll();
     return allDetails;
   }
 

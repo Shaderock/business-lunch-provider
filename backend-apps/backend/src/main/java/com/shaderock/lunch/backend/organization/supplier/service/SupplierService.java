@@ -16,6 +16,7 @@ import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.model.type.Role;
 import com.shaderock.lunch.backend.utils.FilterManager;
 import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 import java.util.List;
 import java.util.UUID;
 import lombok.NonNull;
@@ -35,7 +36,7 @@ public class SupplierService {
   private final FilterManager filterManager;
   private final SupplierMapper supplierMapper;
 
-  @Transactional
+  @Transactional(TxType.REQUIRES_NEW)
   public Supplier register(@NonNull OrganizationRegistrationForm form,
       @NonNull AppUserDetails userDetails) {
     organizationDetailsService.validateOrganizationRegistration(form, userDetails);
@@ -86,9 +87,9 @@ public class SupplierService {
   }
 
   public List<Supplier> readAllDeleted() {
-    filterManager.enableDeleteFilter();
+    filterManager.switchSoftDeleteFilterToReturnNotDeleted();
     List<Supplier> all = readAll();
-    filterManager.disableDeleteFilter();
+    filterManager.switchSoftDeleteFilterToReturnAll();
     return all;
   }
 

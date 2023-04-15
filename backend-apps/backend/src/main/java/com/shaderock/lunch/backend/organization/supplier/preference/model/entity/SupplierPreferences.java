@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.organization.supplier.preference.model.entity;
 
-import static com.shaderock.lunch.backend.utils.FilterManager.DELETED_FILTER;
+import static com.shaderock.lunch.backend.utils.FilterManager.SOFT_DELETE_FILTER;
 
 import com.shaderock.lunch.backend.menu.price.model.entity.PriceForCategories;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
@@ -44,8 +44,8 @@ import org.hibernate.type.descriptor.java.BooleanJavaType;
 @Entity
 @Table(name = "supplier_preferences")
 @SQLDelete(sql = "UPDATE supplier_preferences SET deleted = true WHERE id=?")
-@FilterDef(name = DELETED_FILTER, parameters = @ParamDef(name = "isDeleted", type = BooleanJavaType.class))
-@Filter(name = DELETED_FILTER, condition = "deleted = :isDeleted")
+@FilterDef(name = SOFT_DELETE_FILTER, parameters = @ParamDef(name = "isDeleted", type = BooleanJavaType.class))
+@Filter(name = SOFT_DELETE_FILTER, condition = "deleted = :isDeleted")
 public class SupplierPreferences  {
 
   @Id
@@ -65,6 +65,9 @@ public class SupplierPreferences  {
 
   @Column
   private LocalTime deliveryPeriodEndTime;
+
+  @Column(nullable = false)
+  private boolean isPublic = false;
 
   @Column(columnDefinition = "int default 1")
   private int minimumOrdersPerRequest;

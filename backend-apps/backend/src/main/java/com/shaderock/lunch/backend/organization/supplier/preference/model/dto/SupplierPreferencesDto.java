@@ -12,7 +12,7 @@ import java.util.UUID;
  * A DTO for the
  * {@link
  * com.shaderock.lunch.backend.organization.supplier.preference.model.entity.SupplierPreferences}
- * entity
+ * BaseEntity
  */
 public record SupplierPreferencesDto(UUID id, UUID supplierId,
                                      Duration requestOffset, LocalTime deliveryPeriodStartTime,

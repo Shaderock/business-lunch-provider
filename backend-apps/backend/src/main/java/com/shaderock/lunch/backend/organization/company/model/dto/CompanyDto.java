@@ -6,7 +6,7 @@ import java.util.UUID;
 
 /**
  * A DTO for the {@link com.shaderock.lunch.backend.organization.company.model.entity.Company}
- * entity
+ * BaseEntity
  */
 public record CompanyDto(UUID id,
                          UUID organizationDetailsId,

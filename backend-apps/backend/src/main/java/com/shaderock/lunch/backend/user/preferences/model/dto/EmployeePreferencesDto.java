@@ -6,7 +6,7 @@ import java.util.UUID;
 import lombok.Builder;
 
 /**
- * A DTO for the {@link EmployeePreferences} entity
+ * A DTO for the {@link EmployeePreferences} BaseEntity
  */
 @Builder
 public record EmployeePreferencesDto(UUID id,

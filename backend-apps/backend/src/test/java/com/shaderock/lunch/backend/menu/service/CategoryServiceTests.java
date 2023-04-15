@@ -44,12 +44,12 @@ class CategoryServiceTests {
   @BeforeEach
   public void init() {
     supplier = Supplier.builder()
-        .id(UUID.randomUUID())
         .organizationDetails(OrganizationDetails.builder()
             .id(UUID.randomUUID())
             .name("supplier")
             .build())
         .build();
+    supplier.setId(UUID.randomUUID());
 
     Menu menu = Menu.builder()
         .id(UUID.randomUUID())
@@ -59,16 +59,20 @@ class CategoryServiceTests {
     supplier.setMenu(menu);
 
     category = Category.builder()
-        .id(UUID.randomUUID())
         .name("category")
         .menu(menu)
         .options(new HashSet<>())
         .build();
+    category.setId(UUID.randomUUID());
 
-    categoryDto = new CategoryDto(category.getId(), category.getName(),
-        category.getOptions().stream().map(Option::getId).collect(Collectors.toSet()),
-        category.isPublic(), category.getMenu().getId());
-
+    categoryDto =
+        new CategoryDto(
+            category.getId(),
+            category.getName(),
+            category.getOptions().stream()
+                .map(Option::getId)
+                .collect(Collectors.toSet()),
+            category.isPublic());
   }
 
   @Test

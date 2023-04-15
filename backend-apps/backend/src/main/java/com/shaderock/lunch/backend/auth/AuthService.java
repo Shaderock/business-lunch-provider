@@ -15,6 +15,7 @@ import com.shaderock.lunch.backend.user.repository.AppUserDetailsRepository;
 import com.shaderock.lunch.backend.user.repository.AppUserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 import jakarta.validation.Valid;
 import java.util.HashSet;
 import java.util.UUID;
@@ -52,7 +53,7 @@ public class AuthService {
     return jwtTokenService.generateToken(userDetails);
   }
 
-  @Transactional
+  @Transactional(TxType.REQUIRES_NEW)
   public void registerUser(@Valid UserRegistrationForm form, boolean sendConfirmationEmail) {
     LOGGER.info("Attempting to register user with email=[{}]", form.email());
     if (isUserRegistered(form.email())) {

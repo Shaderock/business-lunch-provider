@@ -7,14 +7,14 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A DTO for the {@link com.shaderock.lunch.backend.menu.model.entity.Category} entity
+ * A DTO for the {@link com.shaderock.lunch.backend.menu.model.entity.Category} BaseEntity
  */
 public record CategoryDto(UUID id,
                           @NotNull(message = "Name should be provided")
                           @NotBlank(message = "Name can't be blank")
                           String name,
                           Set<UUID> optionIds,
-                          boolean isPublic,
-                          UUID menuId) implements Serializable {
+                          @NotNull(message = "Visibility should be provided")
+                          Boolean isPublic) implements Serializable {
 
 }

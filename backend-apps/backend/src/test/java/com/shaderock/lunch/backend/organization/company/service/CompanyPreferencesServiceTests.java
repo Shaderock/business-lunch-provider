@@ -43,9 +43,9 @@ class CompanyPreferencesServiceTests {
   @BeforeEach
   public void init() {
     userDetails = AppUserDetails.builder()
-        .id(UUID.randomUUID())
         .email("user@dummy.email.test")
         .build();
+    userDetails.setId(UUID.randomUUID());
 
     preferences = CompanyPreferences.builder()
         .id(UUID.randomUUID())

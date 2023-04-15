@@ -17,4 +17,13 @@ public record UserRegistrationForm(
     @NotBlank(message = "Last name is empty")
     String lastName) implements Serializable {
 
+  @Override
+  public String toString() {
+    return "UserRegistrationForm{" +
+        "email='" + email + '\'' +
+        ", password='" + password + '\'' +
+        ", firstName='" + firstName + '\'' +
+        ", lastName='" + lastName + '\'' +
+        '}';
+  }
 }

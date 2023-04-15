@@ -1,11 +1,11 @@
 package com.shaderock.lunch.backend.organization.supplier.repository;
 
+import com.shaderock.lunch.backend.data.DeletableEntityRepository;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.data.repository.ListCrudRepository;
 
-public interface SupplierRepository extends ListCrudRepository<Supplier, UUID> {
+public interface SupplierRepository extends DeletableEntityRepository<Supplier> {
 
   Optional<Supplier> findByIdAndIsPublicTrue(UUID id);
 

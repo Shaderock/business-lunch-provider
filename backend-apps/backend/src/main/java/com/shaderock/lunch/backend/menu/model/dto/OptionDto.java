@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A DTO for the {@link com.shaderock.lunch.backend.menu.model.entity.Option} entity
+ * A DTO for the {@link com.shaderock.lunch.backend.menu.model.entity.Option} BaseEntity
  */
 public record OptionDto(UUID id,
                         String name,

@@ -18,7 +18,7 @@ public class ArchitectureTests {
       .layer("Controller").definedBy("..controller..")
       .layer("Service").definedBy("..service..")
       .layer("Repository").definedBy("..repository..")
-      .layer("Entities").definedBy("..entity..")
+      .layer("Entities").definedBy("..BaseEntity..")
 
       .whereLayer("Controller").mayNotBeAccessedByAnyLayer()
       .whereLayer("Service").mayOnlyBeAccessedByLayers("Controller", "Service")
