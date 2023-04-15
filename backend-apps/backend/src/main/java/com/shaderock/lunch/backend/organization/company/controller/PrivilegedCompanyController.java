@@ -25,8 +25,6 @@ public class PrivilegedCompanyController {
   @GetMapping
   public ResponseEntity<List<CompanyDto>> readAll() {
     List<Company> companies = companyService.readAll();
-    List<Company> deletedCompanies = companyService.readAllDeleted();
-    companies.addAll(deletedCompanies);
     return ResponseEntity.ok(companies.stream().map(companyMapper::toDto).toList());
   }
 }

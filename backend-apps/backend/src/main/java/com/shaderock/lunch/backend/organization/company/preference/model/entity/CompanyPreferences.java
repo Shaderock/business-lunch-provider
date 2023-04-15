@@ -1,7 +1,6 @@
 package com.shaderock.lunch.backend.organization.company.preference.model.entity;
 
-import static com.shaderock.lunch.backend.utils.FilterManager.SOFT_DELETE_FILTER;
-
+import com.shaderock.lunch.backend.data.VisibleEntity;
 import com.shaderock.lunch.backend.organization.company.model.entity.Company;
 import com.shaderock.lunch.backend.organization.company.preference.model.type.CompanyDiscountType;
 import jakarta.persistence.Column;
@@ -9,13 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,11 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.ToString.Exclude;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.type.descriptor.java.BooleanJavaType;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,17 +26,8 @@ import org.hibernate.type.descriptor.java.BooleanJavaType;
 @Builder
 @ToString
 @Entity
-@Table(name = "companies_preferences")
-@SQLDelete(sql = "UPDATE companies_preferences SET deleted = true WHERE id=?")
-@FilterDef(name = SOFT_DELETE_FILTER, parameters = @ParamDef(name = "isDeleted", type = BooleanJavaType.class))
-@Filter(name = SOFT_DELETE_FILTER, condition = "deleted = :isDeleted")
-public class CompanyPreferences  {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
-  @Column(nullable = false)
-  private boolean deleted = false;
+@SQLDelete(sql = "UPDATE company_preferences SET is_deleted = true WHERE id=?")
+public class CompanyPreferences extends VisibleEntity {
 
   @OneToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "company_id", nullable = false)

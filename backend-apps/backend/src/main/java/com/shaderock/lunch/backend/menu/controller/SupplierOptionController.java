@@ -60,7 +60,7 @@ public class SupplierOptionController {
   @GetMapping("/all")
   public ResponseEntity<List<OptionDto>> read(Principal principal) {
     Supplier supplier = supplierService.read(principal.getName());
-    List<Option> options = optionService.readAll(supplier);
+    List<Option> options = optionService.read(supplier);
     return ResponseEntity.ok(options.stream().map(optionMapper::toDto).toList());
   }
 

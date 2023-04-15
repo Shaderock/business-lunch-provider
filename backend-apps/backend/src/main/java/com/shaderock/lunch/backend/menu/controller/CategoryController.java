@@ -30,7 +30,7 @@ public class CategoryController {
 
   @GetMapping("/by-category-id")
   public ResponseEntity<CategoryDto> readPublic(@RequestParam @NotBlank final UUID id) {
-    Category category = categoryService.readPublic(id);
+    Category category = categoryService.read(id);
     CategoryDto categoryDto = categoryMapper.toDto(category);
     return ResponseEntity.ok(categoryDto);
   }
@@ -38,14 +38,14 @@ public class CategoryController {
   @GetMapping("/by-supplier-id")
   public ResponseEntity<List<CategoryDto>> readPublicBySupplierId(
       @RequestParam @NotBlank final UUID supplierId) {
-    Supplier supplier = supplierService.readPublic(supplierId);
-    List<Category> categories = categoryService.readPublic(supplier);
+    Supplier supplier = supplierService.read(supplierId);
+    List<Category> categories = categoryService.read(supplier);
     return ResponseEntity.ok(categories.stream().map(categoryMapper::toDto).toList());
   }
 
   @GetMapping("/all")
   public ResponseEntity<List<CategoryDto>> readAllPublic() {
-    List<CategoryDto> categoryDtos = categoryService.readPublic().stream()
+    List<CategoryDto> categoryDtos = categoryService.read().stream()
         .map(categoryMapper::toDto).toList();
 
     return ResponseEntity.ok(categoryDtos);

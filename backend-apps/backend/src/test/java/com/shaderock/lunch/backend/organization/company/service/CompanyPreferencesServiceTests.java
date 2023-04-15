@@ -9,7 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.shaderock.lunch.backend.doubles.FakeCompanyPreferenceRepository;
 import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import com.shaderock.lunch.backend.organization.company.preference.model.dto.CompanyPreferencesDto;
 import com.shaderock.lunch.backend.organization.company.preference.model.entity.CompanyPreferences;
@@ -48,10 +47,10 @@ class CompanyPreferencesServiceTests {
     userDetails.setId(UUID.randomUUID());
 
     preferences = CompanyPreferences.builder()
-        .id(UUID.randomUUID())
         .companyDiscountType(CompanyDiscountType.PERCENTAGE_FIRST)
         .deliveryAddress("Delivery address")
         .build();
+    preferences.setId(UUID.randomUUID());
 
     preferencesDto = new CompanyPreferencesDto(preferences.getId(), UUID.randomUUID(),
         preferences.getCompanyDiscountType(), preferences.getDeliveryAddress());
@@ -122,17 +121,6 @@ class CompanyPreferencesServiceTests {
       }
     });
 
-    CompanyPreferences created = companyPreferencesService1.create(preferences);
-    assertNotNull(created);
-  }
-
-  @Test
-  void CreatePreferences_OnValidPreferencesAndFakeRepository_ReturnsCreatedPreferences() {
-    FakeCompanyPreferenceRepository fakeRepository = new FakeCompanyPreferenceRepository();
-
-    CompanyPreferencesService companyPreferencesService1 = new CompanyPreferencesServiceImpl(
-        fakeRepository,
-        companyPreferencesMapper);
     CompanyPreferences created = companyPreferencesService1.create(preferences);
     assertNotNull(created);
   }

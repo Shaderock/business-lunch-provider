@@ -46,6 +46,7 @@ public interface OptionMapper {
         .toList();
   }
 
+  @Mapping(target = "isPublic", source = "public")
   @Mapping(target = "categoryId", source = "category.id")
   @Mapping(target = "employeesOrderIds", source = "employeesOrders")
   @Mapping(target = "optionDescriptionIds", source = "optionDescriptions")

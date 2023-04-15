@@ -33,7 +33,11 @@ public interface OrganizationDetailsMapper {
   default Set<AppUser> idsToUsers(Set<UUID> usersIds) {
     return Stream.ofNullable(usersIds)
         .flatMap(Collection::stream)
-        .map(id -> AppUser.builder().id(id).build())
+        .map(id -> {
+          AppUser user = new AppUser();
+          user.setId(id);
+          return user;
+        })
         .collect(Collectors.toSet());
   }
 }

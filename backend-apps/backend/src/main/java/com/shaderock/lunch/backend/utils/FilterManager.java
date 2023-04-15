@@ -19,19 +19,19 @@ public class FilterManager {
 
   private final EntityManager entityManager;
 
-  public void switchSoftDeleteFilterToReturnNotDeleted() {
+  public void returnNotDeleted() {
     switchBooleanFilter(SOFT_DELETE_FILTER, SOFT_DELETE_FILTER_PARAM_NAME, false);
   }
 
-  public void switchVisibilityFilterToReturnPublic() {
+  public void returnPublic() {
     switchBooleanFilter(VISIBILITY_FILTER, VISIBILITY_FILTER_PARAM_NAME, true);
   }
 
-  public void switchSoftDeleteFilterToReturnAll() {
+  public void ignoreDeleted() {
     disableFilter(SOFT_DELETE_FILTER);
   }
 
-  public void switchVisibilityFilterToReturnAll() {
+  public void ignoreVisibility() {
     disableFilter(VISIBILITY_FILTER);
   }
 

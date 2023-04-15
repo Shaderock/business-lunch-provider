@@ -84,13 +84,6 @@ public class CompanyService {
     return companyRepository.findAll();
   }
 
-  public List<Company> readAllDeleted() {
-    filterManager.switchSoftDeleteFilterToReturnNotDeleted();
-    List<Company> all = readAll();
-    filterManager.switchSoftDeleteFilterToReturnAll();
-    return all;
-  }
-
   public Company read(@NonNull UUID companyId) {
     return companyRepository.findById(companyId).orElseThrow(() -> new CrudValidationException(
         String.format("Company(id=[%s] not found", companyId)));

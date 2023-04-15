@@ -52,12 +52,12 @@ class SupplierServiceTests {
 
   @BeforeEach
   public void init() {
-    organizationDetails = OrganizationDetails.builder()
-        .id(UUID.fromString("e9a4b5c5-1e9a-46b7-ae13-54cb2d7f815c"))
+    OrganizationDetails organizationDetails = OrganizationDetails.builder()
         .name("organization")
         .phone("+373777777")
         .email("organization@dummy.email.test")
         .build();
+    organizationDetails.setId(UUID.fromString("e9a4b5c5-1e9a-46b7-ae13-54cb2d7f815c"));
 
     supplier = Supplier.builder()
         .organizationDetails(organizationDetails)
@@ -82,10 +82,10 @@ class SupplierServiceTests {
     userDetails.setId(UUID.randomUUID());
 
     AppUser appUser = AppUser.builder()
-        .id(UUID.randomUUID())
         .userDetails(userDetails)
         .organizationDetails(organizationDetails)
         .build();
+    appUser.setId(UUID.randomUUID());
 
     userDetails.setAppUser(appUser);
   }

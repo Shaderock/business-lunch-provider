@@ -15,16 +15,6 @@ import org.mapstruct.MappingConstants.ComponentModel;
 
 @Mapper(componentModel = ComponentModel.SPRING)
 public interface SupplierPreferencesMapper {
-
-//  @Mapping(source = "priceForCategoriesIds", target = "priceForCategories")
-//  @Mapping(source = "orderCapacityId", target = "orderCapacity.id")
-//  @Mapping(source = "supplierId", target = "supplier.id")
-//  SupplierPreferences toEntity(SupplierPreferencesDto supplierPreferencesDto);
-
-//  @InheritInverseConfiguration(name = "toEntity")
-//  @Mapping(target = "supplierId", source = "supplier.id")
-//  SupplierPreferences toDto(SupplierPreferencesDto supplierPreferencesDto);
-
   @Mapping(target = "priceForCategoriesIds", source = "priceForCategories")
   @Mapping(target = "orderCapacityId", source = "orderCapacity.id")
   @Mapping(source = "supplier.id", target = "supplierId")

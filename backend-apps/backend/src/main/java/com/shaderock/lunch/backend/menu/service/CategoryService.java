@@ -9,7 +9,6 @@ import com.shaderock.lunch.backend.menu.repository.CategoryRepository;
 import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import com.shaderock.lunch.backend.messaging.exception.TransferableApplicationException;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
-import com.shaderock.lunch.backend.utils.FilterManager;
 import jakarta.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +26,6 @@ public class CategoryService {
 
   private final CategoryRepository categoryRepository;
   private final CategoryMapper categoryMapper;
-  private final FilterManager filterManager;
 
   @Transactional
   public Category create(@NonNull CategoryDto categoryDto, @NonNull Supplier supplier)
@@ -90,31 +88,11 @@ public class CategoryService {
     return categoryRepository.findByMenu_Supplier_Id(supplier.getId());
   }
 
-  public Category readPublic(@NonNull UUID id) {
-    return categoryRepository.findByIsPublicTrueAndId(id).orElseThrow(
-        () -> new CrudValidationException(String.format("Category(id=[%s]) not found", id)));
-  }
-
-  public List<Category> readPublic() {
-    return categoryRepository.findByIsPublicTrue();
-  }
-
-  public List<Category> readPublic(Supplier supplier) {
-    return categoryRepository.findByMenu_Supplier_IdAndIsPublicTrue(supplier.getId());
-  }
-
   public List<CategoryDto> readAllDefault() {
     return Stream.of(DefaultCategory.values())
         .map(defaultCategory ->
             new CategoryDto(null, defaultCategory.getName(), Collections.emptySet(), true))
         .toList();
-  }
-
-  public List<Category> readAllDeleted() {
-    filterManager.switchSoftDeleteFilterToReturnAll();
-    List<Category> all = read();
-    filterManager.switchSoftDeleteFilterToReturnNotDeleted();
-    return all;
   }
 
   @Transactional

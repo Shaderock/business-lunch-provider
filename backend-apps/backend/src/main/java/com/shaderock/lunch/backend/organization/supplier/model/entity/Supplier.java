@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.organization.supplier.model.entity;
 
-import com.shaderock.lunch.backend.data.DeletableEntity;
+import com.shaderock.lunch.backend.data.VisibleEntity;
 import com.shaderock.lunch.backend.menu.model.entity.Menu;
 import com.shaderock.lunch.backend.organization.company.model.entity.Company;
 import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
@@ -31,7 +31,7 @@ import org.hibernate.annotations.SQLDelete;
 @ToString
 @Entity
 @SQLDelete(sql = "UPDATE supplier SET is_deleted = true WHERE id=?")
-public class Supplier extends DeletableEntity {
+public class Supplier extends VisibleEntity {
 
   @Column
   private URI websiteUrl;
@@ -39,8 +39,6 @@ public class Supplier extends DeletableEntity {
   @Column
   private URI menuUrl;
 
-  @Column(nullable = false)
-  private boolean isPublic = false;
   @Exclude
   @OneToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "organization_details_id", nullable = false)

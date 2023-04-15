@@ -1,19 +1,17 @@
 package com.shaderock.lunch.backend.user.preferences.model.entity;
 
+import com.shaderock.lunch.backend.data.DeletableEntity;
 import com.shaderock.lunch.backend.user.model.entity.AppUser;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
 @Getter
 @Setter
@@ -21,11 +19,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class EmployeePreferences {
+@SQLDelete(sql = "UPDATE employee_preferences SET is_deleted = true WHERE id=?")
+public class EmployeePreferences extends DeletableEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
   @OneToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "notification_config_id", nullable = false)
   private EmployeeNotifications notificationConfig;

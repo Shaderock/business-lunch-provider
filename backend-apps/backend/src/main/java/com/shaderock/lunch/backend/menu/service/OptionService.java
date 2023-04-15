@@ -54,22 +54,13 @@ public class OptionService {
                 supplier.getId())));
   }
 
-  public Option readPublic(UUID id) {
-    return optionRepository.findByIdAndIsPublicTrue(id).orElseThrow(
-        () -> new CrudValidationException(String.format("Public Option(id=[%s]) not found", id)));
-  }
-
-  public List<Option> readPublic(Supplier supplier) {
-    return optionRepository.findByIsPublicTrueAndCategory_Menu_Supplier_Id(supplier.getId());
-  }
-
-  public List<Option> readPublic(Supplier supplier, Category category) {
-    return optionRepository.findByIsPublicTrueAndCategoryAndCategory_Menu_Supplier(category,
-        supplier);
-  }
-
-  public List<Option> readAll(Supplier supplier) {
+  public List<Option> read(Supplier supplier) {
     return optionRepository.findByCategory_Menu_Supplier_Id(supplier.getId());
+  }
+
+  public List<Option> read(Supplier supplier, Category category) {
+    return optionRepository.findByCategoryAndCategory_Menu_Supplier(category,
+        supplier);
   }
 
   public Option update(OptionDto optionDto, Supplier supplier) {

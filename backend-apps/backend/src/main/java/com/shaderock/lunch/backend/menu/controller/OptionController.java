@@ -31,7 +31,7 @@ public class OptionController {
 
   @GetMapping("/by-option-id")
   public ResponseEntity<OptionDto> read(@RequestParam @NotBlank final UUID id) {
-    Option option = optionService.readPublic(id);
+    Option option = optionService.read(id);
     return ResponseEntity.ok(optionMapper.toDto(option));
   }
 
@@ -40,17 +40,17 @@ public class OptionController {
       @RequestParam @NotBlank final UUID supplierId,
       @RequestParam @NotBlank final UUID categoryId) {
 
-    Supplier supplier = supplierService.readPublic(supplierId);
-    Category category = categoryService.readPublic(categoryId);
-    List<Option> options = optionService.readPublic(supplier, category);
+    Supplier supplier = supplierService.read(supplierId);
+    Category category = categoryService.read(categoryId);
+    List<Option> options = optionService.read(supplier, category);
     return ResponseEntity.ok(options.stream().map(optionMapper::toDto).toList());
   }
 
   @GetMapping("/by-supplier-id")
   public ResponseEntity<List<OptionDto>> readAllBySupplierId(
       @RequestParam @NotBlank final UUID supplierId) {
-    Supplier supplier = supplierService.readPublic(supplierId);
-    List<Option> options = optionService.readPublic(supplier);
+    Supplier supplier = supplierService.read(supplierId);
+    List<Option> options = optionService.read(supplier);
     return ResponseEntity.ok(options.stream().map(optionMapper::toDto).toList());
   }
 }

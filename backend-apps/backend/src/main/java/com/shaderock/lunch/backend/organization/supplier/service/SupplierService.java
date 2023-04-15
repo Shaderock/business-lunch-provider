@@ -14,7 +14,6 @@ import com.shaderock.lunch.backend.organization.supplier.preference.service.Supp
 import com.shaderock.lunch.backend.organization.supplier.repository.SupplierRepository;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.model.type.Role;
-import com.shaderock.lunch.backend.utils.FilterManager;
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
 import java.util.List;
@@ -33,7 +32,6 @@ public class SupplierService {
   private final OrganizationDetailsService organizationDetailsService;
   private final MenuService menuService;
   private final SupplierPreferencesService supplierPreferencesService;
-  private final FilterManager filterManager;
   private final SupplierMapper supplierMapper;
 
   @Transactional(TxType.REQUIRES_NEW)
@@ -82,26 +80,13 @@ public class SupplierService {
     return persistedSupplier;
   }
 
-  public List<Supplier> readAll() {
+  public List<Supplier> read() {
     return supplierRepository.findAll();
-  }
-
-  public List<Supplier> readAllDeleted() {
-    filterManager.switchSoftDeleteFilterToReturnNotDeleted();
-    List<Supplier> all = readAll();
-    filterManager.switchSoftDeleteFilterToReturnAll();
-    return all;
   }
 
   public Supplier read(@NonNull UUID supplierId) {
     return supplierRepository.findById(supplierId).orElseThrow(() -> new CrudValidationException(
         String.format("Supplier(id=[%s] not found", supplierId)));
-  }
-
-  public Supplier readPublic(@NonNull UUID supplierId) {
-    return supplierRepository.findByIdAndIsPublicTrue(supplierId)
-        .orElseThrow(() -> new CrudValidationException(
-            String.format("Public Supplier(id=[%s] not found", supplierId)));
   }
 
   public Supplier read(@NonNull String userEmail) {

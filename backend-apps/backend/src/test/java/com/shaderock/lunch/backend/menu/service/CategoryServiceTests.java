@@ -45,17 +45,16 @@ class CategoryServiceTests {
   public void init() {
     supplier = Supplier.builder()
         .organizationDetails(OrganizationDetails.builder()
-            .id(UUID.randomUUID())
             .name("supplier")
             .build())
         .build();
     supplier.setId(UUID.randomUUID());
 
     Menu menu = Menu.builder()
-        .id(UUID.randomUUID())
         .supplier(supplier)
         .categories(new HashSet<>())
         .build();
+    menu.setId(UUID.randomUUID());
     supplier.setMenu(menu);
 
     category = Category.builder()

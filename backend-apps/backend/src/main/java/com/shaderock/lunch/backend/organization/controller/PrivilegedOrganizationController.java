@@ -25,8 +25,6 @@ public class PrivilegedOrganizationController {
   @GetMapping
   public ResponseEntity<List<OrganizationDetailsDto>> readAll() {
     List<OrganizationDetails> details = organizationDetailsService.readAll();
-    List<OrganizationDetails> deletedDetails = organizationDetailsService.readAllDeleted();
-    details.addAll(deletedDetails);
     return ResponseEntity.ok(details.stream().map(organizationDetailsMapper::toDto).toList());
   }
 

@@ -14,7 +14,6 @@ public record OptionDto(UUID id,
                         Double price,
                         boolean isPublic,
                         Set<UUID> employeesOrderIds,
-                        List<UUID> optionDescriptionIds,
-                        UUID priceId) implements Serializable {
+                        List<UUID> optionDescriptionIds) implements Serializable {
 
 }

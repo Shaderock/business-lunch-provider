@@ -16,6 +16,7 @@ import org.mapstruct.MappingConstants.ComponentModel;
 @Mapper(componentModel = ComponentModel.SPRING)
 public interface SupplierMapper {
 
+  @Mapping(target = "isPublic", source = "public")
   @Mapping(target = "organizationDetailsId", source = "organizationDetails.id")
   @Mapping(target = "subscribersIds", source = "subscribers")
   @Mapping(target = "subscriptionsRequestsIds", source = "subscriptionsRequests")

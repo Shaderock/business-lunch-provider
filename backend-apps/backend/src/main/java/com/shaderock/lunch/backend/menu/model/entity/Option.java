@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.menu.model.entity;
 
-import com.shaderock.lunch.backend.data.DeletableEntity;
+import com.shaderock.lunch.backend.data.VisibleEntity;
 import com.shaderock.lunch.backend.user.order.model.entity.EmployeeOrder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,14 +28,13 @@ import org.hibernate.annotations.SQLDelete;
 @Entity
 @ToString
 @SQLDelete(sql = "UPDATE option SET is_deleted = true WHERE id=?")
-public class Option extends DeletableEntity {
+public class Option extends VisibleEntity {
 
   @Column
   private String name;
   @Column
   private Double price;
-  @Column(nullable = false)
-  private boolean isPublic = false;
+
   @ManyToMany(mappedBy = "options", fetch = FetchType.LAZY)
   @Exclude
   private Set<EmployeeOrder> employeesOrders;

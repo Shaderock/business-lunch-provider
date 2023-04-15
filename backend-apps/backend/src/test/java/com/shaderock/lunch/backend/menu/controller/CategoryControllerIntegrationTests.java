@@ -74,15 +74,14 @@ class CategoryControllerIntegrationTests {
     mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
     OrganizationDetails organizationDetails = OrganizationDetails.builder()
-        .id(UUID.fromString("e9a4b5c5-1e9a-46b7-ae13-54cb2d7f815c"))
         .name("organization")
         .phone("+373777777")
         .email("organization@dummy.email.test")
         .build();
+    organizationDetails.setId(UUID.fromString("e9a4b5c5-1e9a-46b7-ae13-54cb2d7f815c"));
 
     supplier = Supplier.builder()
         .organizationDetails(OrganizationDetails.builder()
-            .id(UUID.randomUUID())
             .name("supplier")
             .build())
         .build();
@@ -95,10 +94,10 @@ class CategoryControllerIntegrationTests {
     supplier.setPreferences(supplierPreferences);
 
     Menu menu = Menu.builder()
-        .id(UUID.randomUUID())
         .supplier(supplier)
         .categories(new HashSet<>())
         .build();
+    menu.setId(UUID.randomUUID());
     supplier.setMenu(menu);
 
     Set<Role> roles = new HashSet<>();
@@ -112,10 +111,10 @@ class CategoryControllerIntegrationTests {
     userDetails.setId(UUID.randomUUID());
 
     AppUser appUser = AppUser.builder()
-        .id(UUID.randomUUID())
         .userDetails(userDetails)
         .organizationDetails(organizationDetails)
         .build();
+    appUser.setId(UUID.randomUUID());
 
     userDetails.setAppUser(appUser);
 

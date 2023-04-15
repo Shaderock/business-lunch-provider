@@ -7,7 +7,6 @@ import com.shaderock.lunch.backend.organization.repository.OrganizationDetailsRe
 import com.shaderock.lunch.backend.organization.supplier.model.form.OrganizationRegistrationForm;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.model.type.Role;
-import com.shaderock.lunch.backend.utils.FilterManager;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 public class OrganizationDetailsService {
 
   private final OrganizationDetailsRepository organizationDetailsRepository;
-  private final FilterManager filterManager;
 
   public void validateOrganizationRegistration(@NonNull OrganizationRegistrationForm form,
       @NonNull AppUserDetails userDetails) {
@@ -83,13 +81,6 @@ public class OrganizationDetailsService {
 
   public List<OrganizationDetails> readAll() {
     return organizationDetailsRepository.findAll();
-  }
-
-  public List<OrganizationDetails> readAllDeleted() {
-    filterManager.switchSoftDeleteFilterToReturnNotDeleted();
-    List<OrganizationDetails> allDetails = readAll();
-    filterManager.switchSoftDeleteFilterToReturnAll();
-    return allDetails;
   }
 
   public OrganizationDetails read(@NonNull UUID id) {

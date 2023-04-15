@@ -48,12 +48,12 @@ class OrganizationDetailsServiceTests {
 
   @BeforeEach
   public void init() {
-    organizationDetails = OrganizationDetails.builder()
-        .id(UUID.fromString("e9a4b5c5-1e9a-46b7-ae13-54cb2d7f815c"))
+    OrganizationDetails organizationDetails = OrganizationDetails.builder()
         .name("organization")
         .phone("+373777777")
         .email("organization@dummy.email.test")
         .build();
+    organizationDetails.setId(UUID.fromString("e9a4b5c5-1e9a-46b7-ae13-54cb2d7f815c"));
 
     userDetails = AppUserDetails.builder()
         .email("user@dummy.email.test")
@@ -61,10 +61,10 @@ class OrganizationDetailsServiceTests {
     userDetails.setId(UUID.fromString("0b566090-69b2-48ef-ba4f-6788248bfdb7"));
 
     appUser = AppUser.builder()
-        .id(UUID.fromString("d18489b8-b959-4189-94c3-371a4d1498a2"))
         .userDetails(userDetails)
         .organizationDetails(organizationDetails)
         .build();
+    appUser.setId(UUID.fromString("d18489b8-b959-4189-94c3-371a4d1498a2"));
 
     userDetails.setAppUser(appUser);
 
@@ -193,12 +193,12 @@ class OrganizationDetailsServiceTests {
   @Test
   void UpdateOrganization_OnValidOrganizationPassed_ReturnsUpdatedOrganization() {
     OrganizationDetails detailsForUpdate = OrganizationDetails.builder()
-        .id(UUID.fromString("e9a4b5c5-1e9a-46b7-ae13-54cb2d7f815c"))
         .email("newemail@dummy.mail.test")
         .name("new name")
         .phone("+37388888888")
         .description("new description")
         .build();
+    detailsForUpdate.setId(UUID.fromString("e9a4b5c5-1e9a-46b7-ae13-54cb2d7f815c"));
 
     when(organizationDetailsRepository.findById(organizationDetails.getId())).thenReturn(
         Optional.of(organizationDetails));

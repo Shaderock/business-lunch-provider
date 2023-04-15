@@ -1,15 +1,12 @@
 package com.shaderock.lunch.backend.menu.model.entity;
 
+import com.shaderock.lunch.backend.data.BaseEntity;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.util.Set;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,11 +22,7 @@ import lombok.ToString.Exclude;
 @AllArgsConstructor
 @ToString
 @Entity
-public class Menu {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
+public class Menu extends BaseEntity {
 
   @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
   @Exclude
