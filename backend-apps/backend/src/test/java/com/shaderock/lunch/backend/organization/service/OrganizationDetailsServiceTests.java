@@ -39,6 +39,8 @@ class OrganizationDetailsServiceTests {
   private OrganizationDetailsRepository organizationDetailsRepository;
   @InjectMocks
   private OrganizationDetailsService organizationDetailsService;
+  @InjectMocks
+  private OrganizationDetailsValidationService organizationDetailsValidationService;
   @Mock
   private AppUserDetailsService appUserDetailsService;
   private OrganizationDetails organizationDetails;
@@ -79,7 +81,8 @@ class OrganizationDetailsServiceTests {
     userDetails.setRoles(Set.of(Role.COMPANY_ADMIN));
 
     assertThrows(CompanyRegistrationValidationException.class,
-        () -> organizationDetailsService.validateOrganizationRegistration(registrationForm,
+        () -> organizationDetailsValidationService.validateOrganizationRegistration(
+            registrationForm,
             userDetails));
   }
 
@@ -91,7 +94,8 @@ class OrganizationDetailsServiceTests {
     userDetails.setRoles(Set.of(Role.USER));
 
     assertDoesNotThrow(
-        () -> organizationDetailsService.validateOrganizationRegistration(registrationForm,
+        () -> organizationDetailsValidationService.validateOrganizationRegistration(
+            registrationForm,
             userDetails));
   }
 
@@ -151,7 +155,7 @@ class OrganizationDetailsServiceTests {
   void ReadAllOrganizations_OnOrganizationsExist_ReturnsListOfOrganizations() {
     when(organizationDetailsRepository.findAll()).thenReturn(List.of(organizationDetails));
 
-    List<OrganizationDetails> allDetails = organizationDetailsService.readAll();
+    List<OrganizationDetails> allDetails = organizationDetailsService.read();
 
     assertNotNull(allDetails);
   }

@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.user.model.entity;
 
-import com.shaderock.lunch.backend.data.DeletableEntity;
+import com.shaderock.lunch.backend.data.entity.DeletableEntity;
 import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferences;
 import jakarta.persistence.Entity;

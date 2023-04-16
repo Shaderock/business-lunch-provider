@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A DTO for the {@link com.shaderock.lunch.backend.menu.model.entity.Option} BaseEntity
+ * A DTO for the {@link com.shaderock.lunch.backend.menu.model.entity.Option}
  */
 public record OptionDto(UUID id,
                         String name,
@@ -14,6 +14,6 @@ public record OptionDto(UUID id,
                         Double price,
                         boolean isPublic,
                         Set<UUID> employeesOrderIds,
-                        List<UUID> optionDescriptionIds) implements Serializable {
+                        List<UUID> subOptionsIds) implements Serializable {
 
 }

@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.organization.company.model.entity;
 
-import com.shaderock.lunch.backend.data.DeletableEntity;
+import com.shaderock.lunch.backend.data.entity.DeletableEntity;
 import com.shaderock.lunch.backend.organization.company.preference.model.entity.CompanyPreferences;
 import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import java.util.Set;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,4 +45,14 @@ public class Company extends DeletableEntity {
   @ManyToMany(mappedBy = "subscriptionsRequests", fetch = FetchType.LAZY)
   @Exclude
   private Set<Supplier> subscriptionsRequests;
+
+  public Company(UUID id, OrganizationDetails organizationDetails,
+      CompanyPreferences preferences, Set<Supplier> subscriptions,
+      Set<Supplier> subscriptionsRequests) {
+    super(id);
+    this.organizationDetails = organizationDetails;
+    this.preferences = preferences;
+    this.subscriptions = subscriptions;
+    this.subscriptionsRequests = subscriptionsRequests;
+  }
 }

@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.user.model.entity;
 
-import com.shaderock.lunch.backend.data.DeletableEntity;
+import com.shaderock.lunch.backend.data.entity.DeletableEntity;
 import com.shaderock.lunch.backend.user.model.type.Role;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -11,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
 import java.util.Collection;
@@ -35,6 +36,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @ToString
 @Builder
 @Entity
+@Table(name = "app_user_details")
 @SQLDelete(sql = "UPDATE app_user_details SET is_deleted = true WHERE id=?")
 public class AppUserDetails extends DeletableEntity implements UserDetails {
 

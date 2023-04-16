@@ -5,6 +5,7 @@ import com.shaderock.lunch.backend.menu.service.MenuService;
 import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.organization.service.OrganizationDetailsService;
+import com.shaderock.lunch.backend.organization.service.OrganizationDetailsValidationService;
 import com.shaderock.lunch.backend.organization.supplier.mapper.SupplierMapper;
 import com.shaderock.lunch.backend.organization.supplier.model.dto.SupplierDto;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
@@ -33,11 +34,12 @@ public class SupplierService {
   private final MenuService menuService;
   private final SupplierPreferencesService supplierPreferencesService;
   private final SupplierMapper supplierMapper;
+  private final OrganizationDetailsValidationService organizationDetailsValidationService;
 
   @Transactional(TxType.REQUIRES_NEW)
   public Supplier register(@NonNull OrganizationRegistrationForm form,
       @NonNull AppUserDetails userDetails) {
-    organizationDetailsService.validateOrganizationRegistration(form, userDetails);
+    organizationDetailsValidationService.validateOrganizationRegistration(form, userDetails);
 
     OrganizationDetails organizationDetails = OrganizationDetails.builder()
         .name(form.name())

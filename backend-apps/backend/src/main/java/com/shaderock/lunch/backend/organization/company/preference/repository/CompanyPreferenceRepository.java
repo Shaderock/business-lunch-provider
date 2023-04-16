@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.organization.company.preference.repository;
 
-import com.shaderock.lunch.backend.data.VisibleEntityRepository;
+import com.shaderock.lunch.backend.data.repository.VisibleEntityRepository;
 import com.shaderock.lunch.backend.organization.company.preference.model.entity.CompanyPreferences;
 import java.util.Optional;
 import java.util.UUID;

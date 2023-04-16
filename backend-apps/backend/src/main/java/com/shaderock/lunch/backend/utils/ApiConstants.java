@@ -16,7 +16,6 @@ public class ApiConstants {
   public static final String REGISTER = API + "/register";
   public static final String CATEGORY = API + "/category";
   public static final String COMPANY = API + "/company";
-  public static final String COMPANY_PREFERENCES = COMPANY + "/preferences";
   public static final String SUPPLIER = API + "/supplier";
   public static final String OPTION = API + "/option";
   public static final String ORGANIZATION = API + "/organization";
@@ -24,4 +23,8 @@ public class ApiConstants {
   public static final String SUPPLIER_ADM_CATEGORY = SUPPLIER_ADM + "/category";
   public static final String SUPPLIER_ADM_OPTION = SUPPLIER_ADM + "/option";
   public static final String USER = API + "/user";
+  private static final String PREFERENCES = "/preferences";
+  public static final String COMPANY_PREFERENCES = COMPANY + PREFERENCES;
+  public static final String PUBLIC_SUPPLIER_PREFERENCES = SUPPLIER + PREFERENCES;
+  public static final String SUPPLIER_ADM_PREFERENCES = SUPPLIER_ADM + PREFERENCES;
 }

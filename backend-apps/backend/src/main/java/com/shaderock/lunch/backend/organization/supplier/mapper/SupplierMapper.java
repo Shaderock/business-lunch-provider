@@ -20,7 +20,6 @@ public interface SupplierMapper {
   @Mapping(target = "organizationDetailsId", source = "organizationDetails.id")
   @Mapping(target = "subscribersIds", source = "subscribers")
   @Mapping(target = "subscriptionsRequestsIds", source = "subscriptionsRequests")
-  @Mapping(target = "menuId", source = "menu.id")
   @Mapping(target = "preferencesId", source = "preferences.id")
   SupplierDto toDto(Supplier supplier);
 

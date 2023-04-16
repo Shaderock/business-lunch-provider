@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.menu.repository;
 
-import com.shaderock.lunch.backend.data.VisibleEntityRepository;
+import com.shaderock.lunch.backend.data.repository.VisibleEntityRepository;
 import com.shaderock.lunch.backend.menu.model.entity.Category;
 import java.util.List;
 import java.util.Optional;

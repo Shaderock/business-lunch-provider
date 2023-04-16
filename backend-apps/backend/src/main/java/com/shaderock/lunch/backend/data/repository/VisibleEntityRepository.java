@@ -1,5 +1,6 @@
-package com.shaderock.lunch.backend.data;
+package com.shaderock.lunch.backend.data.repository;
 
+import com.shaderock.lunch.backend.data.entity.VisibleEntity;
 import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean

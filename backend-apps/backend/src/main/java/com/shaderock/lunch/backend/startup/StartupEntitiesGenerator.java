@@ -3,12 +3,19 @@ package com.shaderock.lunch.backend.startup;
 import com.shaderock.lunch.backend.auth.AuthService;
 import com.shaderock.lunch.backend.auth.registration.model.UserRegistrationForm;
 import com.shaderock.lunch.backend.organization.company.service.CompanyService;
+import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
+import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.model.form.OrganizationRegistrationForm;
+import com.shaderock.lunch.backend.organization.supplier.preference.model.entity.SupplierPreferences;
+import com.shaderock.lunch.backend.organization.supplier.preference.model.type.OrderType;
 import com.shaderock.lunch.backend.organization.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.user.AppUserDetailsService;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.model.type.Role;
 import jakarta.transaction.Transactional;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +58,20 @@ public class StartupEntitiesGenerator implements
     try {
       supplierService.register(new OrganizationRegistrationForm(Organization.SUPPLIER.name),
           appUserDetailsService.loadUserByUsername(Organization.SUPPLIER.adminEmail));
+      Supplier supplier = supplierService.read(Organization.SUPPLIER.adminEmail);
+      supplier.setPublic(true);
+
+      OrganizationDetails organizationDetails = supplier.getOrganizationDetails();
+      organizationDetails.setEmail(Organization.SUPPLIER.adminEmail);
+      organizationDetails.setPhone("+37377777777");
+      organizationDetails.setDescription("A dummy supplier");
+
+      SupplierPreferences preferences = supplier.getPreferences();
+      preferences.setDeliveryPeriodStartTime(LocalTime.of(10, 0));
+      preferences.setDeliveryPeriodEndTime(LocalTime.of(18, 0));
+      preferences.setMinimumOrdersPerCompanyRequest(2);
+      preferences.setOrderType(OrderType.UNLIMITED_OPTIONS);
+      preferences.setRequestOffset(Duration.of(2, ChronoUnit.HOURS));
     } catch (Exception e) {
       LOGGER.error("Couldn't generate default supplier. Reason: {}", e.getMessage());
     }

@@ -1,6 +1,7 @@
 package com.shaderock.lunch.backend.organization.supplier.preference.service;
 
 import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
+import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.preference.model.dto.SupplierPreferencesDto;
 import com.shaderock.lunch.backend.organization.supplier.preference.model.entity.SupplierPreferences;
 import com.shaderock.lunch.backend.organization.supplier.preference.model.mapper.SupplierPreferencesMapper;
@@ -37,23 +38,42 @@ public class SupplierPreferencesService {
             userDetails.getEmail())));
   }
 
+  public SupplierPreferences read(@NonNull Supplier supplier) {
+    return supplierPreferencesRepository.findBySupplier(supplier)
+        .orElseThrow(() -> new CrudValidationException(
+            String.format("SupplierPreferences not found for Supplier(id=[%s])",
+                supplier.getId())));
+  }
+
   public SupplierPreferences update(@NonNull SupplierPreferencesDto supplierPreferencesDto,
       @NonNull AppUserDetails userDetails) {
     return update(supplierPreferencesMapper.toEntity(supplierPreferencesDto), userDetails);
   }
 
+  // todo validate for nulls. you can't set something back to null
+  // todo validate whether there are no invalid options if order type is changed
   @Transactional
   public SupplierPreferences update(@NonNull SupplierPreferences preferences,
       @NonNull AppUserDetails userDetails) {
     SupplierPreferences persisted = read(userDetails);
+
     persisted.setRequestOffset(preferences.getRequestOffset());
     persisted.setDeliveryPeriodStartTime(preferences.getDeliveryPeriodStartTime());
     persisted.setDeliveryPeriodEndTime(preferences.getDeliveryPeriodEndTime());
-    persisted.setMinimumOrdersPerRequest(preferences.getMinimumOrdersPerRequest());
+    persisted.setMinimumOrdersPerCompanyRequest(preferences.getMinimumOrdersPerCompanyRequest());
     persisted.setOrderType(preferences.getOrderType());
-    persisted.setOrderCapacity(preferences.getOrderCapacity());
 
     return persisted;
+  }
+
+  public SupplierPreferences update(@NonNull SupplierPreferencesDto supplierPreferencesDto,
+      @NonNull Supplier supplier) {
+    return update(supplierPreferencesDto,
+        supplier.getOrganizationDetails().getUsers().stream()
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException(
+                String.format("Supplier(id=[%s]) has no users", supplier.getId())))
+            .getUserDetails());
   }
 
   @Transactional

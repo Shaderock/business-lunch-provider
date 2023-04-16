@@ -6,10 +6,10 @@ import com.shaderock.lunch.backend.organization.company.preference.model.entity.
 import com.shaderock.lunch.backend.organization.company.repository.CompanyRepository;
 import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.organization.service.OrganizationDetailsService;
+import com.shaderock.lunch.backend.organization.service.OrganizationDetailsValidationService;
 import com.shaderock.lunch.backend.organization.supplier.model.form.OrganizationRegistrationForm;
 import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
 import com.shaderock.lunch.backend.user.model.type.Role;
-import com.shaderock.lunch.backend.utils.FilterManager;
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
 import java.util.List;
@@ -27,20 +27,18 @@ public class CompanyService {
   private final CompanyRepository companyRepository;
   private final OrganizationDetailsService organizationDetailsService;
   private final CompanyPreferencesServiceImpl companyPreferencesService;
-  private final FilterManager filterManager;
+  private final OrganizationDetailsValidationService organizationDetailsValidationService;
 
   @Transactional(TxType.REQUIRES_NEW)
   public Company register(@NonNull OrganizationRegistrationForm form,
       @NonNull AppUserDetails userDetails) {
-    organizationDetailsService.validateOrganizationRegistration(form, userDetails);
+    organizationDetailsValidationService.validateOrganizationRegistration(form, userDetails);
 
     OrganizationDetails organizationDetails = OrganizationDetails.builder()
         .name(form.name())
         .build();
 
-    Company persistedCompany = create(organizationDetails, userDetails);
-
-    return persistedCompany;
+    return create(organizationDetails, userDetails);
   }
 
   @Transactional

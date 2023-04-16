@@ -5,6 +5,7 @@ import com.shaderock.lunch.backend.menu.controller.SupplierOptionController;
 import com.shaderock.lunch.backend.organization.company.controller.PrivilegedCompanyController;
 import com.shaderock.lunch.backend.organization.controller.PrivilegedOrganizationController;
 import com.shaderock.lunch.backend.organization.supplier.controller.PrivilegedSupplierController;
+import com.shaderock.lunch.backend.organization.supplier.preference.controller.SupplierPreferencesController;
 import com.shaderock.lunch.backend.user.PrivilegedUserController;
 import com.shaderock.lunch.backend.utils.FilterManager;
 import java.util.List;
@@ -22,7 +23,8 @@ public class JpaFilterAspect {
   private final FilterManager filterManager;
   private final List<Class<?>> ignoreVisibilityControllers = List.of(
       SupplierCategoryController.class,
-      SupplierOptionController.class);
+      SupplierOptionController.class,
+      SupplierPreferencesController.class);
   private final List<Class<?>> ignoreDeletedControllers = List.of();
 
   private final List<Class<?>> ignoreFiltersControllers = List.of(

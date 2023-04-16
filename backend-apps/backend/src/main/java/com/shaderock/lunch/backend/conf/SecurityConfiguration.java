@@ -42,7 +42,7 @@ public class SecurityConfiguration {
         .requestMatchers("/api/login/**", "/api/register/**", "/api/food/**").permitAll()
         .requestMatchers("/api/sys-adm/**").hasRole(Role.SYSTEM_ADMIN.getName())
         .requestMatchers("/api/supplier-adm/**").hasRole(Role.SUPPLIER.getName())
-        .requestMatchers("/api/company-adm/**").hasRole(Role.SUPPLIER.getName())
+        .requestMatchers("/api/company-adm/**").hasRole(Role.COMPANY_ADMIN.getName())
         .requestMatchers("/actuator/**").authenticated().and().httpBasic()
         .and()
         .authorizeHttpRequests()

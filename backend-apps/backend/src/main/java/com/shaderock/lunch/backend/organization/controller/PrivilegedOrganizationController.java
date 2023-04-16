@@ -24,7 +24,7 @@ public class PrivilegedOrganizationController {
 
   @GetMapping
   public ResponseEntity<List<OrganizationDetailsDto>> readAll() {
-    List<OrganizationDetails> details = organizationDetailsService.readAll();
+    List<OrganizationDetails> details = organizationDetailsService.read();
     return ResponseEntity.ok(details.stream().map(organizationDetailsMapper::toDto).toList());
   }
 

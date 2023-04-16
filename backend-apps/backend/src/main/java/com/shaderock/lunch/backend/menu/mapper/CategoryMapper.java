@@ -34,11 +34,7 @@ public interface CategoryMapper {
   default Set<Option> idsToOptions(Set<UUID> optionsIds) {
     return Stream.ofNullable(optionsIds)
         .flatMap(Collection::stream)
-        .map(id -> {
-          Option option = new Option();
-          option.setId(id);
-          return option;
-        })
+        .map(id -> Option.builder().id(id).build())
         .collect(Collectors.toSet());
   }
 }

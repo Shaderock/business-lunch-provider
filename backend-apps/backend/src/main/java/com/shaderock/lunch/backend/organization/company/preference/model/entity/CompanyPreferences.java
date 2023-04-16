@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.organization.company.preference.model.entity;
 
-import com.shaderock.lunch.backend.data.VisibleEntity;
+import com.shaderock.lunch.backend.data.entity.VisibleEntity;
 import com.shaderock.lunch.backend.organization.company.model.entity.Company;
 import com.shaderock.lunch.backend.organization.company.preference.model.type.CompanyDiscountType;
 import jakarta.persistence.Column;

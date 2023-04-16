@@ -1,10 +1,11 @@
-package com.shaderock.lunch.backend.data;
+package com.shaderock.lunch.backend.data.entity;
 
 import static com.shaderock.lunch.backend.utils.FilterManager.SOFT_DELETE_FILTER;
 import static com.shaderock.lunch.backend.utils.FilterManager.SOFT_DELETE_FILTER_PARAM_NAME;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,4 +31,12 @@ public class DeletableEntity extends BaseEntity {
   @Column(nullable = false, name = "is_deleted")
   protected boolean isDeleted = false;
 
+  public DeletableEntity(UUID id, boolean isDeleted) {
+    super(id);
+    this.isDeleted = isDeleted;
+  }
+
+  public DeletableEntity(UUID id) {
+    super(id);
+  }
 }

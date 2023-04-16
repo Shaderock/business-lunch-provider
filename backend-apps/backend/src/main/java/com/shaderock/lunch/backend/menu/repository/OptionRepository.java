@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.menu.repository;
 
-import com.shaderock.lunch.backend.data.VisibleEntityRepository;
+import com.shaderock.lunch.backend.data.repository.VisibleEntityRepository;
 import com.shaderock.lunch.backend.menu.model.entity.Category;
 import com.shaderock.lunch.backend.menu.model.entity.Option;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;

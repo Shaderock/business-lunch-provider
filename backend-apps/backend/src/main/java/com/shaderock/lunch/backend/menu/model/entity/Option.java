@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.menu.model.entity;
 
-import com.shaderock.lunch.backend.data.VisibleEntity;
+import com.shaderock.lunch.backend.data.entity.VisibleEntity;
 import com.shaderock.lunch.backend.user.order.model.entity.EmployeeOrder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +23,6 @@ import org.hibernate.annotations.SQLDelete;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -34,6 +34,8 @@ public class Option extends VisibleEntity {
   private String name;
   @Column
   private Double price;
+  @Column
+  private String description;
 
   @ManyToMany(mappedBy = "options", fetch = FetchType.LAZY)
   @Exclude
@@ -46,5 +48,17 @@ public class Option extends VisibleEntity {
 
   @OneToMany(mappedBy = "option", fetch = FetchType.LAZY)
   @Exclude
-  private List<OptionDescription> optionDescriptions;
+  private List<SubOptions> subOptions;
+
+  @Builder
+  public Option(UUID id, boolean isPublic, String name, Double price, String description,
+      Set<EmployeeOrder> employeesOrders, Category category, List<SubOptions> subOptions) {
+    super(id, isPublic);
+    this.name = name;
+    this.price = price;
+    this.description = description;
+    this.employeesOrders = employeesOrders;
+    this.category = category;
+    this.subOptions = subOptions;
+  }
 }

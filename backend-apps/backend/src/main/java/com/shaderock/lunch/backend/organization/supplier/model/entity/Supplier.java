@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.organization.supplier.model.entity;
 
-import com.shaderock.lunch.backend.data.VisibleEntity;
+import com.shaderock.lunch.backend.data.entity.VisibleEntity;
 import com.shaderock.lunch.backend.menu.model.entity.Menu;
 import com.shaderock.lunch.backend.organization.company.model.entity.Company;
 import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import java.net.URI;
 import java.util.Set;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -66,4 +67,17 @@ public class Supplier extends VisibleEntity {
   @ManyToMany(fetch = FetchType.LAZY)
   @Exclude
   private Set<Company> subscriptionsRequests;
+
+  public Supplier(UUID id, boolean isPublic, URI websiteUrl, URI menuUrl,
+      OrganizationDetails organizationDetails, Menu menu, SupplierPreferences preferences,
+      Set<Company> subscribers, Set<Company> subscriptionsRequests) {
+    super(id, isPublic);
+    this.websiteUrl = websiteUrl;
+    this.menuUrl = menuUrl;
+    this.organizationDetails = organizationDetails;
+    this.menu = menu;
+    this.preferences = preferences;
+    this.subscribers = subscribers;
+    this.subscriptionsRequests = subscriptionsRequests;
+  }
 }

@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.menu.model.entity;
 
-import com.shaderock.lunch.backend.data.BaseEntity;
+import com.shaderock.lunch.backend.data.entity.BaseEntity;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

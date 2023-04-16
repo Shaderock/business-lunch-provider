@@ -15,6 +15,8 @@ import org.mapstruct.MappingConstants.ComponentModel;
 
 @Mapper(componentModel = ComponentModel.SPRING)
 public interface SupplierPreferencesMapper {
+
+  @Mapping(target = "minimumOrdersPerCompanyRequest", source = "minimumOrdersPerCompanyRequest")
   @Mapping(target = "priceForCategoriesIds", source = "priceForCategories")
   @Mapping(target = "orderCapacityId", source = "orderCapacity.id")
   @Mapping(source = "supplier.id", target = "supplierId")

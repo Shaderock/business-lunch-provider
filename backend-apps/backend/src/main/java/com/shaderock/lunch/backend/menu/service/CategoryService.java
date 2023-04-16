@@ -9,6 +9,7 @@ import com.shaderock.lunch.backend.menu.repository.CategoryRepository;
 import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import com.shaderock.lunch.backend.messaging.exception.TransferableApplicationException;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
+import com.shaderock.lunch.backend.organization.supplier.service.SupplierValidationService;
 import jakarta.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +27,7 @@ public class CategoryService {
 
   private final CategoryRepository categoryRepository;
   private final CategoryMapper categoryMapper;
+  private final SupplierValidationService supplierValidationService;
 
   @Transactional
   public Category create(@NonNull CategoryDto categoryDto, @NonNull Supplier supplier)
@@ -55,6 +57,10 @@ public class CategoryService {
   }
 
   private void validateCreate(Category category, Supplier supplier) {
+    if (category.isPublic()) {
+      supplierValidationService.validateCanCreatePublicCategories(supplier);
+    }
+
     categoryRepository.findByNameAndMenu_Supplier_Id(
         category.getName(), supplier.getId()).ifPresent(c -> {
       throw new CrudValidationException(String.format(
@@ -111,7 +117,10 @@ public class CategoryService {
     LOGGER.info("Attempting to update [{}]", categoryToUpdate);
 
     Category persistedCategory = read(categoryToUpdate.getId(), supplier);
-    validateVisibility(persistedCategory, persistedCategory.getMenu().getSupplier());
+    if (categoryToUpdate.isPublic()) {
+      supplierValidationService.validateCanCreatePublicCategories(supplier);
+      validateVisibility(persistedCategory, persistedCategory.getMenu().getSupplier());
+    }
 
     persistedCategory.setName(categoryToUpdate.getName());
     persistedCategory.setPublic(categoryToUpdate.isPublic());

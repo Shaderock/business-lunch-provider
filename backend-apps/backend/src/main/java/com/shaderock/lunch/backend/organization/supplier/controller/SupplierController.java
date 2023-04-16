@@ -11,8 +11,10 @@ import com.shaderock.lunch.backend.utils.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,5 +37,12 @@ public class SupplierController {
     Supplier registeredSupplier = supplierService.register(form, userDetails);
     SupplierDto responseSupplier = supplierMapper.toDto(registeredSupplier);
     return ResponseEntity.ok(responseSupplier);
+  }
+
+  @GetMapping("/all")
+  public ResponseEntity<List<SupplierDto>> readAll() {
+    List<Supplier> suppliers = supplierService.read();
+
+    return ResponseEntity.ok(suppliers.stream().map(supplierMapper::toDto).toList());
   }
 }

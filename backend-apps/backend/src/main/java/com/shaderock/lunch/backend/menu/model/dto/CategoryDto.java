@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A DTO for the {@link com.shaderock.lunch.backend.menu.model.entity.Category} BaseEntity
+ * A DTO for the {@link com.shaderock.lunch.backend.menu.model.entity.Category}
  */
 public record CategoryDto(UUID id,
                           @NotNull(message = "Name should be provided")

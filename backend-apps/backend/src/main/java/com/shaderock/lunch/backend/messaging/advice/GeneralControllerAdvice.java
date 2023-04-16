@@ -38,7 +38,7 @@ public class GeneralControllerAdvice {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorMessage handleKnownException(CrudValidationException e) {
     LOGGER.warn("A validation exception happened, message=[{}]", e.getMessage());
-    return new ErrorMessage(true, e.getMessage());
+    return new ErrorMessage(true, e.getMessage(), e.getErrors());
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)

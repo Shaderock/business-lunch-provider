@@ -1,10 +1,9 @@
 package com.shaderock.lunch.backend.organization.supplier.preference.model.entity;
 
-import com.shaderock.lunch.backend.data.DeletableEntity;
+import com.shaderock.lunch.backend.data.entity.DeletableEntity;
 import com.shaderock.lunch.backend.menu.price.model.entity.PriceForCategories;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
 import com.shaderock.lunch.backend.organization.supplier.preference.model.type.OrderType;
-import com.shaderock.lunch.backend.organization.supplier.preference.model.type.PriceByType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -49,20 +48,16 @@ public class SupplierPreferences extends DeletableEntity {
   private LocalTime deliveryPeriodEndTime;
 
   @Column(columnDefinition = "int default 1")
-  private int minimumOrdersPerRequest;
+  private int minimumOrdersPerCompanyRequest;
 
   @Column
   @Enumerated(EnumType.STRING)
   private OrderType orderType;
 
-  @Column
-  @Enumerated(EnumType.STRING)
-  private PriceByType priceByType;
-
   @OneToMany(mappedBy = "supplierPreferences", fetch = FetchType.LAZY)
   @Exclude
   private Set<PriceForCategories> priceForCategories;
 
-  @OneToOne(mappedBy = "preferenceConfig")
+  @OneToOne(mappedBy = "preferences")
   private OrderCapacity orderCapacity;
 }

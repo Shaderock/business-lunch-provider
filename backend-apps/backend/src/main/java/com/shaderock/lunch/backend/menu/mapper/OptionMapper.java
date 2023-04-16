@@ -2,7 +2,7 @@ package com.shaderock.lunch.backend.menu.mapper;
 
 import com.shaderock.lunch.backend.menu.model.dto.OptionDto;
 import com.shaderock.lunch.backend.menu.model.entity.Option;
-import com.shaderock.lunch.backend.menu.model.entity.OptionDescription;
+import com.shaderock.lunch.backend.menu.model.entity.SubOptions;
 import com.shaderock.lunch.backend.user.order.model.entity.EmployeeOrder;
 import java.util.Collection;
 import java.util.List;
@@ -32,24 +32,24 @@ public interface OptionMapper {
         .collect(Collectors.toSet());
   }
 
-  default List<UUID> optionDescriptionsToIds(List<OptionDescription> optionDescriptions) {
-    return Stream.ofNullable(optionDescriptions)
+  default List<UUID> optionDescriptionsToIds(List<SubOptions> subOptions) {
+    return Stream.ofNullable(subOptions)
         .flatMap(Collection::stream)
-        .map(OptionDescription::getId)
+        .map(SubOptions::getId)
         .toList();
   }
 
-  default List<OptionDescription> idsToOptionDescriptions(List<UUID> optionDescriptionsIds) {
-    return Stream.ofNullable(optionDescriptionsIds)
+  default List<SubOptions> idsToOptionDescriptions(List<UUID> subOptionsIds) {
+    return Stream.ofNullable(subOptionsIds)
         .flatMap(Collection::stream)
-        .map(id -> OptionDescription.builder().id(id).build())
+        .map(id -> SubOptions.builder().id(id).build())
         .toList();
   }
 
   @Mapping(target = "isPublic", source = "public")
   @Mapping(target = "categoryId", source = "category.id")
   @Mapping(target = "employeesOrderIds", source = "employeesOrders")
-  @Mapping(target = "optionDescriptionIds", source = "optionDescriptions")
+  @Mapping(target = "subOptionsIds", source = "subOptions")
   OptionDto toDto(Option option);
 
   @InheritInverseConfiguration

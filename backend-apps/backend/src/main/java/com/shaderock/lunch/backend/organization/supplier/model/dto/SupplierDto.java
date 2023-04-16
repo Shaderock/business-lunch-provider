@@ -7,7 +7,7 @@ import java.util.UUID;
 
 /**
  * A DTO for the {@link com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier}
- * BaseEntity
+ * entity
  */
 public record SupplierDto(UUID id,
                           UUID organizationDetailsId,
@@ -16,7 +16,6 @@ public record SupplierDto(UUID id,
                           boolean isPublic,
                           Set<UUID> subscribersIds,
                           Set<UUID> subscriptionsRequestsIds,
-                          UUID menuId,
                           UUID preferencesId) implements Serializable {
 
 }

@@ -7,6 +7,7 @@ import com.shaderock.lunch.backend.menu.model.entity.Option;
 import com.shaderock.lunch.backend.menu.repository.OptionRepository;
 import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
 import com.shaderock.lunch.backend.organization.supplier.model.entity.Supplier;
+import com.shaderock.lunch.backend.organization.supplier.service.SupplierValidationService;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +22,7 @@ public class OptionService {
 
   private final OptionRepository optionRepository;
   private final OptionMapper optionMapper;
+  private final SupplierValidationService supplierValidationService;
 
   @Transactional
   public Option create(OptionDto optionDto, Category category) {
@@ -30,6 +32,9 @@ public class OptionService {
 
   @Transactional
   public Option create(Option option, Category category) {
+    if (option.isPublic()) {
+      supplierValidationService.validateCanCreatePublicOptions(category.getMenu().getSupplier());
+    }
     validateVisibility(option, category);
 
     option.setCategory(category);
@@ -71,6 +76,9 @@ public class OptionService {
   @Transactional
   public Option update(Option option, Supplier supplier) {
     Option persistedOption = read(option.getId(), supplier);
+    if (option.isPublic()) {
+      supplierValidationService.validateCanCreatePublicOptions(supplier);
+    }
     validateVisibility(persistedOption, persistedOption.getCategory());
     persistedOption.setName(option.getName());
     persistedOption.setPublic(option.isPublic());
