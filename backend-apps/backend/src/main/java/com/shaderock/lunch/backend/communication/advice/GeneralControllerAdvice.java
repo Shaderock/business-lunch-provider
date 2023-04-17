@@ -11,7 +11,9 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,6 +27,20 @@ public class GeneralControllerAdvice {
   public ErrorMessage handleAnyException(Exception e) {
     LOGGER.error("An exception happened", e);
     return new ErrorMessage(false, "Something went wrong");
+  }
+
+  @ExceptionHandler(MissingServletRequestParameterException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorMessage handleMissedRequestParameter(MissingServletRequestParameterException e) {
+    LOGGER.warn("A parameter was not present in the request. Message: {}", e.getMessage());
+    return new ErrorMessage(false, e.getMessage());
+  }
+
+  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorMessage handleMissedRequestParameter(HttpRequestMethodNotSupportedException e) {
+    LOGGER.warn("Request method is not supported. Message: {}", e.getMessage());
+    return new ErrorMessage(false, e.getMessage());
   }
 
   @ExceptionHandler(TransferableApplicationException.class)

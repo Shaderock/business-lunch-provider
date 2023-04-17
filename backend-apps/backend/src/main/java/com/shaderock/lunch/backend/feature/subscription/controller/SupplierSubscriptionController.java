@@ -9,6 +9,7 @@ import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.List;
@@ -32,15 +33,16 @@ public class SupplierSubscriptionController {
   private final SubscriptionMapper subscriptionMapper;
   private final SupplierService supplierService;
 
-  @GetMapping("/subscribers")
-  public ResponseEntity<List<SubscriptionDto>> readSubscribers(Principal principal) {
+  @GetMapping()
+  public ResponseEntity<List<SubscriptionDto>> read(Principal principal) {
     Supplier supplier = supplierService.read(principal);
     List<Subscription> subscriptions = subscriptionService.read(supplier);
     return ResponseEntity.ok(subscriptions.stream().map(subscriptionMapper::toDto).toList());
   }
 
   @PostMapping("/accept")
-  public ResponseEntity<SubscriptionDto> acceptSubscription(@RequestParam @NotNull UUID companyId,
+  public ResponseEntity<SubscriptionDto> acceptSubscription(
+      @RequestParam @NotNull @Valid UUID companyId,
       Principal principal) {
     Supplier supplier = supplierService.read(principal);
     Subscription subscription = subscriptionService.read(supplier, companyId);
@@ -49,7 +51,7 @@ public class SupplierSubscriptionController {
     return ResponseEntity.ok(subscriptionMapper.toDto(updated));
   }
 
-  @DeleteMapping("/delete")
+  @DeleteMapping
   public ResponseEntity<Void> declineSubscription(@RequestParam @NotNull UUID companyId,
       Principal principal) {
     Supplier supplier = supplierService.read(principal);

@@ -11,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -42,13 +43,20 @@ public class Subscription extends BaseEntity {
 
   @Column
   @Enumerated(EnumType.STRING)
-  private SubscriptionStatus subscriptionStatus = SubscriptionStatus.PENDING;
+  private SubscriptionStatus subscriptionStatus;
 
-  @Column
-  private LocalDateTime createdAt = LocalDateTime.now();
+  @Column(nullable = false)
+  private LocalDateTime createdAt;
 
   @Builder(builderMethodName = "baseEntityBuilder")
   public Subscription(UUID id) {
     super(id);
+  }
+
+  @PrePersist
+  public void prePersist() {
+    if (createdAt == null) {
+      createdAt = LocalDateTime.now();
+    }
   }
 }

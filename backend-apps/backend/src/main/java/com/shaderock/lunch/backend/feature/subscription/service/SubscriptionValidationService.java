@@ -20,7 +20,7 @@ public class SubscriptionValidationService {
     if (subscription.getCompany() == null) {
       throw new CrudValidationException("Company to subscribe not provided");
     }
-    if (subscription.getSubscriptionStatus() == null) {
+    if (subscription.getSupplier() == null) {
       throw new CrudValidationException("Supplier to subscribe not provided");
     }
 

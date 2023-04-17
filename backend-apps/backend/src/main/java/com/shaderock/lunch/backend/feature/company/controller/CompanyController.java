@@ -41,8 +41,7 @@ public class CompanyController {
 
   @GetMapping("/my")
   public ResponseEntity<CompanyDto> read(Principal principal) {
-    AppUserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-    Company userCompany = companyService.read(userDetails);
+    Company userCompany = companyService.read(principal);
     CompanyDto userCompanyDto = companyMapper.toDto(userCompany);
     return ResponseEntity.ok(userCompanyDto);
   }

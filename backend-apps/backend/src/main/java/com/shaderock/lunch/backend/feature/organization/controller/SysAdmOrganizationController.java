@@ -27,5 +27,4 @@ public class SysAdmOrganizationController {
     List<OrganizationDetails> details = organizationDetailsService.read();
     return ResponseEntity.ok(details.stream().map(organizationDetailsMapper::toDto).toList());
   }
-
 }

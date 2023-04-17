@@ -37,6 +37,17 @@ public class SubscriptionService {
   @Transactional
   public Subscription create(@NonNull Subscription subscription) {
     subscriptionValidationService.validateCreate(subscription);
+
+    if (subscription.getSubscriptionStatus() == SubscriptionStatus.PENDING) {
+      Notification notification = Notification.builder().content(
+          String.format("There is a new subscription request from Organization (%s).",
+              subscription.getCompany().getOrganizationDetails().getName())).build();
+
+      notificationService.create(notification,
+          subscription.getSupplier().getOrganizationDetails().getUsers().stream()
+              .map(AppUser::getUserDetails).toList(), true);
+    }
+
     return subscriptionRepository.save(subscription);
   }
 
@@ -44,6 +55,7 @@ public class SubscriptionService {
     Subscription subscription = Subscription.builder()
         .company(company)
         .supplier(supplier)
+        .subscriptionStatus(SubscriptionStatus.PENDING)
         .build();
     return create(subscription);
   }
@@ -51,7 +63,7 @@ public class SubscriptionService {
 
   public Subscription read(@NonNull UUID id) {
     return subscriptionRepository.findById(id).orElseThrow(
-        () -> new CrudValidationException(String.format("Subscription(id=[%s]) not found", id)));
+        () -> new CrudValidationException(String.format("Subscription(id=%s) not found", id)));
   }
 
   public List<Subscription> read(@NonNull Company company) {
@@ -75,7 +87,7 @@ public class SubscriptionService {
   public Subscription read(@NonNull Company company, @NonNull Supplier supplier) {
     return subscriptionRepository.findByCompanyAndSupplier(company, supplier).orElseThrow(
         () -> new CrudValidationException(
-            String.format("Subscription for Company(id=[%s]) and Supplier(id=[%s]) not found",
+            String.format("Subscription for Company(id=[%s]) and Supplier(id=%s) not found",
                 company.getId(), supplier.getId())));
   }
 
@@ -86,7 +98,7 @@ public class SubscriptionService {
     if (subscription.getSubscriptionStatus() == SubscriptionStatus.ACCEPTED &&
         persisted.getSubscriptionStatus() == SubscriptionStatus.PENDING) {
       Notification notification = Notification.builder().content(
-          String.format("Your organization has subscribed to a supplier ([%s]). Check new lunches!",
+          String.format("Your organization has subscribed to a supplier (%s). Check new lunches!",
               persisted.getSupplier().getOrganizationDetails().getName())).build();
 
       notificationService.create(notification,
@@ -118,24 +130,24 @@ public class SubscriptionService {
 
     if (subscription.getSubscriptionStatus() == SubscriptionStatus.ACCEPTED) {
       companyNotification = Notification.builder().content(
-          String.format("Your organization has unsubscribed from a Supplier ([%s])",
+          String.format("Your organization has unsubscribed from a Supplier (%s)",
               supplierDetails.getName())).build();
 
       notificationService.create(companyNotification, companyUserDetailsList, true);
 
       supplierNotification = Notification.builder().content(
-          String.format("A Company ([%s]) was unsubscribed from your organization",
+          String.format("A Company (%s) was unsubscribed from your organization",
               companyDetails.getName())).build();
     } else {
       companyNotification = Notification.builder().content(
-          String.format("Your subscription request for Supplier ([%s]) was dismissed",
+          String.format("Your subscription request for Supplier (%s) was dismissed",
               supplierDetails.getName())).build();
 
       notificationService.create(companyNotification, companyUserDetailsList, true,
           Set.of(Role.COMPANY_ADMIN));
 
       supplierNotification = Notification.builder().content(
-          String.format("Subscription request from Organization ([%s]) was dismissed",
+          String.format("Subscription request from Organization (%s) was dismissed",
               supplierDetails.getName())).build();
 
     }
