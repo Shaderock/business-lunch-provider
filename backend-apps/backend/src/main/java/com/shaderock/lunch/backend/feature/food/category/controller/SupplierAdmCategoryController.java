@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(ApiConstants.SUPPLIER_ADM_CATEGORY)
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
-public class SupplierCategoryController {
+public class SupplierAdmCategoryController {
 
   private final CategoryService categoryService;
   private final SupplierService supplierService;
@@ -38,7 +38,7 @@ public class SupplierCategoryController {
   @PostMapping
   public ResponseEntity<CategoryDto> create(
       @RequestBody @NotNull @Valid final CategoryDto categoryDto, Principal principal) {
-    Supplier supplier = supplierService.read(principal.getName());
+    Supplier supplier = supplierService.read(principal);
     Category persistedCategory = categoryService.create(categoryDto, supplier);
     CategoryDto persistedCategoryDto = categoryMapper.toDto(persistedCategory);
     return ResponseEntity.ok(persistedCategoryDto);
@@ -47,7 +47,7 @@ public class SupplierCategoryController {
   @GetMapping
   public ResponseEntity<CategoryDto> read(@RequestParam @NotBlank final UUID id,
       Principal principal) {
-    Supplier supplier = supplierService.read(principal.getName());
+    Supplier supplier = supplierService.read(principal);
     Category category = categoryService.read(id, supplier);
     CategoryDto categoryDto = categoryMapper.toDto(category);
     return ResponseEntity.ok(categoryDto);
@@ -55,7 +55,7 @@ public class SupplierCategoryController {
 
   @GetMapping("/all")
   public ResponseEntity<List<CategoryDto>> readAll(Principal principal) {
-    Supplier supplier = supplierService.read(principal.getName());
+    Supplier supplier = supplierService.read(principal);
     List<Category> categories = categoryService.read(supplier);
     return ResponseEntity.ok(categories.stream().map(categoryMapper::toDto).toList());
   }
@@ -63,7 +63,7 @@ public class SupplierCategoryController {
   @PutMapping
   public ResponseEntity<CategoryDto> update(
       @RequestBody @NotNull @Valid final CategoryDto categoryDto, Principal principal) {
-    Supplier supplier = supplierService.read(principal.getName());
+    Supplier supplier = supplierService.read(principal);
     Category updatedCategory = categoryService.update(categoryDto, supplier);
     CategoryDto updatedCategoryDto = categoryMapper.toDto(updatedCategory);
     return ResponseEntity.ok(updatedCategoryDto);
@@ -71,7 +71,7 @@ public class SupplierCategoryController {
 
   @DeleteMapping
   public ResponseEntity<Void> delete(@RequestParam @NotNull UUID id, Principal principal) {
-    Supplier supplier = supplierService.read(principal.getName());
+    Supplier supplier = supplierService.read(principal);
     categoryService.delete(id, supplier);
     return ResponseEntity.noContent().build();
   }

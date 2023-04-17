@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(ApiConstants.SUPPLIER_ADM_OPTION)
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
-public class SupplierOptionController {
+public class SupplierAdmOptionController {
 
   private final OptionService optionService;
   private final CategoryService categoryService;
@@ -43,7 +43,7 @@ public class SupplierOptionController {
       @RequestBody @NotNull @Valid final OptionDto optionDto,
       @RequestParam @NotBlank final UUID categoryId,
       Principal principal) {
-    Supplier supplier = supplierService.read(principal.getName());
+    Supplier supplier = supplierService.read(principal);
     Category category = categoryService.read(categoryId, supplier);
     Option option = optionService.create(optionDto, category);
     return ResponseEntity.ok(optionMapper.toDto(option));
@@ -52,14 +52,14 @@ public class SupplierOptionController {
   @GetMapping
   public ResponseEntity<OptionDto> read(@RequestParam @NotBlank final UUID id,
       Principal principal) {
-    Supplier supplier = supplierService.read(principal.getName());
+    Supplier supplier = supplierService.read(principal);
     Option option = optionService.read(id, supplier);
     return ResponseEntity.ok(optionMapper.toDto(option));
   }
 
   @GetMapping("/all")
   public ResponseEntity<List<OptionDto>> read(Principal principal) {
-    Supplier supplier = supplierService.read(principal.getName());
+    Supplier supplier = supplierService.read(principal);
     List<Option> options = optionService.read(supplier);
     return ResponseEntity.ok(options.stream().map(optionMapper::toDto).toList());
   }
@@ -68,14 +68,14 @@ public class SupplierOptionController {
   public ResponseEntity<OptionDto> update(
       @RequestBody @NotNull @Valid final OptionDto optionDto,
       Principal principal) {
-    Supplier supplier = supplierService.read(principal.getName());
+    Supplier supplier = supplierService.read(principal);
     Option option = optionService.update(optionDto, supplier);
     return ResponseEntity.ok(optionMapper.toDto(option));
   }
 
   @DeleteMapping
   public ResponseEntity<Void> delete(@RequestParam @NotNull UUID id, Principal principal) {
-    Supplier supplier = supplierService.read(principal.getName());
+    Supplier supplier = supplierService.read(principal);
     optionService.delete(id, supplier);
     return ResponseEntity.noContent().build();
   }

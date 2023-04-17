@@ -2,18 +2,18 @@ package com.shaderock.lunch.backend.feature.organization.dto;
 
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 /**
- * A DTO for the {@link OrganizationDetails}
+ * A DTO for the {@link OrganizationDetails} entity
  */
 public record OrganizationDetailsDto(UUID id,
                                      String name,
                                      String description,
                                      String email,
                                      String phone,
-                                     Set<UUID> usersIds,
-                                     Set<UUID> usersRequestsIds) implements Serializable {
+                                     List<UUID> usersIds,
+                                     List<UUID> usersRequestsIds) implements Serializable {
 
 }

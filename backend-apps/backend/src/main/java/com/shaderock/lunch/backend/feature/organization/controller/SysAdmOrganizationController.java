@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(ApiConstants.SYS_ADM_ORGANIZATION_DETAILS)
-public class PrivilegedOrganizationController {
+@RequestMapping(ApiConstants.SYS_ADM_ORGANIZATION)
+public class SysAdmOrganizationController {
 
   private final OrganizationDetailsService organizationDetailsService;
   private final OrganizationDetailsMapper organizationDetailsMapper;

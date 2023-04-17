@@ -69,10 +69,9 @@ public class SupplierPreferencesService {
   public SupplierPreferences update(@NonNull SupplierPreferencesDto supplierPreferencesDto,
       @NonNull Supplier supplier) {
     return update(supplierPreferencesDto,
-        supplier.getOrganizationDetails().getUsers().stream()
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException(
-                String.format("Supplier(id=[%s]) has no users", supplier.getId())))
+        supplier.getOrganizationDetails().getUsers().stream().findFirst().orElseThrow(
+                () -> new IllegalStateException(
+                    String.format("Supplier(id=[%s]) has no users", supplier.getId())))
             .getUserDetails());
   }
 

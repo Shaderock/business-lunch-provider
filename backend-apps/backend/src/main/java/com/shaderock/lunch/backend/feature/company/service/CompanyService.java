@@ -10,9 +10,11 @@ import com.shaderock.lunch.backend.feature.organization.form.OrganizationRegistr
 import com.shaderock.lunch.backend.feature.organization.service.OrganizationDetailsService;
 import com.shaderock.lunch.backend.feature.organization.service.OrganizationDetailsValidationService;
 import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.user.service.AppUserDetailsService;
 import com.shaderock.lunch.backend.feature.user.type.Role;
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 import lombok.NonNull;
@@ -29,6 +31,7 @@ public class CompanyService {
   private final OrganizationDetailsService organizationDetailsService;
   private final CompanyPreferencesServiceImpl companyPreferencesService;
   private final OrganizationDetailsValidationService organizationDetailsValidationService;
+  private final AppUserDetailsService userDetailsService;
 
   @Transactional(TxType.REQUIRES_NEW)
   public Company register(@NonNull OrganizationRegistrationForm form,
@@ -40,13 +43,6 @@ public class CompanyService {
         .build();
 
     return create(organizationDetails, userDetails);
-  }
-
-  @Transactional
-  public Company read(@NonNull AppUserDetails userDetails) {
-    OrganizationDetails organizationDetails = organizationDetailsService.read(userDetails);
-    return companyRepository.findByOrganizationDetails(organizationDetails)
-        .orElseThrow(() -> new CrudValidationException("There is no company assigned"));
   }
 
   @Transactional
@@ -79,7 +75,21 @@ public class CompanyService {
     return persistedCompany;
   }
 
-  public List<Company> readAll() {
+  public Company read(@NonNull Principal principal) {
+    return read(principal.getName());
+  }
+
+  public Company read(@NonNull String userEmail) {
+    return read(userDetailsService.loadUserByUsername(userEmail));
+  }
+
+  public Company read(@NonNull AppUserDetails userDetails) {
+    OrganizationDetails organizationDetails = organizationDetailsService.read(userDetails);
+    return companyRepository.findByOrganizationDetails(organizationDetails)
+        .orElseThrow(() -> new CrudValidationException("There is no company assigned"));
+  }
+
+  public List<Company> read() {
     return companyRepository.findAll();
   }
 
@@ -88,13 +98,13 @@ public class CompanyService {
         String.format("Company(id=[%s] not found", companyId)));
   }
 
+
   @Transactional
   public Company update(@NonNull Company company) {
     LOGGER.info("Attempting to update {}", company);
 
     Company persistedCompany = read(company.getId());
     persistedCompany.setSubscriptions(company.getSubscriptions());
-    persistedCompany.setSubscriptionsRequests(company.getSubscriptionsRequests());
 
     LOGGER.info("Updated {}", persistedCompany);
     return persistedCompany;

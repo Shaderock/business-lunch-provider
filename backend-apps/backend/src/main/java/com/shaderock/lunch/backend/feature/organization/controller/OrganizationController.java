@@ -1,6 +1,7 @@
 package com.shaderock.lunch.backend.feature.organization.controller;
 
 import com.shaderock.lunch.backend.feature.organization.dto.OrganizationDetailsDto;
+import com.shaderock.lunch.backend.feature.organization.dto.PublicOrganizationDetailsDto;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.feature.organization.mapper.OrganizationDetailsMapper;
 import com.shaderock.lunch.backend.feature.organization.service.OrganizationDetailsService;
@@ -13,7 +14,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
-import java.util.HashSet;
 import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -54,13 +54,11 @@ public class OrganizationController {
   }
 
   @GetMapping
-  public ResponseEntity<OrganizationDetailsDto> read(@NotNull @RequestParam UUID supplierId) {
+  public ResponseEntity<PublicOrganizationDetailsDto> read(@NotNull @RequestParam UUID supplierId) {
     Supplier supplier = supplierService.read(supplierId);
     OrganizationDetails organizationDetails = supplier.getOrganizationDetails();
 
-    organizationDetails.setUsers(new HashSet<>());
-    organizationDetails.setUsersRequests(new HashSet<>());
-    return ResponseEntity.ok(organizationDetailsMapper.toDto(organizationDetails));
+    return ResponseEntity.ok(organizationDetailsMapper.toPublicDto(organizationDetails));
   }
 
   @PutMapping

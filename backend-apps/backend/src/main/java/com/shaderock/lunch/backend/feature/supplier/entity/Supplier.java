@@ -1,16 +1,15 @@
 package com.shaderock.lunch.backend.feature.supplier.entity;
 
 import com.shaderock.lunch.backend.data.entity.VisibleEntity;
-import com.shaderock.lunch.backend.feature.company.entity.Company;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.entity.SupplierPreferences;
 import com.shaderock.lunch.backend.feature.food.menu.entity.Menu;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
+import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.net.URI;
 import java.util.Set;
@@ -54,30 +53,12 @@ public class Supplier extends VisibleEntity {
   @OneToOne(mappedBy = "supplier")
   private SupplierPreferences preferences;
 
-  @JoinTable(name = "lunch_subscriptions",
-      joinColumns = @JoinColumn(name = "supplier_id"),
-      inverseJoinColumns = @JoinColumn(name = "company_id"))
-  @ManyToMany(fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY)
   @Exclude
-  private Set<Company> subscribers;
+  private Set<Subscription> subscribers;
 
-  @JoinTable(name = "lunch_subscriptions_requests",
-      joinColumns = @JoinColumn(name = "supplier_id"),
-      inverseJoinColumns = @JoinColumn(name = "company_id"))
-  @ManyToMany(fetch = FetchType.LAZY)
-  @Exclude
-  private Set<Company> subscriptionsRequests;
-
-  public Supplier(UUID id, boolean isPublic, URI websiteUrl, URI menuUrl,
-      OrganizationDetails organizationDetails, Menu menu, SupplierPreferences preferences,
-      Set<Company> subscribers, Set<Company> subscriptionsRequests) {
-    super(id, isPublic);
-    this.websiteUrl = websiteUrl;
-    this.menuUrl = menuUrl;
-    this.organizationDetails = organizationDetails;
-    this.menu = menu;
-    this.preferences = preferences;
-    this.subscribers = subscribers;
-    this.subscriptionsRequests = subscriptionsRequests;
+  @Builder(builderMethodName = "baseEntityBuilder")
+  public Supplier(UUID id, boolean isDeleted, boolean isPublic) {
+    super(id, isDeleted, isPublic);
   }
 }

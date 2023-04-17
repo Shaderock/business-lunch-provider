@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.feature.user.entity;
 
-import com.shaderock.lunch.backend.data.entity.DeletableEntity;
+import com.shaderock.lunch.backend.data.entity.BaseEntity;
 import com.shaderock.lunch.backend.feature.config.preference.employee.entity.EmployeePreferences;
 import com.shaderock.lunch.backend.feature.notification.entity.Notification;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
@@ -12,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +20,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.ToString.Exclude;
-import org.hibernate.annotations.SQLDelete;
 
 @Getter
 @Setter
@@ -28,8 +28,7 @@ import org.hibernate.annotations.SQLDelete;
 @AllArgsConstructor
 @Entity
 @ToString
-@SQLDelete(sql = "UPDATE app_user SET is_deleted = true WHERE id=?")
-public class AppUser extends DeletableEntity {
+public class AppUser extends BaseEntity {
 
   @OneToOne(mappedBy = "appUser", optional = false)
   private AppUserDetails userDetails;
@@ -50,4 +49,9 @@ public class AppUser extends DeletableEntity {
   @OneToMany(mappedBy = "appUser", fetch = FetchType.LAZY)
   @Exclude
   private List<Notification> notifications = new ArrayList<>();
+
+  @Builder(builderMethodName = "baseEntityBuilder")
+  public AppUser(UUID id) {
+    super(id);
+  }
 }

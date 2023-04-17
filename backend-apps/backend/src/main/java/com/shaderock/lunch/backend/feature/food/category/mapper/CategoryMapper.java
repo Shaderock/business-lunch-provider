@@ -16,7 +16,6 @@ import org.mapstruct.MappingConstants.ComponentModel;
 @Mapper(componentModel = ComponentModel.SPRING)
 public interface CategoryMapper {
 
-  @Mapping(target = "id", source = "id")
   @Mapping(target = "isPublic", source = "public")
   @Mapping(target = "optionIds", source = "options")
   CategoryDto toDto(Category category);

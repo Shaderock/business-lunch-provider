@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(ApiConstants.SUPPLIER_ADM_PREFERENCES)
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
-public class SupplierPreferencesController {
+public class SupplierAdmPreferencesController {
 
   private final SupplierPreferencesMapper preferencesMapper;
   private final SupplierService supplierService;
@@ -31,7 +31,7 @@ public class SupplierPreferencesController {
 
   @GetMapping
   public ResponseEntity<SupplierPreferencesDto> read(Principal principal) {
-    Supplier supplier = supplierService.read(principal.getName());
+    Supplier supplier = supplierService.read(principal);
     SupplierPreferences preferences = supplierPreferencesService.read(supplier);
     return ResponseEntity.ok(preferencesMapper.toDto(preferences));
   }
@@ -39,7 +39,7 @@ public class SupplierPreferencesController {
   @PutMapping
   public ResponseEntity<SupplierPreferencesDto> update(Principal principal,
       @NotNull @Valid @RequestBody SupplierPreferencesDto supplierPreferencesDto) {
-    Supplier supplier = supplierService.read(principal.getName());
+    Supplier supplier = supplierService.read(principal);
     SupplierPreferences preferences = supplierPreferencesService.update(supplierPreferencesDto,
         supplier);
     return ResponseEntity.ok(preferencesMapper.toDto(preferences));

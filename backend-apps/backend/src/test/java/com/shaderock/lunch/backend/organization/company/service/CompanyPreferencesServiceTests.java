@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
 import com.shaderock.lunch.backend.feature.config.preference.company.dto.CompanyPreferencesDto;
 import com.shaderock.lunch.backend.feature.config.preference.company.entity.CompanyPreferences;
+import com.shaderock.lunch.backend.feature.config.preference.company.entity.PublicCompanyPreferencesDto;
 import com.shaderock.lunch.backend.feature.config.preference.company.mapper.CompanyPreferencesMapper;
 import com.shaderock.lunch.backend.feature.config.preference.company.mapper.CompanyPreferencesMapperImpl;
 import com.shaderock.lunch.backend.feature.config.preference.company.repository.CompanyPreferenceRepository;
@@ -114,6 +115,11 @@ class CompanyPreferencesServiceTests {
         companyPreferenceRepository, new CompanyPreferencesMapper() {
       @Override
       public CompanyPreferencesDto toDto(CompanyPreferences companyPreferences) {
+        return null;
+      }
+
+      @Override
+      public PublicCompanyPreferencesDto toPublicDto(CompanyPreferences companyPreferences) {
         return null;
       }
 

@@ -27,6 +27,7 @@ import org.hibernate.annotations.SQLDelete;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(builderMethodName = "optionBuilder")
 @Entity
 @ToString
 @SQLDelete(sql = "UPDATE option SET is_deleted = true WHERE id=?")
@@ -53,14 +54,7 @@ public class Option extends VisibleEntity {
   private List<SubOption> subOptions;
 
   @Builder
-  public Option(UUID id, boolean isPublic, String name, Double price, String description,
-      Set<EmployeeOrder> employeesOrders, Category category, List<SubOption> subOptions) {
-    super(id, isPublic);
-    this.name = name;
-    this.price = price;
-    this.description = description;
-    this.employeesOrders = employeesOrders;
-    this.category = category;
-    this.subOptions = subOptions;
+  public Option(UUID id, boolean isDeleted, boolean isPublic) {
+    super(id, isDeleted, isPublic);
   }
 }

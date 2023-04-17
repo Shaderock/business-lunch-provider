@@ -6,12 +6,11 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A DTO for the {@link Company} BaseEntity
+ * A DTO for the {@link Company} entity
  */
 public record CompanyDto(UUID id,
                          UUID organizationDetailsId,
                          Set<UUID> subscriptionsIds,
-                         Set<UUID> subscriptionsRequestsIds,
                          UUID preferencesId) implements Serializable {
 
 }

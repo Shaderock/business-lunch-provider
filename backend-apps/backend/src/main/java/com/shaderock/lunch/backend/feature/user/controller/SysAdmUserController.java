@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping(ApiConstants.SYS_ADM_USER)
-public class PrivilegedUserController {
+public class SysAdmUserController {
 
   private final AppUserService appUserService;
   private final AppUserDetailsService appUserDetailsService;

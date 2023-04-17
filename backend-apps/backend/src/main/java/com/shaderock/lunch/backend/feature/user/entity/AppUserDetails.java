@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.feature.user.entity;
 
-import com.shaderock.lunch.backend.data.entity.DeletableEntity;
+import com.shaderock.lunch.backend.data.entity.BaseEntity;
 import com.shaderock.lunch.backend.feature.user.type.Role;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.ToString.Exclude;
-import org.hibernate.annotations.SQLDelete;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,8 +36,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Builder
 @Entity
 @Table(name = "app_user_details")
-@SQLDelete(sql = "UPDATE app_user_details SET is_deleted = true WHERE id=?")
-public class AppUserDetails extends DeletableEntity implements UserDetails {
+public class AppUserDetails extends BaseEntity implements UserDetails {
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "app_user_id")

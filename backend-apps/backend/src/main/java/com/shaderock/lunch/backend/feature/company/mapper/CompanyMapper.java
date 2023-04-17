@@ -1,8 +1,9 @@
 package com.shaderock.lunch.backend.feature.company.mapper;
 
 import com.shaderock.lunch.backend.feature.company.dto.CompanyDto;
+import com.shaderock.lunch.backend.feature.company.dto.PublicCompanyDto;
 import com.shaderock.lunch.backend.feature.company.entity.Company;
-import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
+import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
@@ -18,28 +19,27 @@ public interface CompanyMapper {
 
   @Mapping(target = "organizationDetailsId", source = "organizationDetails.id")
   @Mapping(target = "subscriptionsIds", source = "subscriptions")
-  @Mapping(target = "subscriptionsRequestsIds", source = "subscriptionsRequests")
   @Mapping(target = "preferencesId", source = "preferences.id")
   CompanyDto toDto(Company company);
+
+  @Mapping(target = "organizationDetailsId", source = "organizationDetails.id")
+  @Mapping(target = "preferencesId", source = "preferences.id")
+  PublicCompanyDto toPublicDto(Company company);
 
   @InheritInverseConfiguration
   Company toEntity(CompanyDto companyDto);
 
-  default Set<UUID> subscriptionsToIds(Set<Supplier> subscriptions) {
+  default Set<UUID> subscriptionsToIds(Set<Subscription> subscriptions) {
     return Stream.ofNullable(subscriptions)
         .flatMap(Collection::stream)
-        .map(Supplier::getId)
+        .map(Subscription::getId)
         .collect(Collectors.toSet());
   }
 
-  default Set<Supplier> idsToSubscriptions(Set<UUID> subscriptionsIds) {
+  default Set<Subscription> idsToSubscriptions(Set<UUID> subscriptionsIds) {
     return Stream.ofNullable(subscriptionsIds)
         .flatMap(Collection::stream)
-        .map(id -> {
-          Supplier supplier = new Supplier();
-          supplier.setId(id);
-          return supplier;
-        })
+        .map(id -> Subscription.baseEntityBuilder().id(id).build())
         .collect(Collectors.toSet());
   }
 }

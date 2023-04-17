@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping(ApiConstants.SYS_ADM_COMPANY)
-public class PrivilegedCompanyController {
+public class SysAdmCompanyController {
 
   private final CompanyService companyService;
   private final CompanyMapper companyMapper;
 
   @GetMapping
-  public ResponseEntity<List<CompanyDto>> readAll() {
-    List<Company> companies = companyService.readAll();
+  public ResponseEntity<List<CompanyDto>> read() {
+    List<Company> companies = companyService.read();
     return ResponseEntity.ok(companies.stream().map(companyMapper::toDto).toList());
   }
 }

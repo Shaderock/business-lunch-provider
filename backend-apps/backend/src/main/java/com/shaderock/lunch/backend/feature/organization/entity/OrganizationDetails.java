@@ -7,7 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,15 +41,15 @@ public class OrganizationDetails extends DeletableEntity {
 
   @OneToMany(mappedBy = "organizationDetails", fetch = FetchType.LAZY)
   @Exclude
-  private Set<AppUser> users;
+  private List<AppUser> users;
 
   @OneToMany(mappedBy = "organizationDetailsRequest", fetch = FetchType.LAZY)
   @Exclude
-  private Set<AppUser> usersRequests;
+  private List<AppUser> usersRequests;
 
   @Builder
   public OrganizationDetails(UUID id, String name, String description,
-      String email, String phone, Set<AppUser> users, Set<AppUser> usersRequests) {
+      String email, String phone, List<AppUser> users, List<AppUser> usersRequests) {
     super(id);
     this.name = name;
     this.description = description;

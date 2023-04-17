@@ -146,7 +146,6 @@ class CompanyServiceTests {
         .preferences(new CompanyPreferences())
         .organizationDetails(new OrganizationDetails())
         .subscriptions(new HashSet<>())
-        .subscriptionsRequests(new HashSet<>())
         .build();
     companyUpdate.setId(company.getId());
 
@@ -155,7 +154,5 @@ class CompanyServiceTests {
     assertNotNull(updated);
     assertNotNull(updated.getSubscriptions());
     assertEquals(companyUpdate.getSubscriptions(), updated.getSubscriptions());
-    assertNotNull(updated.getSubscriptionsRequests());
-    assertEquals(companyUpdate.getSubscriptionsRequests(), updated.getSubscriptionsRequests());
   }
 }

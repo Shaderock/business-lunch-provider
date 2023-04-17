@@ -8,7 +8,8 @@ import java.util.UUID;
 /**
  * A DTO for the {@link CompanyPreferences} BaseEntity
  */
-public record CompanyPreferencesDto(UUID id, UUID companyId,
+public record CompanyPreferencesDto(UUID id,
+                                    UUID companyId,
                                     CompanyDiscountType companyDiscountType,
                                     String deliveryAddress) implements Serializable {
 

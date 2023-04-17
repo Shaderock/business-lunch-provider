@@ -17,6 +17,7 @@ import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.user.type.Role;
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 import lombok.NonNull;
@@ -89,6 +90,10 @@ public class SupplierService {
   public Supplier read(@NonNull UUID supplierId) {
     return supplierRepository.findById(supplierId).orElseThrow(() -> new CrudValidationException(
         String.format("Supplier(id=[%s] not found", supplierId)));
+  }
+
+  public Supplier read(@NonNull Principal principal) {
+    return read(principal.getName());
   }
 
   public Supplier read(@NonNull String userEmail) {
