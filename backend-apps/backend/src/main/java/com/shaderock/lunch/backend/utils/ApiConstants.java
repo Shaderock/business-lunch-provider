@@ -23,6 +23,7 @@ public class ApiConstants {
   public static final String SUPPLIER_ADM_CATEGORY = SUPPLIER_ADM + "/category";
   public static final String SUPPLIER_ADM_OPTION = SUPPLIER_ADM + "/option";
   public static final String USER = API + "/user";
+  public static final String NOTIFICATIONS = API + "/notifications";
   private static final String PREFERENCES = "/preferences";
   public static final String COMPANY_PREFERENCES = COMPANY + PREFERENCES;
   public static final String PUBLIC_SUPPLIER_PREFERENCES = SUPPLIER + PREFERENCES;

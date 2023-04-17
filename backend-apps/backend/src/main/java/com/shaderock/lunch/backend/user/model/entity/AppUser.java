@@ -1,13 +1,17 @@
 package com.shaderock.lunch.backend.user.model.entity;
 
 import com.shaderock.lunch.backend.data.entity.DeletableEntity;
+import com.shaderock.lunch.backend.notification.entity.Notification;
 import com.shaderock.lunch.backend.organization.model.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.user.preferences.model.entity.EmployeePreferences;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,4 +46,8 @@ public class AppUser extends DeletableEntity {
 
   @OneToOne(mappedBy = "employee")
   private EmployeePreferences preferences;
+
+  @OneToMany(mappedBy = "appUser", fetch = FetchType.LAZY)
+  @Exclude
+  private List<Notification> notifications = new ArrayList<>();
 }
