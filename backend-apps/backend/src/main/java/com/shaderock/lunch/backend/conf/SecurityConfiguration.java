@@ -2,8 +2,8 @@ package com.shaderock.lunch.backend.conf;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-import com.shaderock.lunch.backend.auth.login.JWTRequestFilter;
-import com.shaderock.lunch.backend.user.model.type.Role;
+import com.shaderock.lunch.backend.feature.auth.login.JWTRequestFilter;
+import com.shaderock.lunch.backend.feature.user.type.Role;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

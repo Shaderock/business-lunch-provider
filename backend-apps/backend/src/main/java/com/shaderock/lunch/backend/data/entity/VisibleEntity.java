@@ -1,7 +1,7 @@
 package com.shaderock.lunch.backend.data.entity;
 
-import static com.shaderock.lunch.backend.utils.FilterManager.VISIBILITY_FILTER;
-import static com.shaderock.lunch.backend.utils.FilterManager.VISIBILITY_FILTER_PARAM_NAME;
+import static com.shaderock.lunch.backend.util.FilterManager.VISIBILITY_FILTER;
+import static com.shaderock.lunch.backend.util.FilterManager.VISIBILITY_FILTER_PARAM_NAME;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;

@@ -1,13 +1,13 @@
 package com.shaderock.lunch.backend.aop;
 
-import com.shaderock.lunch.backend.menu.controller.SupplierCategoryController;
-import com.shaderock.lunch.backend.menu.controller.SupplierOptionController;
-import com.shaderock.lunch.backend.organization.company.controller.PrivilegedCompanyController;
-import com.shaderock.lunch.backend.organization.controller.PrivilegedOrganizationController;
-import com.shaderock.lunch.backend.organization.supplier.controller.PrivilegedSupplierController;
-import com.shaderock.lunch.backend.organization.supplier.preference.controller.SupplierPreferencesController;
-import com.shaderock.lunch.backend.user.PrivilegedUserController;
-import com.shaderock.lunch.backend.utils.FilterManager;
+import com.shaderock.lunch.backend.feature.company.controller.PrivilegedCompanyController;
+import com.shaderock.lunch.backend.feature.config.preference.supplier.controller.SupplierPreferencesController;
+import com.shaderock.lunch.backend.feature.food.category.controller.SupplierCategoryController;
+import com.shaderock.lunch.backend.feature.food.option.controller.SupplierOptionController;
+import com.shaderock.lunch.backend.feature.organization.controller.PrivilegedOrganizationController;
+import com.shaderock.lunch.backend.feature.supplier.controller.PrivilegedSupplierController;
+import com.shaderock.lunch.backend.feature.user.controller.PrivilegedUserController;
+import com.shaderock.lunch.backend.util.FilterManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
