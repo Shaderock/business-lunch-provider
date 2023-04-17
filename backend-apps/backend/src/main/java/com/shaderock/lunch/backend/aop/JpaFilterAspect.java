@@ -1,13 +1,14 @@
 package com.shaderock.lunch.backend.aop;
 
-import com.shaderock.lunch.backend.menu.controller.SupplierCategoryController;
-import com.shaderock.lunch.backend.menu.controller.SupplierOptionController;
-import com.shaderock.lunch.backend.organization.company.controller.PrivilegedCompanyController;
-import com.shaderock.lunch.backend.organization.controller.PrivilegedOrganizationController;
-import com.shaderock.lunch.backend.organization.supplier.controller.PrivilegedSupplierController;
-import com.shaderock.lunch.backend.organization.supplier.preference.controller.SupplierPreferencesController;
-import com.shaderock.lunch.backend.user.PrivilegedUserController;
-import com.shaderock.lunch.backend.utils.FilterManager;
+import com.shaderock.lunch.backend.feature.company.controller.SysAdmCompanyController;
+import com.shaderock.lunch.backend.feature.config.preference.supplier.controller.SupplierAdmPreferencesController;
+import com.shaderock.lunch.backend.feature.food.category.controller.SupplierAdmCategoryController;
+import com.shaderock.lunch.backend.feature.food.option.controller.SupplierAdmOptionController;
+import com.shaderock.lunch.backend.feature.organization.controller.SysAdmOrganizationController;
+import com.shaderock.lunch.backend.feature.supplier.controller.SupplierAdmSupplierController;
+import com.shaderock.lunch.backend.feature.supplier.controller.SysAdmSupplierController;
+import com.shaderock.lunch.backend.feature.user.controller.SysAdmUserController;
+import com.shaderock.lunch.backend.util.FilterManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
@@ -22,16 +23,17 @@ public class JpaFilterAspect {
 
   private final FilterManager filterManager;
   private final List<Class<?>> ignoreVisibilityControllers = List.of(
-      SupplierCategoryController.class,
-      SupplierOptionController.class,
-      SupplierPreferencesController.class);
+      SupplierAdmCategoryController.class,
+      SupplierAdmOptionController.class,
+      SupplierAdmPreferencesController.class,
+      SupplierAdmSupplierController.class);
   private final List<Class<?>> ignoreDeletedControllers = List.of();
 
   private final List<Class<?>> ignoreFiltersControllers = List.of(
-      PrivilegedCompanyController.class,
-      PrivilegedOrganizationController.class,
-      PrivilegedSupplierController.class,
-      PrivilegedUserController.class
+      SysAdmCompanyController.class,
+      SysAdmOrganizationController.class,
+      SysAdmSupplierController.class,
+      SysAdmUserController.class
   );
 
   @Before("within(@org.springframework.web.bind.annotation.RestController *)")

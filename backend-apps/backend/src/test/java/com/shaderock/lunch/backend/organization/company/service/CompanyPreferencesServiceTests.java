@@ -9,14 +9,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.shaderock.lunch.backend.messaging.exception.CrudValidationException;
-import com.shaderock.lunch.backend.organization.company.preference.model.dto.CompanyPreferencesDto;
-import com.shaderock.lunch.backend.organization.company.preference.model.entity.CompanyPreferences;
-import com.shaderock.lunch.backend.organization.company.preference.model.mapper.CompanyPreferencesMapper;
-import com.shaderock.lunch.backend.organization.company.preference.model.mapper.CompanyPreferencesMapperImpl;
-import com.shaderock.lunch.backend.organization.company.preference.model.type.CompanyDiscountType;
-import com.shaderock.lunch.backend.organization.company.preference.repository.CompanyPreferenceRepository;
-import com.shaderock.lunch.backend.user.model.entity.AppUserDetails;
+import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
+import com.shaderock.lunch.backend.feature.config.preference.company.dto.CompanyPreferencesDto;
+import com.shaderock.lunch.backend.feature.config.preference.company.entity.CompanyPreferences;
+import com.shaderock.lunch.backend.feature.config.preference.company.entity.PublicCompanyPreferencesDto;
+import com.shaderock.lunch.backend.feature.config.preference.company.mapper.CompanyPreferencesMapper;
+import com.shaderock.lunch.backend.feature.config.preference.company.mapper.CompanyPreferencesMapperImpl;
+import com.shaderock.lunch.backend.feature.config.preference.company.repository.CompanyPreferenceRepository;
+import com.shaderock.lunch.backend.feature.config.preference.company.service.CompanyPreferencesService;
+import com.shaderock.lunch.backend.feature.config.preference.company.service.CompanyPreferencesServiceImpl;
+import com.shaderock.lunch.backend.feature.config.preference.company.type.CompanyDiscountType;
+import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -112,6 +115,11 @@ class CompanyPreferencesServiceTests {
         companyPreferenceRepository, new CompanyPreferencesMapper() {
       @Override
       public CompanyPreferencesDto toDto(CompanyPreferences companyPreferences) {
+        return null;
+      }
+
+      @Override
+      public PublicCompanyPreferencesDto toPublicDto(CompanyPreferences companyPreferences) {
         return null;
       }
 
