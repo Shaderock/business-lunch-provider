@@ -1,17 +1,13 @@
 package com.shaderock.lunch.backend.feature.subscription.controller;
 
-import com.shaderock.lunch.backend.feature.company.mapper.CompanyMapper;
-import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.subscription.dto.SubscriptionDto;
 import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
 import com.shaderock.lunch.backend.feature.subscription.mapper.SubscriptionMapper;
 import com.shaderock.lunch.backend.feature.subscription.service.SubscriptionService;
 import com.shaderock.lunch.backend.feature.subscription.type.SubscriptionStatus;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
-import com.shaderock.lunch.backend.feature.supplier.mapper.SupplierMapper;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.util.ApiConstants;
-import com.shaderock.lunch.backend.util.FilterManager;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
@@ -34,11 +30,7 @@ public class SupplierSubscriptionController {
 
   private final SubscriptionService subscriptionService;
   private final SubscriptionMapper subscriptionMapper;
-  private final CompanyService companyService;
   private final SupplierService supplierService;
-  private final SupplierMapper supplierMapper;
-  private final CompanyMapper companyMapper;
-  private final FilterManager filterManager;
 
   @GetMapping("/subscribers")
   public ResponseEntity<List<SubscriptionDto>> readSubscribers(Principal principal) {

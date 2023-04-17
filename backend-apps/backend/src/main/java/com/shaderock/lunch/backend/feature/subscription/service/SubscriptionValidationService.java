@@ -1,12 +1,8 @@
 package com.shaderock.lunch.backend.feature.subscription.service;
 
 import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
-import com.shaderock.lunch.backend.feature.company.service.CompanyService;
-import com.shaderock.lunch.backend.feature.notification.service.NotificationService;
 import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
 import com.shaderock.lunch.backend.feature.subscription.repository.SubscriptionRepository;
-import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
-import com.shaderock.lunch.backend.feature.user.service.AppUserDetailsService;
 import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +14,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SubscriptionValidationService {
 
-  private final SupplierService supplierService;
-  private final CompanyService companyService;
-  private final AppUserDetailsService userDetailsService;
-  private final NotificationService notificationService;
   private final SubscriptionRepository subscriptionRepository;
 
   public void validateCreate(@NonNull Subscription subscription) {

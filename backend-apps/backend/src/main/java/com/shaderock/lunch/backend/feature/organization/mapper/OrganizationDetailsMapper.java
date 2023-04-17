@@ -7,7 +7,6 @@ import com.shaderock.lunch.backend.feature.user.entity.AppUser;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -30,13 +29,13 @@ public interface OrganizationDetailsMapper {
     return Stream.ofNullable(users)
         .flatMap(Collection::stream)
         .map(AppUser::getId)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   default List<AppUser> idsToUsers(List<UUID> usersIds) {
     return Stream.ofNullable(usersIds)
         .flatMap(Collection::stream)
         .map(id -> AppUser.baseEntityBuilder().id(id).build())
-        .collect(Collectors.toList());
+        .toList();
   }
 }

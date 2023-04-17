@@ -3,7 +3,6 @@ package com.shaderock.lunch.backend.feature.company.controller;
 import com.shaderock.lunch.backend.feature.company.dto.PublicCompanyDto;
 import com.shaderock.lunch.backend.feature.company.entity.Company;
 import com.shaderock.lunch.backend.feature.company.mapper.CompanyMapper;
-import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
 import com.shaderock.lunch.backend.feature.subscription.service.SubscriptionService;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(ApiConstants.SUPPLIER_ADMIN_COMPANY)
 public class SupplierAdmCompanyController {
 
-  private final CompanyService companyService;
   private final CompanyMapper companyMapper;
   private final SubscriptionService subscriptionService;
   private final SupplierService supplierService;
