@@ -43,19 +43,14 @@ public class OrganizationDetails extends DeletableEntity {
   @Exclude
   private List<AppUser> users;
 
-  @OneToMany(mappedBy = "organizationDetailsRequest", fetch = FetchType.LAZY)
-  @Exclude
-  private List<AppUser> usersRequests;
-
   @Builder
   public OrganizationDetails(UUID id, String name, String description,
-      String email, String phone, List<AppUser> users, List<AppUser> usersRequests) {
+      String email, String phone, List<AppUser> users) {
     super(id);
     this.name = name;
     this.description = description;
     this.email = email;
     this.phone = phone;
     this.users = users;
-    this.usersRequests = usersRequests;
   }
 }

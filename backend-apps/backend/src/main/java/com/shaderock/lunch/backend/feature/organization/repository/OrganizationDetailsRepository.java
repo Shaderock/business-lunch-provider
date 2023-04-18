@@ -1,8 +1,8 @@
 package com.shaderock.lunch.backend.feature.organization.repository;
 
 import com.shaderock.lunch.backend.data.repository.DeletableEntityRepository;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
 import java.util.Optional;
 
 public interface OrganizationDetailsRepository extends

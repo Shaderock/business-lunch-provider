@@ -4,9 +4,9 @@ import com.shaderock.lunch.backend.feature.company.dto.CompanyDto;
 import com.shaderock.lunch.backend.feature.company.entity.Company;
 import com.shaderock.lunch.backend.feature.company.mapper.CompanyMapper;
 import com.shaderock.lunch.backend.feature.company.service.CompanyService;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
 import com.shaderock.lunch.backend.feature.organization.form.OrganizationRegistrationForm;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
-import com.shaderock.lunch.backend.feature.user.service.AppUserDetailsService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -29,6 +29,13 @@ public class CompanyController {
   private final CompanyMapper companyMapper;
   private final AppUserDetailsService userDetailsService;
 
+  @GetMapping("/my")
+  public ResponseEntity<CompanyDto> read(Principal principal) {
+    Company userCompany = companyService.read(principal);
+    CompanyDto userCompanyDto = companyMapper.toDto(userCompany);
+    return ResponseEntity.ok(userCompanyDto);
+  }
+
   @PostMapping("/register")
   public ResponseEntity<CompanyDto> registerCompany(
       @RequestBody @Valid final OrganizationRegistrationForm form, Principal principal) {
@@ -37,12 +44,5 @@ public class CompanyController {
     Company registeredCompany = companyService.register(form, userDetails);
     CompanyDto responseCompany = companyMapper.toDto(registeredCompany);
     return ResponseEntity.ok(responseCompany);
-  }
-
-  @GetMapping("/my")
-  public ResponseEntity<CompanyDto> read(Principal principal) {
-    Company userCompany = companyService.read(principal);
-    CompanyDto userCompanyDto = companyMapper.toDto(userCompany);
-    return ResponseEntity.ok(userCompanyDto);
   }
 }

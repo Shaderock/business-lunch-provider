@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.feature.auth.login;
 
-import com.shaderock.lunch.backend.feature.user.service.AppUserDetailsService;
+import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

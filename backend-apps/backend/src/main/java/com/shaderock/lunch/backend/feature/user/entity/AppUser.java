@@ -1,7 +1,10 @@
 package com.shaderock.lunch.backend.feature.user.entity;
 
 import com.shaderock.lunch.backend.data.entity.BaseEntity;
+import com.shaderock.lunch.backend.feature.config.notification.employee.entity.EmployeeNotificationConfig;
 import com.shaderock.lunch.backend.feature.config.preference.employee.entity.EmployeePreferences;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.invitation.entity.Invitation;
 import com.shaderock.lunch.backend.feature.notification.entity.Notification;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import jakarta.persistence.Entity;
@@ -38,17 +41,19 @@ public class AppUser extends BaseEntity {
   @Exclude
   private OrganizationDetails organizationDetails;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "organization_request_id")
-  @Exclude
-  private OrganizationDetails organizationDetailsRequest;
-
   @OneToOne(mappedBy = "employee")
   private EmployeePreferences preferences;
+
+  @OneToOne(mappedBy = "appUser")
+  private EmployeeNotificationConfig notificationConfig;
 
   @OneToMany(mappedBy = "appUser", fetch = FetchType.LAZY)
   @Exclude
   private List<Notification> notifications = new ArrayList<>();
+
+  @OneToMany(mappedBy = "appUser", fetch = FetchType.LAZY)
+  @Exclude
+  private List<Invitation> invitations = new ArrayList<>();
 
   @Builder(builderMethodName = "baseEntityBuilder")
   public AppUser(UUID id) {

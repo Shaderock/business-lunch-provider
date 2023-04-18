@@ -2,6 +2,7 @@ package com.shaderock.lunch.backend.aop;
 
 import com.shaderock.lunch.backend.feature.company.controller.SysAdmCompanyController;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.controller.SupplierAdmPreferencesController;
+import com.shaderock.lunch.backend.feature.details.controller.SysAdmUserDetailsController;
 import com.shaderock.lunch.backend.feature.food.category.controller.SupplierAdmCategoryController;
 import com.shaderock.lunch.backend.feature.food.option.controller.SupplierAdmOptionController;
 import com.shaderock.lunch.backend.feature.organization.controller.SysAdmOrganizationController;
@@ -33,7 +34,8 @@ public class JpaFilterAspect {
       SysAdmCompanyController.class,
       SysAdmOrganizationController.class,
       SysAdmSupplierController.class,
-      SysAdmUserController.class
+      SysAdmUserController.class,
+      SysAdmUserDetailsController.class
   );
 
   @Before("within(@org.springframework.web.bind.annotation.RestController *)")

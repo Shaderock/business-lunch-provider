@@ -1,12 +1,12 @@
 package com.shaderock.lunch.backend.feature.notification.service;
 
 import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.type.Role;
 import com.shaderock.lunch.backend.feature.notification.entity.Notification;
 import com.shaderock.lunch.backend.feature.notification.entity.NotificationDto;
 import com.shaderock.lunch.backend.feature.notification.mapper.NotificationMapper;
 import com.shaderock.lunch.backend.feature.notification.repository.NotificationRepository;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
-import com.shaderock.lunch.backend.feature.user.type.Role;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;

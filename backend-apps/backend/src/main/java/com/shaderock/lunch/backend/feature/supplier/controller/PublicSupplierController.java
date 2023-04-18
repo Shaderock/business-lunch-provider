@@ -1,13 +1,13 @@
 package com.shaderock.lunch.backend.feature.supplier.controller;
 
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
 import com.shaderock.lunch.backend.feature.organization.form.OrganizationRegistrationForm;
 import com.shaderock.lunch.backend.feature.supplier.dto.PublicSupplierDto;
 import com.shaderock.lunch.backend.feature.supplier.dto.SupplierDto;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.mapper.SupplierMapper;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
-import com.shaderock.lunch.backend.feature.user.service.AppUserDetailsService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;

@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A DTO for the {@link Category}
+ * A DTO for the {@link Category} entity
  */
 public record CategoryDto(UUID id,
                           @NotNull(message = "Name should be provided")

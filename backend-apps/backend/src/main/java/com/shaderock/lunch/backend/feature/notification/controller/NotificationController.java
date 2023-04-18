@@ -1,11 +1,11 @@
 package com.shaderock.lunch.backend.feature.notification.controller;
 
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
 import com.shaderock.lunch.backend.feature.notification.entity.Notification;
 import com.shaderock.lunch.backend.feature.notification.entity.NotificationDto;
 import com.shaderock.lunch.backend.feature.notification.mapper.NotificationMapper;
 import com.shaderock.lunch.backend.feature.notification.service.NotificationService;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
-import com.shaderock.lunch.backend.feature.user.service.AppUserDetailsService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.security.Principal;

@@ -33,7 +33,7 @@ public class SupplierSubscriptionController {
   private final SubscriptionMapper subscriptionMapper;
   private final SupplierService supplierService;
 
-  @GetMapping()
+  @GetMapping("/all")
   public ResponseEntity<List<SubscriptionDto>> read(Principal principal) {
     Supplier supplier = supplierService.read(principal);
     List<Subscription> subscriptions = subscriptionService.read(supplier);

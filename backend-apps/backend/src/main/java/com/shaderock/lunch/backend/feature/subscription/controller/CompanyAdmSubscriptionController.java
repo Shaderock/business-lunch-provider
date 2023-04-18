@@ -34,7 +34,7 @@ public class CompanyAdmSubscriptionController {
   private final SupplierService supplierService;
   private final SubscriptionMapper subscriptionMapper;
 
-  @GetMapping
+  @GetMapping("/all")
   public ResponseEntity<List<SubscriptionDto>> read(Principal principal) {
     Company company = companyService.read(principal);
     List<Subscription> subscriptions = subscriptionService.read(company);

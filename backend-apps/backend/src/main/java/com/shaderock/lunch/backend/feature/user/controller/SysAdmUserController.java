@@ -1,8 +1,8 @@
 package com.shaderock.lunch.backend.feature.user.controller;
 
-import com.shaderock.lunch.backend.feature.user.dto.AppUserDetailsDto;
 import com.shaderock.lunch.backend.feature.user.dto.AppUserDto;
-import com.shaderock.lunch.backend.feature.user.service.AppUserDetailsService;
+import com.shaderock.lunch.backend.feature.user.entity.AppUser;
+import com.shaderock.lunch.backend.feature.user.mapper.AppUserMapper;
 import com.shaderock.lunch.backend.feature.user.service.AppUserService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -19,16 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(ApiConstants.SYS_ADM_USER)
 public class SysAdmUserController {
 
-  private final AppUserService appUserService;
-  private final AppUserDetailsService appUserDetailsService;
+  private final AppUserService userService;
+  private final AppUserMapper userMapper;
 
-  @GetMapping
+  @GetMapping("/all")
   public ResponseEntity<List<AppUserDto>> readUsers() {
-    return ResponseEntity.ok(appUserService.readAllAsDTO());
-  }
-
-  @GetMapping("/details")
-  public ResponseEntity<List<AppUserDetailsDto>> readUsersDetails() {
-    return ResponseEntity.ok(appUserDetailsService.readAllAsDto());
+    List<AppUser> users = userService.read();
+    return ResponseEntity.ok(users.stream().map(userMapper::toDto).toList());
   }
 }

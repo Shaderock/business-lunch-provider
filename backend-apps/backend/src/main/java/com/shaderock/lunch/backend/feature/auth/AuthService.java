@@ -7,12 +7,13 @@ import com.shaderock.lunch.backend.feature.auth.registration.error.exception.Con
 import com.shaderock.lunch.backend.feature.auth.registration.error.exception.TokenNotFoundException;
 import com.shaderock.lunch.backend.feature.auth.registration.error.exception.UserAlreadyRegisteredException;
 import com.shaderock.lunch.backend.feature.auth.registration.model.UserRegistrationForm;
+import com.shaderock.lunch.backend.feature.config.preference.employee.service.EmployeePreferencesService;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.repository.AppUserDetailsRepository;
+import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
+import com.shaderock.lunch.backend.feature.details.type.Role;
 import com.shaderock.lunch.backend.feature.user.entity.AppUser;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
-import com.shaderock.lunch.backend.feature.user.repository.AppUserDetailsRepository;
 import com.shaderock.lunch.backend.feature.user.repository.AppUserRepository;
-import com.shaderock.lunch.backend.feature.user.service.AppUserDetailsService;
-import com.shaderock.lunch.backend.feature.user.type.Role;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
@@ -37,6 +38,7 @@ public class AuthService {
   private final AppUserRepository appUserRepository;
   private final MailService mailService;
   private final BCryptPasswordEncoder passwordEncoder;
+  private final EmployeePreferencesService employeePreferencesService;
 
   @Transactional
   public String login(@Valid final LoginForm form) {
@@ -49,7 +51,7 @@ public class AuthService {
       throw new BadCredentialsException("Bad Credentials");
     }
 
-    LOGGER.info("User by [{}] found", form);
+    LOGGER.info("User found");
     return jwtTokenService.generateToken(userDetails);
   }
 
@@ -75,7 +77,7 @@ public class AuthService {
     AppUser appUser = new AppUser();
     appUser.setUserDetails(persistedDetails);
     AppUser persistedUser = appUserRepository.save(appUser);
-
+    employeePreferencesService.create(persistedUser);
     persistedDetails.setAppUser(persistedUser);
     try {
       if (sendConfirmationEmail) {

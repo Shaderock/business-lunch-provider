@@ -1,12 +1,13 @@
 package com.shaderock.lunch.backend.feature.organization.service;
 
 import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
 import com.shaderock.lunch.backend.feature.organization.dto.OrganizationDetailsDto;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.feature.organization.mapper.OrganizationDetailsMapper;
 import com.shaderock.lunch.backend.feature.organization.repository.OrganizationDetailsRepository;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
-import com.shaderock.lunch.backend.feature.user.service.AppUserDetailsService;
+import com.shaderock.lunch.backend.feature.user.entity.AppUser;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
@@ -115,5 +116,20 @@ public class OrganizationDetailsService {
 
   public boolean existsByEmail(@NonNull String email) {
     return organizationDetailsRepository.existsByEmail(email);
+  }
+
+  @Transactional
+  public void addUser(@NonNull AppUser appUser,
+      @NonNull OrganizationDetails organizationDetails) {
+    organizationDetails.getUsers().add(appUser);
+    appUser.setOrganizationDetails(organizationDetails);
+  }
+
+  @Transactional
+  public void removeUser(@NonNull AppUser appUser,
+      @NonNull OrganizationDetails organizationDetails) {
+    organizationDetailsValidationService.validateRemoveUser(appUser, organizationDetails);
+    organizationDetails.getUsers().remove(appUser);
+    appUser.setOrganizationDetails(null);
   }
 }

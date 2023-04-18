@@ -1,4 +1,4 @@
-package com.shaderock.lunch.backend.feature.user.type;
+package com.shaderock.lunch.backend.feature.details.type;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

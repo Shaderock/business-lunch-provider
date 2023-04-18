@@ -16,6 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+// todo use mapped superclass default values for each new employee
 public class CompanyNotifications extends NotificationConfig {
 
   @OneToOne(fetch = FetchType.LAZY)

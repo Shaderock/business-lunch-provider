@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(ApiConstants.SUPPLIER_ADMIN_COMPANY)
+@RequestMapping(ApiConstants.SUPPLIER_ADM_COMPANY)
 public class SupplierAdmCompanyController {
 
   private final CompanyMapper companyMapper;
