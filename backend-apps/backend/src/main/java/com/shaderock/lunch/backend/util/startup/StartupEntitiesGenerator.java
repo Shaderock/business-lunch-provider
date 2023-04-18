@@ -2,7 +2,10 @@ package com.shaderock.lunch.backend.util.startup;
 
 import com.shaderock.lunch.backend.feature.auth.AuthService;
 import com.shaderock.lunch.backend.feature.auth.registration.model.UserRegistrationForm;
+import com.shaderock.lunch.backend.feature.company.entity.Company;
 import com.shaderock.lunch.backend.feature.company.service.CompanyService;
+import com.shaderock.lunch.backend.feature.config.preference.company.entity.CompanyPreferences;
+import com.shaderock.lunch.backend.feature.config.preference.company.type.CompanyDiscountType;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.entity.SupplierPreferences;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.type.OrderType;
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
@@ -79,6 +82,21 @@ public class StartupEntitiesGenerator implements
     try {
       companyService.register(new OrganizationRegistrationForm(Organization.COMPANY.name),
           appUserDetailsService.loadUserByUsername(Organization.COMPANY.adminEmail));
+
+      Company company = companyService.read(Organization.COMPANY.adminEmail);
+
+      OrganizationDetails organizationDetails = company.getOrganizationDetails();
+      organizationDetails.setEmail(Organization.COMPANY.adminEmail);
+      organizationDetails.setPhone("+37388888888");
+      organizationDetails.setDescription("A dummy company");
+
+      CompanyPreferences preferences = company.getPreferences();
+      preferences.setDeliveryAddress("A dummy delivery address");
+      preferences.setCompanyDiscountType(CompanyDiscountType.SPECIFIC_PER_DAY);
+      preferences.setDiscountPerDay(55.55);
+      preferences.setDiscountFixFirstOrder(44.44);
+      preferences.setMaxDiscountFixFirstOrder(33.33);
+      preferences.setDiscountPercentageFirstOrder(50);
     } catch (Exception e) {
       LOGGER.error("Couldn't generate default company. Reason: {}", e.getMessage());
     }

@@ -35,9 +35,10 @@ public class ApiConstants {
   public static final String SUPPLIER_ADM_PREFERENCES = SUPPLIER_ADM + PREFERENCES_URL_PART;
   private static final String COMPANY_URL_PART = "/company";
   public static final String COMPANY_ADM_COMPANY = COMPANY_ADM + COMPANY_URL_PART;
+  public static final String COMPANY_ADM_COMPANY_PREFERENCES =
+      COMPANY_ADM_COMPANY + PREFERENCES_URL_PART;
   public static final String SYS_ADM_COMPANY = SYS_ADM + COMPANY_URL_PART;
   public static final String COMPANY = API + COMPANY_URL_PART;
-  public static final String COMPANY_PREFERENCES = COMPANY + PREFERENCES_URL_PART;
   public static final String SUPPLIER_ADM_COMPANY = SUPPLIER_ADM + COMPANY_URL_PART;
   public static final String SUPPLIER_ADM_COMPANY_PREFERENCES =
       SUPPLIER_ADM_COMPANY + PREFERENCES_URL_PART;
@@ -46,6 +47,4 @@ public class ApiConstants {
   public static final String SUPPLIER = API + SUPPLIER_URL_PART;
   public static final String SUPPLIER_ADM_SUPPLIER = SUPPLIER_ADM + SUPPLIER_URL_PART;
   public static final String PUBLIC_SUPPLIER_PREFERENCES = SUPPLIER_URL_PART + PREFERENCES_URL_PART;
-
-
 }

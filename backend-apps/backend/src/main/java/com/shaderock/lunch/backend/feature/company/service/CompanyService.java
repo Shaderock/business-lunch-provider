@@ -4,7 +4,7 @@ import com.shaderock.lunch.backend.communication.exception.CrudValidationExcepti
 import com.shaderock.lunch.backend.feature.company.entity.Company;
 import com.shaderock.lunch.backend.feature.company.repository.CompanyRepository;
 import com.shaderock.lunch.backend.feature.config.preference.company.entity.CompanyPreferences;
-import com.shaderock.lunch.backend.feature.config.preference.company.service.CompanyPreferencesServiceImpl;
+import com.shaderock.lunch.backend.feature.config.preference.company.service.CompanyPreferencesService;
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
 import com.shaderock.lunch.backend.feature.details.type.Role;
@@ -31,7 +31,7 @@ public class CompanyService {
 
   private final CompanyRepository companyRepository;
   private final OrganizationDetailsService organizationDetailsService;
-  private final CompanyPreferencesServiceImpl companyPreferencesService;
+  private final CompanyPreferencesService companyPreferencesService;
   private final OrganizationDetailsValidationService organizationDetailsValidationService;
   private final CompanyValidationService companyValidationService;
   private final AppUserDetailsService userDetailsService;

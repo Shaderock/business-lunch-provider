@@ -38,6 +38,18 @@ public class CompanyPreferences extends DeletableEntity {
   private CompanyDiscountType companyDiscountType;
 
   @Column
+  private Integer discountPercentageFirstOrder;
+
+  @Column
+  private Double discountFixFirstOrder;
+
+  @Column
+  private Double maxDiscountFixFirstOrder;
+
+  @Column
+  private Double discountPerDay;
+
+  @Column
   private String deliveryAddress;
 
   @Builder(builderMethodName = "baseEntityBuilder")
