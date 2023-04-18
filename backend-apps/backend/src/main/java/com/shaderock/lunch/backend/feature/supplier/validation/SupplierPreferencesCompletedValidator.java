@@ -20,13 +20,13 @@ public class SupplierPreferencesCompletedValidator implements Validator {
   @Override
   public void validate(Object target, Errors errors) {
     ValidationUtils.rejectIfEmptyOrWhitespace(errors, "requestOffset", FIELD_REQUIRED_CODE,
-        "Request offset cannot be null");
+        "Request offset can not be empty");
     ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deliveryPeriodStartTime",
         FIELD_REQUIRED_CODE,
-        "Delivery period start time cannot be null");
+        "Delivery period start time can not be empty");
     ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deliveryPeriodEndTime", FIELD_REQUIRED_CODE,
-        "Delivery period end time cannot be null");
+        "Delivery period end time can not be empty");
     ValidationUtils.rejectIfEmptyOrWhitespace(errors, "orderType", FIELD_REQUIRED_CODE,
-        "Order type cannot be null");
+        "Order type can not be empty");
   }
 }

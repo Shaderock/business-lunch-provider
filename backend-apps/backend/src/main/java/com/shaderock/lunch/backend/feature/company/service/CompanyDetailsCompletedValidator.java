@@ -1,4 +1,4 @@
-package com.shaderock.lunch.backend.feature.supplier.validation;
+package com.shaderock.lunch.backend.feature.company.service;
 
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.validation.Validator;
 
 @Component
 @RequiredArgsConstructor
-public class SupplierDetailsCompletedValidator implements Validator {
+public class CompanyDetailsCompletedValidator implements Validator {
 
   public static final String FIELD_REQUIRED_CODE = "field.required";
 
@@ -20,8 +20,6 @@ public class SupplierDetailsCompletedValidator implements Validator {
 
   @Override
   public void validate(Object target, Errors errors) {
-    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", FIELD_REQUIRED_CODE,
-        "Description can not be empty");
     ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", FIELD_REQUIRED_CODE,
         "Email can not be empty");
     ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phone", FIELD_REQUIRED_CODE,
