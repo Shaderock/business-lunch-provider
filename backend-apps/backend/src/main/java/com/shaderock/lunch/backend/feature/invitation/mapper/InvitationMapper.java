@@ -1,5 +1,6 @@
 package com.shaderock.lunch.backend.feature.invitation.mapper;
 
+import com.shaderock.lunch.backend.data.mapper.BaseMapper;
 import com.shaderock.lunch.backend.feature.invitation.dto.InvitationDto;
 import com.shaderock.lunch.backend.feature.invitation.entity.Invitation;
 import org.mapstruct.InheritInverseConfiguration;
@@ -8,7 +9,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
 
 @Mapper(componentModel = ComponentModel.SPRING)
-public interface InvitationMapper {
+public interface InvitationMapper extends BaseMapper {
 
   @Mapping(target = "companyId", source = "company.id")
   @Mapping(target = "appUserId", source = "appUser.id")

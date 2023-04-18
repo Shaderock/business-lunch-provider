@@ -1,5 +1,6 @@
 package com.shaderock.lunch.backend.feature.subscription.mapper;
 
+import com.shaderock.lunch.backend.data.mapper.BaseMapper;
 import com.shaderock.lunch.backend.feature.subscription.dto.SubscriptionDto;
 import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
 import org.mapstruct.InheritInverseConfiguration;
@@ -8,7 +9,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
 
 @Mapper(componentModel = ComponentModel.SPRING)
-public interface SubscriptionMapper {
+public interface SubscriptionMapper extends BaseMapper {
 
   @Mapping(target = "supplier", ignore = true)
   @Mapping(target = "company", ignore = true)
