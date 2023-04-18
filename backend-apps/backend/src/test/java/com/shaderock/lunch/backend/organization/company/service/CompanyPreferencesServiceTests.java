@@ -17,7 +17,6 @@ import com.shaderock.lunch.backend.feature.config.preference.company.mapper.Comp
 import com.shaderock.lunch.backend.feature.config.preference.company.mapper.CompanyPreferencesMapperImpl;
 import com.shaderock.lunch.backend.feature.config.preference.company.repository.CompanyPreferenceRepository;
 import com.shaderock.lunch.backend.feature.config.preference.company.service.CompanyPreferencesService;
-import com.shaderock.lunch.backend.feature.config.preference.company.service.CompanyPreferencesServiceImpl;
 import com.shaderock.lunch.backend.feature.config.preference.company.type.CompanyDiscountType;
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import java.util.Optional;
@@ -37,26 +36,24 @@ class CompanyPreferencesServiceTests {
   @Mock
   private CompanyPreferencesMapper companyPreferencesMapper;
   @InjectMocks
-  private CompanyPreferencesServiceImpl companyPreferencesService;
+  private CompanyPreferencesService companyPreferencesService;
   private CompanyPreferences preferences;
   private CompanyPreferencesDto preferencesDto;
   private AppUserDetails userDetails;
 
   @BeforeEach
   public void init() {
-    userDetails = AppUserDetails.builder()
-        .email("user@dummy.email.test")
-        .build();
+    userDetails = AppUserDetails.builder().email("user@dummy.email.test").build();
     userDetails.setId(UUID.randomUUID());
 
     preferences = CompanyPreferences.builder()
         .companyDiscountType(CompanyDiscountType.PERCENTAGE_FIRST)
-        .deliveryAddress("Delivery address")
-        .build();
+        .deliveryAddress("Delivery address").build();
     preferences.setId(UUID.randomUUID());
 
     preferencesDto = new CompanyPreferencesDto(preferences.getId(), UUID.randomUUID(),
-        preferences.getCompanyDiscountType(), preferences.getDeliveryAddress());
+        preferences.getCompanyDiscountType(), null, null, null, null,
+        preferences.getDeliveryAddress());
   }
 
   @Test
@@ -111,7 +108,7 @@ class CompanyPreferencesServiceTests {
   @Test
   void CreatePreferences_OnValidPreferencesAndDummyMapper_ReturnsCreatedPreferences() {
     when(companyPreferenceRepository.save(any())).thenReturn(preferences);
-    CompanyPreferencesService companyPreferencesService1 = new CompanyPreferencesServiceImpl(
+    CompanyPreferencesService companyPreferencesService1 = new CompanyPreferencesService(
         companyPreferenceRepository, new CompanyPreferencesMapper() {
       @Override
       public CompanyPreferencesDto toDto(CompanyPreferences companyPreferences) {
@@ -136,7 +133,7 @@ class CompanyPreferencesServiceTests {
   @Test
   void UpdatePreferencesByDto_WithSpyMapper_ReturnsUpdatedPreferences() {
     CompanyPreferencesMapper spyMapper = spy(new CompanyPreferencesMapperImpl());
-    companyPreferencesService = new CompanyPreferencesServiceImpl(companyPreferenceRepository,
+    companyPreferencesService = new CompanyPreferencesService(companyPreferenceRepository,
         spyMapper);
     when(companyPreferenceRepository.findByCompany_OrganizationDetails_Users_UserDetails_Id(any()))
         .thenReturn(Optional.of(preferences));

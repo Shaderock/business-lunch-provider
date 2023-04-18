@@ -13,7 +13,7 @@ import com.shaderock.lunch.backend.feature.company.entity.Company;
 import com.shaderock.lunch.backend.feature.company.repository.CompanyRepository;
 import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.config.preference.company.entity.CompanyPreferences;
-import com.shaderock.lunch.backend.feature.config.preference.company.service.CompanyPreferencesServiceImpl;
+import com.shaderock.lunch.backend.feature.config.preference.company.service.CompanyPreferencesService;
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.details.type.Role;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
@@ -39,7 +39,7 @@ class CompanyServiceTests {
   @Mock
   private OrganizationDetailsService organizationDetailsService;
   @Mock
-  private CompanyPreferencesServiceImpl companyPreferencesService;
+  private CompanyPreferencesService companyPreferencesService;
   @InjectMocks
   private CompanyService companyService;
   private OrganizationDetails organizationDetails;

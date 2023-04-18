@@ -11,6 +11,10 @@ import java.util.UUID;
 public record CompanyPreferencesDto(UUID id,
                                     UUID companyId,
                                     CompanyDiscountType companyDiscountType,
+                                    Integer discountPercentageFirstOrder,
+                                    Double discountFixFirstOrder,
+                                    Double maxDiscountFixFirstOrder,
+                                    Double discountPerDay,
                                     String deliveryAddress) implements Serializable {
 
 }
