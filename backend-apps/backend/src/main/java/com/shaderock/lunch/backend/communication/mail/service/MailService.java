@@ -2,7 +2,7 @@ package com.shaderock.lunch.backend.communication.mail.service;
 
 import static jakarta.mail.Message.RecipientType.TO;
 
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;

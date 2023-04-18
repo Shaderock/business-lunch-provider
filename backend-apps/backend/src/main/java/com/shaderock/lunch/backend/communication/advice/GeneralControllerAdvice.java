@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -38,9 +39,16 @@ public class GeneralControllerAdvice {
 
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ErrorMessage handleMissedRequestParameter(HttpRequestMethodNotSupportedException e) {
+  public ErrorMessage handleRequestMethodNotSupported(HttpRequestMethodNotSupportedException e) {
     LOGGER.warn("Request method is not supported. Message: {}", e.getMessage());
     return new ErrorMessage(false, e.getMessage());
+  }
+
+  @ExceptionHandler(UsernameNotFoundException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorMessage handleUsernameNotFound(UsernameNotFoundException e) {
+    LOGGER.warn("User not found. Message: {}", e.getMessage());
+    return new ErrorMessage(true, e.getMessage());
   }
 
   @ExceptionHandler(TransferableApplicationException.class)

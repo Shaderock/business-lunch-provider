@@ -1,7 +1,8 @@
-package com.shaderock.lunch.backend.feature.user.entity;
+package com.shaderock.lunch.backend.feature.details.entity;
 
 import com.shaderock.lunch.backend.data.entity.BaseEntity;
-import com.shaderock.lunch.backend.feature.user.type.Role;
+import com.shaderock.lunch.backend.feature.details.type.Role;
+import com.shaderock.lunch.backend.feature.user.entity.AppUser;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;

@@ -2,11 +2,12 @@ package com.shaderock.lunch.backend.feature.organization.service;
 
 import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
 import com.shaderock.lunch.backend.feature.company.error.exception.CompanyRegistrationValidationException;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.type.Role;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.feature.organization.form.OrganizationRegistrationForm;
 import com.shaderock.lunch.backend.feature.organization.repository.OrganizationDetailsRepository;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
-import com.shaderock.lunch.backend.feature.user.type.Role;
+import com.shaderock.lunch.backend.feature.user.entity.AppUser;
 import java.util.Objects;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,22 @@ public class OrganizationDetailsValidationService {
   public void validateUpdate(@NonNull OrganizationDetails details) {
     if (StringUtils.isBlank(details.getName())) {
       throw new CrudValidationException("Can not update organization without name");
+    }
+  }
+
+  public void validateRemoveUser(@NonNull AppUser appUser,
+      @NonNull OrganizationDetails organizationDetails) {
+    if (organizationDetails.getUsers().size() == 1) {
+      throw new CrudValidationException("Can not remove last user from the organization");
+    }
+
+    validateUserIsPartOfOrganization(appUser, organizationDetails);
+  }
+
+  public void validateUserIsPartOfOrganization(AppUser appUser,
+      OrganizationDetails organizationDetails) {
+    if (!organizationDetails.getUsers().contains(appUser)) {
+      throw new CrudValidationException("User is not a part of organization");
     }
   }
 }

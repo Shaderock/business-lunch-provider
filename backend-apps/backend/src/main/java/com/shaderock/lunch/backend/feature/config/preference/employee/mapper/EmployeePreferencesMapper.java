@@ -9,7 +9,6 @@ import org.mapstruct.MappingConstants.ComponentModel;
 @Mapper(componentModel = ComponentModel.SPRING)
 public interface EmployeePreferencesMapper {
 
-  @Mapping(target = "notificationConfigId", source = "notificationConfig.id")
   @Mapping(target = "employeeId", source = "employee.id")
   EmployeePreferencesDto toDto(EmployeePreferences employeePreferences);
 }

@@ -5,13 +5,13 @@ import com.shaderock.lunch.backend.feature.auth.registration.model.UserRegistrat
 import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.entity.SupplierPreferences;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.type.OrderType;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
+import com.shaderock.lunch.backend.feature.details.type.Role;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.feature.organization.form.OrganizationRegistrationForm;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
-import com.shaderock.lunch.backend.feature.user.service.AppUserDetailsService;
-import com.shaderock.lunch.backend.feature.user.type.Role;
 import jakarta.transaction.Transactional;
 import java.time.Duration;
 import java.time.LocalTime;

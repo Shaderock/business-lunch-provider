@@ -13,7 +13,6 @@ public record OrganizationDetailsDto(UUID id,
                                      String description,
                                      String email,
                                      String phone,
-                                     List<UUID> usersIds,
-                                     List<UUID> usersRequestsIds) implements Serializable {
+                                     List<UUID> usersIds) implements Serializable {
 
 }

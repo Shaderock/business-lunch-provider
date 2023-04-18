@@ -17,7 +17,6 @@ import org.mapstruct.MappingConstants.ComponentModel;
 public interface OrganizationDetailsMapper {
 
   @Mapping(target = "usersIds", source = "users")
-  @Mapping(target = "usersRequestsIds", source = "usersRequests")
   OrganizationDetailsDto toDto(OrganizationDetails organizationDetails);
 
   PublicOrganizationDetailsDto toPublicDto(OrganizationDetails organizationDetails);

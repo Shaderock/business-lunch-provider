@@ -5,17 +5,19 @@ import com.shaderock.lunch.backend.feature.company.entity.Company;
 import com.shaderock.lunch.backend.feature.company.repository.CompanyRepository;
 import com.shaderock.lunch.backend.feature.config.preference.company.entity.CompanyPreferences;
 import com.shaderock.lunch.backend.feature.config.preference.company.service.CompanyPreferencesServiceImpl;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
+import com.shaderock.lunch.backend.feature.details.type.Role;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.feature.organization.form.OrganizationRegistrationForm;
 import com.shaderock.lunch.backend.feature.organization.service.OrganizationDetailsService;
 import com.shaderock.lunch.backend.feature.organization.service.OrganizationDetailsValidationService;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
-import com.shaderock.lunch.backend.feature.user.service.AppUserDetailsService;
-import com.shaderock.lunch.backend.feature.user.type.Role;
+import com.shaderock.lunch.backend.feature.user.entity.AppUser;
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class CompanyService {
   private final OrganizationDetailsService organizationDetailsService;
   private final CompanyPreferencesServiceImpl companyPreferencesService;
   private final OrganizationDetailsValidationService organizationDetailsValidationService;
+  private final CompanyValidationService companyValidationService;
   private final AppUserDetailsService userDetailsService;
 
   @Transactional(TxType.REQUIRES_NEW)
@@ -120,5 +123,33 @@ public class CompanyService {
     organizationDetailsService.delete(persistedCompany.getOrganizationDetails());
 
     LOGGER.info("Deleted {}", persistedCompany);
+  }
+
+  @Transactional
+  public void addEmployee(@NonNull AppUser appUser, @NonNull Company company) {
+    appUser.getUserDetails().getRoles().add(Role.EMPLOYEE);
+    organizationDetailsService.addUser(appUser, company.getOrganizationDetails());
+  }
+
+  @Transactional
+  public void removeEmployee(@NonNull AppUser appUser, @NonNull Company company) {
+    organizationDetailsService.removeUser(appUser, company.getOrganizationDetails());
+    companyValidationService.validateRemoveEmployee(appUser, company);
+    appUser.getUserDetails().getRoles().removeAll(Set.of(Role.EMPLOYEE, Role.COMPANY_ADMIN));
+  }
+
+  @Transactional
+  public void grantAdminRole(AppUser appUser, Company company) {
+    organizationDetailsValidationService.validateUserIsPartOfOrganization(appUser,
+        company.getOrganizationDetails());
+    appUser.getUserDetails().getRoles().add(Role.COMPANY_ADMIN);
+  }
+
+  @Transactional
+  public void revokeAdminRole(AppUser appUser, Company company) {
+    organizationDetailsValidationService.validateUserIsPartOfOrganization(appUser,
+        company.getOrganizationDetails());
+    companyValidationService.validateRevokeAdminRole(appUser, company);
+    appUser.getUserDetails().getRoles().remove(Role.COMPANY_ADMIN);
   }
 }

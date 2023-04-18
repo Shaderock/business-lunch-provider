@@ -1,8 +1,8 @@
 package com.shaderock.lunch.backend.feature.notification.repository;
 
 import com.shaderock.lunch.backend.data.repository.BaseEntityRepository;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.notification.entity.Notification;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

@@ -5,8 +5,8 @@ import com.shaderock.lunch.backend.feature.config.preference.supplier.dto.Suppli
 import com.shaderock.lunch.backend.feature.config.preference.supplier.entity.SupplierPreferences;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.mapper.SupplierPreferencesMapper;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.repository.SupplierPreferencesRepository;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

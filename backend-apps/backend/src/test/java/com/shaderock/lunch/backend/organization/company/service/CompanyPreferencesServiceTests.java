@@ -19,7 +19,7 @@ import com.shaderock.lunch.backend.feature.config.preference.company.repository.
 import com.shaderock.lunch.backend.feature.config.preference.company.service.CompanyPreferencesService;
 import com.shaderock.lunch.backend.feature.config.preference.company.service.CompanyPreferencesServiceImpl;
 import com.shaderock.lunch.backend.feature.config.preference.company.type.CompanyDiscountType;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;

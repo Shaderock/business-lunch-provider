@@ -5,7 +5,7 @@ import com.shaderock.lunch.backend.feature.config.preference.company.dto.Company
 import com.shaderock.lunch.backend.feature.config.preference.company.entity.CompanyPreferences;
 import com.shaderock.lunch.backend.feature.config.preference.company.mapper.CompanyPreferencesMapper;
 import com.shaderock.lunch.backend.feature.config.preference.company.repository.CompanyPreferenceRepository;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import jakarta.transaction.Transactional;
 import java.util.UUID;
 import lombok.NonNull;

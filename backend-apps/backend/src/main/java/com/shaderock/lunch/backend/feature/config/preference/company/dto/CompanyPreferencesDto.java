@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 /**
- * A DTO for the {@link CompanyPreferences} BaseEntity
+ * A DTO for the {@link CompanyPreferences} entity
  */
 public record CompanyPreferencesDto(UUID id,
                                     UUID companyId,

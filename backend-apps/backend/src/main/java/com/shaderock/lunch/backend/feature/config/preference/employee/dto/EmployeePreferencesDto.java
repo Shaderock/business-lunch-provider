@@ -6,11 +6,10 @@ import java.util.UUID;
 import lombok.Builder;
 
 /**
- * A DTO for the {@link EmployeePreferences} BaseEntity
+ * A DTO for the {@link EmployeePreferences} entity
  */
 @Builder
 public record EmployeePreferencesDto(UUID id,
-                                     UUID notificationConfigId,
                                      UUID employeeId) implements Serializable {
 
 }

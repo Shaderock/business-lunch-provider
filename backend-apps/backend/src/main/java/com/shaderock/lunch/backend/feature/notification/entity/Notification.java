@@ -27,7 +27,7 @@ import lombok.ToString.Exclude;
 public class Notification extends BaseEntity {
 
   @Column(nullable = false)
-  private LocalDateTime createdAt = LocalDateTime.now();
+  private LocalDateTime createdAt;
 
   @Column(nullable = false)
   private boolean isViewed = false;

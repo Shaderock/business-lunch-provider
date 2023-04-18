@@ -9,6 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.entity.SupplierPreferences;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.type.Role;
 import com.shaderock.lunch.backend.feature.food.category.dto.CategoryDto;
 import com.shaderock.lunch.backend.feature.food.category.entity.Category;
 import com.shaderock.lunch.backend.feature.food.category.repository.CategoryRepository;
@@ -18,8 +20,6 @@ import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetai
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.repository.SupplierRepository;
 import com.shaderock.lunch.backend.feature.user.entity.AppUser;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
-import com.shaderock.lunch.backend.feature.user.type.Role;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import java.security.Principal;
 import java.util.HashSet;

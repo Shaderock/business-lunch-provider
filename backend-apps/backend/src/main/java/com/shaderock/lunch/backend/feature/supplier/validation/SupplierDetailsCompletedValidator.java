@@ -21,11 +21,11 @@ public class SupplierDetailsCompletedValidator implements Validator {
   @Override
   public void validate(Object target, Errors errors) {
     ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", FIELD_REQUIRED_CODE,
-        "Description cannot be null");
+        "Description can not be empty");
     ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", FIELD_REQUIRED_CODE,
-        "Email cannot be null");
+        "Email can not be empty");
     ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phone", FIELD_REQUIRED_CODE,
-        "Phone cannot be null");
+        "Phone can not be empty");
   }
 
 }

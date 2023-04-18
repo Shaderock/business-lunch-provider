@@ -1,7 +1,7 @@
-package com.shaderock.lunch.backend.feature.user.mapper;
+package com.shaderock.lunch.backend.feature.details.mapper;
 
-import com.shaderock.lunch.backend.feature.user.dto.AppUserDetailsDto;
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.dto.AppUserDetailsDto;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,7 +1,7 @@
-package com.shaderock.lunch.backend.feature.user.dto;
+package com.shaderock.lunch.backend.feature.details.dto;
 
-import com.shaderock.lunch.backend.feature.user.entity.AppUserDetails;
-import com.shaderock.lunch.backend.feature.user.type.Role;
+import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
+import com.shaderock.lunch.backend.feature.details.type.Role;
 import jakarta.validation.constraints.Email;
 import java.io.Serializable;
 import java.util.Set;
