@@ -50,13 +50,16 @@ public class SupplierPreferences extends DeletableEntity {
   @Column(columnDefinition = "int default 1")
   private int minimumOrdersPerCompanyRequest;
 
+  @Column(columnDefinition = "int default 1")
+  private int minimumCategoriesForEmployeeOrder;
+
   @Column
   @Enumerated(EnumType.STRING)
   private OrderType orderType;
 
   @OneToMany(mappedBy = "supplierPreferences", fetch = FetchType.LAZY)
   @Exclude
-  private Set<PriceForCategories> priceForCategories;
+  private Set<PriceForCategories> pricesForCategories;
 
   @OneToOne(mappedBy = "preferences")
   private OrderCapacity orderCapacity;

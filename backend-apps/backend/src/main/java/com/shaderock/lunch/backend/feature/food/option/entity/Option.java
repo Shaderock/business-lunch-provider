@@ -8,11 +8,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,10 +42,6 @@ public class Option extends VisibleEntity {
   @Column
   private String description;
 
-  @ManyToMany(mappedBy = "options", fetch = FetchType.LAZY)
-  @Exclude
-  private Set<EmployeeOrder> employeesOrders;
-
   @Exclude
   @ManyToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "category_id", nullable = false)
@@ -52,6 +50,13 @@ public class Option extends VisibleEntity {
   @OneToMany(mappedBy = "option", fetch = FetchType.LAZY)
   @Exclude
   private List<SubOption> subOptions;
+
+  @Exclude
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(name = "option_employee_orders",
+      joinColumns = @JoinColumn(name = "option_id"),
+      inverseJoinColumns = @JoinColumn(name = "employee_orders_id"))
+  private Collection<EmployeeOrder> employeesOrders = new ArrayList<>();
 
   @Builder
   public Option(UUID id, boolean isDeleted, boolean isPublic) {

@@ -10,6 +10,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import java.time.LocalTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,6 +52,9 @@ public class CompanyPreferences extends DeletableEntity {
 
   @Column
   private String deliveryAddress;
+
+  @Column
+  private LocalTime deliverAt;
 
   @Builder(builderMethodName = "baseEntityBuilder")
   public CompanyPreferences(UUID id, boolean isDeleted) {

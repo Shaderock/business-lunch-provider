@@ -43,6 +43,7 @@ public class SecurityConfiguration {
         .requestMatchers("/api/sys-adm/**").hasRole(Role.SYSTEM_ADMIN.getName())
         .requestMatchers("/api/supplier-adm/**").hasRole(Role.SUPPLIER.getName())
         .requestMatchers("/api/company-adm/**").hasRole(Role.COMPANY_ADMIN.getName())
+        .requestMatchers("/api/employee/**").hasRole(Role.EMPLOYEE.getName())
         .requestMatchers("/actuator/**").authenticated().and().httpBasic()
         .and()
         .authorizeHttpRequests()

@@ -3,6 +3,7 @@ package com.shaderock.lunch.backend.feature.config.preference.company.dto;
 import com.shaderock.lunch.backend.feature.config.preference.company.entity.CompanyPreferences;
 import com.shaderock.lunch.backend.feature.config.preference.company.type.CompanyDiscountType;
 import java.io.Serializable;
+import java.time.LocalTime;
 import java.util.UUID;
 
 /**
@@ -15,6 +16,7 @@ public record CompanyPreferencesDto(UUID id,
                                     Double discountFixFirstOrder,
                                     Double maxDiscountFixFirstOrder,
                                     Double discountPerDay,
+                                    LocalTime deliverAt,
                                     String deliveryAddress) implements Serializable {
 
 }

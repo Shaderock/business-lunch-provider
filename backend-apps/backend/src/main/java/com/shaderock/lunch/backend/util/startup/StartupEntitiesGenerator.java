@@ -97,6 +97,7 @@ public class StartupEntitiesGenerator implements
       preferences.setDiscountFixFirstOrder(44.44);
       preferences.setMaxDiscountFixFirstOrder(33.33);
       preferences.setDiscountPercentageFirstOrder(50);
+      preferences.setDeliverAt(LocalTime.of(13, 0));
     } catch (Exception e) {
       LOGGER.error("Couldn't generate default company. Reason: {}", e.getMessage());
     }
