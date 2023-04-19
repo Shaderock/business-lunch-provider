@@ -2,7 +2,6 @@ package com.shaderock.lunch.backend.feature.food.category.service;
 
 
 import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
-import com.shaderock.lunch.backend.communication.exception.TransferableApplicationException;
 import com.shaderock.lunch.backend.feature.food.category.dto.CategoryDto;
 import com.shaderock.lunch.backend.feature.food.category.entity.Category;
 import com.shaderock.lunch.backend.feature.food.category.mapper.CategoryMapper;
@@ -28,10 +27,9 @@ public class CategoryService {
   private final CategoryRepository categoryRepository;
   private final CategoryMapper categoryMapper;
   private final SupplierValidationService supplierValidationService;
+  private final CategoryValidationService categoryValidationService;
 
-  @Transactional
-  public Category create(@NonNull CategoryDto categoryDto, @NonNull Supplier supplier)
-      throws TransferableApplicationException {
+  public Category create(@NonNull CategoryDto categoryDto, @NonNull Supplier supplier) {
     LOGGER.info("Converting [{}] to Category", categoryDto);
 
     Category newCategory = categoryMapper.toEntity(categoryDto);
@@ -45,7 +43,7 @@ public class CategoryService {
   public Category create(@NonNull Category newCategory, @NonNull Supplier supplier) {
     LOGGER.info("Attempting to create [{}]", newCategory);
 
-    validateCreate(newCategory, supplier);
+    categoryValidationService.validateCreate(newCategory, supplier);
 
     newCategory.setMenu(supplier.getMenu());
 
@@ -56,20 +54,6 @@ public class CategoryService {
     return persistedCategory;
   }
 
-  private void validateCreate(Category category, Supplier supplier) {
-    if (category.isPublic()) {
-      supplierValidationService.validateCanCreatePublicCategories(supplier);
-    }
-
-    categoryRepository.findByNameAndMenu_Supplier_Id(
-        category.getName(), supplier.getId()).ifPresent(c -> {
-      throw new CrudValidationException(String.format(
-          "Category (name=[%s]) already exists and should be updated instead of created",
-          c.getName()));
-    });
-
-    validateVisibility(category, supplier);
-  }
 
   public Category read(@NonNull UUID id) {
     LOGGER.info("Attempting to read Category by id=[{}]", id);
@@ -119,7 +103,8 @@ public class CategoryService {
     Category persistedCategory = read(categoryToUpdate.getId(), supplier);
     if (categoryToUpdate.isPublic()) {
       supplierValidationService.validateCanCreatePublicCategories(supplier);
-      validateVisibility(persistedCategory, persistedCategory.getMenu().getSupplier());
+      categoryValidationService.validateCategoryCanBeMadePublic(persistedCategory,
+          persistedCategory.getMenu().getSupplier());
     }
 
     persistedCategory.setName(categoryToUpdate.getName());
@@ -136,14 +121,5 @@ public class CategoryService {
   public void delete(@NonNull UUID id, @NonNull Supplier supplier) {
     Category persistedCategory = read(id, supplier);
     categoryRepository.delete(persistedCategory);
-  }
-
-  private void validateVisibility(Category category, Supplier supplier) {
-    if (!supplier.isPublic() && category.isPublic()) {
-      throw new CrudValidationException(
-          String.format(
-              "Can not set public Category(id=[%s]) because Supplier(id=[%s]) is not public",
-              category.getId(), supplier.getId()));
-    }
   }
 }

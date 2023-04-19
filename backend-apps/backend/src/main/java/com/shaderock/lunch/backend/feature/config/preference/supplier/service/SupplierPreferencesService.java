@@ -51,7 +51,7 @@ public class SupplierPreferencesService {
   }
 
   // todo validate for nulls. you can't set something back to null
-  // todo validate whether there are no invalid options if order type is changed
+  // todo don't allow changing order type while any categories exist
   @Transactional
   public SupplierPreferences update(@NonNull SupplierPreferences preferences,
       @NonNull AppUserDetails userDetails) {
@@ -61,6 +61,8 @@ public class SupplierPreferencesService {
     persisted.setDeliveryPeriodStartTime(preferences.getDeliveryPeriodStartTime());
     persisted.setDeliveryPeriodEndTime(preferences.getDeliveryPeriodEndTime());
     persisted.setMinimumOrdersPerCompanyRequest(preferences.getMinimumOrdersPerCompanyRequest());
+    persisted.setMinimumCategoriesForEmployeeOrder(
+        preferences.getMinimumCategoriesForEmployeeOrder());
     persisted.setOrderType(preferences.getOrderType());
 
     return persisted;

@@ -10,8 +10,6 @@ import org.mapstruct.MappingConstants.ComponentModel;
 
 @Mapper(componentModel = ComponentModel.SPRING)
 public interface OptionMapper extends BaseMapper {
-
-
   @Mapping(target = "isPublic", source = "public")
   @Mapping(target = "categoryId", source = "category.id")
   @Mapping(target = "employeesOrderIds", source = "employeesOrders")

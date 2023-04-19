@@ -23,6 +23,7 @@ public class OptionService {
   private final OptionRepository optionRepository;
   private final OptionMapper optionMapper;
   private final SupplierValidationService supplierValidationService;
+  private final OptionValidationService optionValidationService;
 
   @Transactional
   public Option create(OptionDto optionDto, Category category) {
@@ -35,7 +36,7 @@ public class OptionService {
     if (option.isPublic()) {
       supplierValidationService.validateCanCreatePublicOptions(category.getMenu().getSupplier());
     }
-    validateVisibility(option, category);
+    optionValidationService.validateOptionCanBeMadePublic(option, category);
 
     option.setCategory(category);
     Option persistedOption = optionRepository.save(option);
@@ -73,13 +74,15 @@ public class OptionService {
     return update(option, supplier);
   }
 
+  // todo don't allow setting back to non public from public
   @Transactional
   public Option update(Option option, Supplier supplier) {
     Option persistedOption = read(option.getId(), supplier);
     if (option.isPublic()) {
       supplierValidationService.validateCanCreatePublicOptions(supplier);
     }
-    validateVisibility(persistedOption, persistedOption.getCategory());
+    optionValidationService.validateOptionCanBeMadePublic(persistedOption,
+        persistedOption.getCategory());
     persistedOption.setName(option.getName());
     persistedOption.setPublic(option.isPublic());
     persistedOption.setPrice(option.getPrice());
@@ -90,14 +93,5 @@ public class OptionService {
   public void delete(UUID id, Supplier supplier) {
     Option persistedOption = read(id, supplier);
     optionRepository.delete(persistedOption);
-  }
-
-  private void validateVisibility(Option option, Category category) {
-    if (!category.isPublic() && option.isPublic()) {
-      throw new CrudValidationException(
-          String.format(
-              "Can not set public Option(id=[%s]) because Category(id=[%s]) is not public",
-              category.getId(), category.getId()));
-    }
   }
 }

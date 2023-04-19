@@ -53,7 +53,7 @@ class CompanyPreferencesServiceTests {
 
     preferencesDto = new CompanyPreferencesDto(preferences.getId(), UUID.randomUUID(),
         preferences.getCompanyDiscountType(), null, null, null, null,
-        preferences.getDeliveryAddress());
+        null, preferences.getDeliveryAddress());
   }
 
   @Test

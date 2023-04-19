@@ -12,7 +12,7 @@ import org.mapstruct.MappingConstants.ComponentModel;
 public interface SupplierPreferencesMapper extends BaseMapper {
 
   @Mapping(target = "minimumOrdersPerCompanyRequest", source = "minimumOrdersPerCompanyRequest")
-  @Mapping(target = "priceForCategoriesIds", source = "priceForCategories")
+  @Mapping(target = "pricesForCategoriesIds", source = "pricesForCategories")
   @Mapping(target = "orderCapacityId", source = "orderCapacity.id")
   @Mapping(source = "supplier.id", target = "supplierId")
   SupplierPreferencesDto toDto(SupplierPreferences preferences);

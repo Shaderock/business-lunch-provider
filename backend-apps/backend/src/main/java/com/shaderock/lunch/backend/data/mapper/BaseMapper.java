@@ -8,6 +8,7 @@ import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
 import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
 import com.shaderock.lunch.backend.feature.user.entity.AppUser;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -44,6 +45,14 @@ public interface BaseMapper {
         .collect(Collectors.toSet());
   }
 
+  default Collection<UUID> optionsToIds(Collection<Option> options) {
+    return optionsToIds(new HashSet<>(options));
+  }
+
+  default Collection<Option> idsToOptions(Collection<UUID> optionsIds) {
+    return idsToOptions(new HashSet<>(optionsIds));
+  }
+
   default Set<UUID> subscriptionsToIds(Set<Subscription> subscriptions) {
     return Stream.ofNullable(subscriptions)
         .flatMap(Collection::stream)
@@ -58,28 +67,28 @@ public interface BaseMapper {
         .collect(Collectors.toSet());
   }
 
-  default Set<UUID> employeeOrdersToIds(Set<EmployeeOrder> employeesOrders) {
+  default Set<UUID> employeeOrdersToIds(Collection<EmployeeOrder> employeesOrders) {
     return Stream.ofNullable(employeesOrders)
         .flatMap(Collection::stream)
         .map(EmployeeOrder::getId)
         .collect(Collectors.toSet());
   }
 
-  default Set<EmployeeOrder> idsToEmployeeOrders(Set<UUID> employeesOrdersIds) {
+  default Set<EmployeeOrder> idsToEmployeeOrders(Collection<UUID> employeesOrdersIds) {
     return Stream.ofNullable(employeesOrdersIds)
         .flatMap(Collection::stream)
-        .map(id -> EmployeeOrder.builder().id(id).build())
+        .map(id -> EmployeeOrder.baseEntityBuilder().id(id).build())
         .collect(Collectors.toSet());
   }
 
-  default List<UUID> optionDescriptionsToIds(List<SubOption> subOptions) {
+  default List<UUID> subOptionsToIds(List<SubOption> subOptions) {
     return Stream.ofNullable(subOptions)
         .flatMap(Collection::stream)
         .map(SubOption::getId)
         .toList();
   }
 
-  default List<SubOption> idsToOptionDescriptions(List<UUID> subOptionsIds) {
+  default List<SubOption> idsToSubOptions(List<UUID> subOptionsIds) {
     return Stream.ofNullable(subOptionsIds)
         .flatMap(Collection::stream)
         .map(id -> SubOption.builder().id(id).build())

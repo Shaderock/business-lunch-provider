@@ -62,6 +62,7 @@ public class CompanyPreferencesService {
     persistedPreferences.setMaxDiscountFixFirstOrder(
         companyPreferences.getMaxDiscountFixFirstOrder());
     persistedPreferences.setDiscountPerDay(companyPreferences.getDiscountPerDay());
+    persistedPreferences.setDeliverAt(companyPreferences.getDeliverAt());
 
     return persistedPreferences;
   }

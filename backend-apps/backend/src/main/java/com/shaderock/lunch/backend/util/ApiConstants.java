@@ -17,6 +17,8 @@ public class ApiConstants {
   public static final String COMPANY_ADM = API + "/company-adm";
   public static final String COMPANY_ADM_INVITATION = COMPANY_ADM + "/invitation";
   public static final String COMPANY_ADM_USER_DETAILS = COMPANY_ADM + "/user/details";
+  public static final String EMPLOYEE = API + "/employee";
+  public static final String EMPLOYEE_ORDER = EMPLOYEE + "/order";
   public static final String OPTION = API + "/option";
   public static final String ORGANIZATION = API + "/organization";
   public static final String SUPPLIER_ADM = API + "/supplier-adm";
