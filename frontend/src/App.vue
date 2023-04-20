@@ -12,5 +12,6 @@
 
 <script lang="ts" setup>
 
-import TheAppBar from "@/components/TheAppBar.vue";
-import TheSideBar from "@/components/TheSideBar.vue";</script>
+import TheSideBar from "@/components/side-bar/TheSideBar.vue";
+import TheAppBar from "@/components/app-bar/TheAppBar.vue";
+</script>

@@ -14,41 +14,49 @@
       <v-spacer/>
 
       <div v-if="useAuthStore().isAuthenticated">
-        <v-btn icon>
+        <v-btn icon
+               v-bind:to="RouterPaths.USER_NOTIFICATIONS">
           <v-icon>mdi-bell</v-icon>
         </v-btn>
 
-        <v-btn icon>
+        <v-btn v-if="useUserStore().isEmployee" icon
+               v-bind:to="RouterPaths.EMPLOYEE_CART">
           <v-icon>mdi-cart</v-icon>
         </v-btn>
 
-        <v-btn id="profile-actions" color="primary"
+        <v-btn id="profile-actions"
+               color="primary"
                variant="tonal">
-          <v-icon start>
-            mdi-account-circle
-          </v-icon>
+          <v-icon start>mdi-account-circle</v-icon>
           Profile
-          <v-icon end>
-            mdi-menu-down
-          </v-icon>
+          <v-icon end>mdi-menu-down</v-icon>
         </v-btn>
 
         <v-menu activator="#profile-actions">
           <v-list>
             <v-list-item append-icon="mdi-card-account-details"
-                         v-bind:to="'/details'">
+                         v-bind:to="RouterPaths.USER_PROFILE">
               Details
             </v-list-item>
-            <v-list-subheader>Settings</v-list-subheader>
-            <v-list-item append-icon="mdi-store-cog"
-                         v-bind:to="'/preferences'">
-              Preferences
-            </v-list-item>
-            <v-list-item append-icon="mdi-bell-cog"
-                         v-bind:to="'/notifications'">
-              Notifications
-            </v-list-item>
-            <v-divider></v-divider>
+
+            <div v-if="useUserStore().isEmployee">
+              <v-list-subheader>Settings</v-list-subheader>
+
+              <v-list-item
+                append-icon="mdi-store-cog"
+                v-bind:to="RouterPaths.EMPLOYEE_PREFERENCES_CONFIG">
+                Preferences
+              </v-list-item>
+
+              <v-list-item
+                append-icon="mdi-bell-cog"
+                v-bind:to="RouterPaths.EMPLOYEE_NOTIFICATIONS_CONFIG">
+                Notifications
+              </v-list-item>
+            </div>
+
+            <v-divider/>
+
             <v-list-item append-icon="mdi-logout" variant="plain" @click="logout()">
               Sign out
             </v-list-item>
@@ -61,7 +69,7 @@
       <div v-else>
         <v-btn
           color="primary"
-          v-bind:to="'/login'"
+          v-bind:to="RouterPaths.ANONYMOUS_LOGIN"
           variant="outlined">
           <v-icon start>mdi-login</v-icon>
           Sign in
@@ -109,6 +117,7 @@ import {useAuthStore, useUserStore} from "@/store/app";
 import toastManager from "@/services/ToastManager";
 import router from "@/router";
 import {useTheme} from "vuetify";
+import {RouterPaths} from "@/services/RouterPaths";
 
 const theme = useTheme();
 

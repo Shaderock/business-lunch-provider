@@ -1,0 +1,10 @@
+<template>
+employee notification config
+</template>
+
+<script lang="ts" setup>
+</script>
+
+<style scoped>
+
+</style>

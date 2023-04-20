@@ -31,7 +31,7 @@
                 Don't have an account?
                 <v-btn color="secondary"
                        size="small"
-                       v-bind:to="'/registration'"
+                       v-bind:to="RouterPaths.ANONYMOUS_REGISTER"
                        variant="plain">Sign up
                 </v-btn>
               </div>
@@ -52,6 +52,7 @@ import {onMounted, ref} from "vue";
 import router from "@/router";
 import toastManager from "@/services/ToastManager";
 import {useAuthStore} from "@/store/app";
+import {RouterPaths} from "@/services/RouterPaths";
 
 const email = ref("")
 const password = ref("")
