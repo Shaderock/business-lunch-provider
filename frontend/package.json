@@ -19,7 +19,7 @@
     "vee-validate": "^4.7.3",
     "vue": "^3.2.38",
     "vue-router": "^4.0.0",
-    "vuetify": "^3.1.6",
+    "vuetify": "^3.1.14",
     "webfontloader": "^1.0.0",
     "yup": "^0.32.11"
   },

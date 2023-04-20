@@ -1,24 +1,19 @@
-import {AppSettings} from "./AppSettings";
 import axios from "axios";
+import {ApiConstants} from "@/services/ApiConstants";
 
 export class OrganizationService {
-  protected organizationUrl = AppSettings.API_URL + '/organization'
-  protected sysAdmOrganizationUrl = AppSettings.API_URL + '/sys-adm/organization/details'
-  protected organizationNameVerifyUrl = this.organizationUrl + '/verify-name'
-  protected organizationEmailVerifyUrl = this.organizationUrl + '/verify-email'
-
   public validateOrganizationName(name: string): Promise<any> {
-    const params = new URLSearchParams([['name', name]])
-    return axios.get(this.organizationNameVerifyUrl, {params});
+    const params: URLSearchParams = new URLSearchParams([['name', name]])
+    return axios.get(ApiConstants.ORGANIZATION + '/verify-name', {params});
   }
 
   public validateOrganizationEmail(email: string): Promise<any> {
-    const params = new URLSearchParams([['email', email]])
-    return axios.get(this.organizationEmailVerifyUrl, {params});
+    const params: URLSearchParams = new URLSearchParams([['email', email]])
+    return axios.get(ApiConstants.ORGANIZATION + '/verify-email', {params});
   }
 
   public getAllOrganizations(): Promise<any> {
-    return axios.get(this.sysAdmOrganizationUrl);
+    return axios.get(ApiConstants.SYS_ADM_ORGANIZATION);
   }
 }
 

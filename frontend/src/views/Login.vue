@@ -1,40 +1,51 @@
 <template>
-  <v-row justify="center">
-    <v-col align-self="center" lg="4">
-      <v-form ref="loginForm" @submit="login">
-        <v-card>
-          <v-card-title>Login</v-card-title>
-
-          <v-divider/>
-
-          <v-card-item>
-            <v-text-field
-              v-model="email"
-              label="Email"
-              required
-            >
-            </v-text-field>
-          </v-card-item>
-          <v-card-item>
-            <v-text-field
-              v-model="password"
-              label="Password"
-              required
-              type="password">
-            </v-text-field>
-          </v-card-item>
-
-          <v-divider/>
-
-          <v-card-actions>
-            <v-btn color="primary" variant="outlined" @click="login">Sign in</v-btn>
-
-            <v-btn v-bind:to="'/registration'">Sign up</v-btn>
+  <v-container class="fill-height" fluid>
+    <v-row align="center" justify="center">
+      <v-col cols="12" md="4" sm="8">
+        <v-card class="elevation-12" shaped variant="outlined">
+          <v-card-title class="text-h5 text-center">Login</v-card-title>
+          <v-card-text>
+            <v-form>
+              <v-text-field
+                v-model="email"
+                label="Email"
+                placeholder="example@example.com"
+                required
+                type="email"
+              ></v-text-field>
+              <v-text-field
+                v-model="password"
+                label="Password"
+                placeholder="Enter your password"
+                required
+                type="password"
+              ></v-text-field>
+            </v-form>
+          </v-card-text>
+          <v-card-actions class="justify-center">
+            <v-btn block color="primary" @click="login()">Login</v-btn>
           </v-card-actions>
+          <v-card-text class="text-center">
+            <v-col>
+              <div>
+                Don't have an account?
+                <v-btn color="secondary"
+                       size="small"
+                       v-bind:to="'/registration'"
+                       variant="plain">Sign up
+                </v-btn>
+              </div>
+              <div>
+                Forgot your password?
+                <v-btn color="secondary" size="small" variant="plain">Reset it</v-btn>
+              </div>
+            </v-col>
+          </v-card-text>
         </v-card>
-      </v-form>
-    </v-col>
-  </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
+
 </template>
 <script lang="ts" setup>
 import {onMounted, ref} from "vue";

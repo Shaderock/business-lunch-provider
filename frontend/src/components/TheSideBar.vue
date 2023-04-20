@@ -4,6 +4,7 @@
     floating
     permanent
     rail
+    elevation="5"
   >
     <v-list
       density="compact"
@@ -11,7 +12,10 @@
     >
       <v-list-item
         prepend-icon="mdi-home"
-        title="Home" v-bind:to="'/'"
+        color="primary"
+        title="Home"
+        v-bind:to="'/'"
+        variant="plain"
         value="home"
       />
 
@@ -34,21 +38,6 @@
       />
 
       <v-divider v-if="useAuthStore().isAuthenticated"/>
-
-      <v-list-item
-        v-if="useUserStore().isOnlyAppUser"
-        prepend-icon="mdi-silverware"
-        title="Register Company"
-        v-bind:to="'/company/registration'"
-        value="registerCompany"
-      ></v-list-item>
-      <v-list-item
-        v-if="useUserStore().isOnlyAppUser"
-        prepend-icon="mdi-food"
-        title="Register supplier"
-        v-bind:to="'/supplier/registration'"
-        value="registerSupplier"
-      ></v-list-item>
 
       <div v-if="useUserStore().isSysAdmin">
         <v-divider/>
