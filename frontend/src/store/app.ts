@@ -126,6 +126,9 @@ export const useUserStore = defineStore('user', {
     isEmployee(): boolean {
       return roleService.hasRole(this.userDetails, Role.Employee)
     },
+    isOnlyEmployee(): boolean {
+      return roleService.hasOnlyRole(this.userDetails, Role.Employee)
+    },
     isCompanyAdmin(): boolean {
       return roleService.hasRole(this.userDetails, Role.CompanyAdmin)
     },
