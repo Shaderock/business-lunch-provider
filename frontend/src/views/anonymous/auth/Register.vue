@@ -1,7 +1,7 @@
 <template>
   <v-row align="center" justify="center">
     <v-col cols="12" md="4" sm="8">
-      <v-card class="elevation-12" shaped>
+      <v-card elevation="20" shaped>
         <v-card-title class="text-h5 text-center">Register</v-card-title>
         <v-card-text>
           <v-form>
@@ -57,13 +57,14 @@
           </v-form>
         </v-card-text>
         <v-card-actions class="justify-center">
-          <v-btn block color="primary" large @click="registerSubmit()">Register</v-btn>
+          <v-btn block color="primary" large variant="outlined" @click="registerSubmit()">Register
+          </v-btn>
         </v-card-actions>
         <v-card-text class="text-center">
           Already have an account?
           <v-btn color="secondary"
                  size="small"
-                 v-bind:to="'/login'"
+                 v-bind:to="RouterPaths.ANONYMOUS_LOGIN"
                  variant="plain">Login
           </v-btn>
         </v-card-text>
@@ -76,6 +77,7 @@ import toastManager from "@/services/ToastManager";
 import {ref} from "vue";
 import * as yup from 'yup';
 import authService from "@/services/AuthService";
+import {RouterPaths} from "@/services/RouterPaths";
 
 const firstName = ref("")
 const firstNameErrors = ref("")

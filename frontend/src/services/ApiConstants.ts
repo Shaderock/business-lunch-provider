@@ -1,6 +1,8 @@
 export class ApiConstants {
   static readonly API: string = "/api";
+
   static readonly BACKEND_URL: string = "http://localhost:8080" + ApiConstants.API;
+
   static readonly SYS_ADM: string = ApiConstants.BACKEND_URL + "/sys-adm";
   static readonly SYS_ADM_ORGANIZATION: string = ApiConstants.SYS_ADM + "/organization/details";
   static readonly SYS_ADM_USER: string = ApiConstants.SYS_ADM + "/user";
@@ -24,6 +26,8 @@ export class ApiConstants {
   static readonly USER_EMPLOYEE_PREFERENCES: string = ApiConstants.USER + "/employee-preferences";
   static readonly INVITATION: string = ApiConstants.BACKEND_URL + "/invitation";
   static readonly NOTIFICATIONS: string = ApiConstants.BACKEND_URL + "/notifications";
+  static readonly ORGANIZATION_ADM: string = ApiConstants.BACKEND_URL + "/organization-adm";
+  static readonly ORGANIZATION_ADM_ORGANIZATION: string = ApiConstants.ORGANIZATION_ADM + "/organization";
   static readonly SUBSCRIPTION_URL_PART: string = "/subscription";
   static readonly COMPANY_ADM_SUBSCRIPTION: string = ApiConstants.COMPANY_ADM + ApiConstants.SUBSCRIPTION_URL_PART;
   static readonly SUPPLIER_ADM_SUBSCRIPTION: string = ApiConstants.SUPPLIER_ADM + ApiConstants.SUBSCRIPTION_URL_PART;
@@ -31,7 +35,8 @@ export class ApiConstants {
   static readonly SUPPLIER_ADM_PREFERENCES: string = ApiConstants.SUPPLIER_ADM + ApiConstants.PREFERENCES_URL_PART;
   static readonly COMPANY_URL_PART: string = "/company";
   static readonly COMPANY_ADM_COMPANY: string = ApiConstants.COMPANY_ADM + ApiConstants.COMPANY_URL_PART;
-  static readonly COMPANY_ADM_COMPANY_PREFERENCES: string = ApiConstants.COMPANY_ADM_COMPANY + ApiConstants.PREFERENCES_URL_PART;
+  static readonly COMPANY_ADM_COMPANY_PREFERENCES: string =
+    ApiConstants.COMPANY_ADM_COMPANY + ApiConstants.PREFERENCES_URL_PART;
   static readonly SYS_ADM_COMPANY: string = ApiConstants.SYS_ADM + ApiConstants.COMPANY_URL_PART;
   static readonly COMPANY: string = ApiConstants.BACKEND_URL + ApiConstants.COMPANY_URL_PART;
   static readonly SUPPLIER_ADM_COMPANY: string = ApiConstants.SUPPLIER_ADM + ApiConstants.COMPANY_URL_PART;

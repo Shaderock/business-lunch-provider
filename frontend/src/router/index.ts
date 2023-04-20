@@ -1,6 +1,6 @@
 // Composables
 import {createRouter, createWebHistory, Router} from 'vue-router'
-import {useAuthStore, useCompanyStore, useUserStore} from "@/store/app";
+import {useAuthStore, useOrganizationStore, useUserStore} from "@/store/app";
 import {RouterPaths} from "@/services/RouterPaths";
 
 const routes = [
@@ -16,7 +16,7 @@ const routes = [
   },
   {
     path: RouterPaths.ANONYMOUS_REGISTER, name: 'Anonymous Register',
-    component: () => import('@/views/anonymous/auth/UserRegistration.vue')
+    component: () => import('@/views/anonymous/auth/Register.vue')
   },
 
   // user
@@ -59,7 +59,7 @@ const routes = [
   {
     path: RouterPaths.EMPLOYEE_PREFERENCES_CONFIG, name: 'Employee Preferences Config',
     component: () => import('@/views/employee/EmployeePreferencesConfig.vue')
-  },  {
+  }, {
     path: RouterPaths.EMPLOYEE_CART, name: 'Employee Cart',
     component: () => import('@/views/employee/EmployeeCart.vue')
   },
@@ -158,8 +158,8 @@ async function initializeStores() {
     useAuthStore().initializeToken()
   if (useAuthStore().hasToken)
     await useUserStore().requestUserData()
-  if (useUserStore().isEmployee) {
-    await useCompanyStore().requestFreshCompanyData()
+  if (useUserStore().isEmployee || useUserStore().isSupplier) {
+    await useOrganizationStore().requestFreshOrganizationData()
   }
 }
 

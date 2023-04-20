@@ -9,13 +9,12 @@ import com.shaderock.lunch.backend.feature.auth.registration.error.message.Token
 import com.shaderock.lunch.backend.feature.auth.registration.error.message.UserRegisteredErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice()
+@RestControllerAdvice
 @Slf4j
 public class RegistrationControllerAdvice {
 
@@ -43,12 +42,5 @@ public class RegistrationControllerAdvice {
   public ErrorMessage emailNotConfirmedForLoginAttempt(DisabledException e) {
     LOGGER.error(e.getMessage());
     return new ErrorMessage(true, "Email is not confirmed yet");
-  }
-
-  @ExceptionHandler(BadCredentialsException.class)
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ErrorMessage badCredentials(BadCredentialsException e) {
-    LOGGER.error(e.getMessage());
-    return new ErrorMessage(true, e.getMessage());
   }
 }

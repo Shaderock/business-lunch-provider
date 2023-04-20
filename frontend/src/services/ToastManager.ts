@@ -5,7 +5,7 @@ export class ToastManager {
   showDefaultError(message: string) {
     createToast({
         title: 'Error',
-        description: 'Whoops! ' + message + '. Try again later!'
+        description: 'Whoops! ' + message + '. Please, try again!'
       },
       {
         showIcon: true,

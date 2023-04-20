@@ -1,16 +1,7 @@
-import {OrganizationService} from "./OrganizationService";
 import axios from "axios";
 import {ApiConstants} from "@/services/ApiConstants";
 
-export class CompanyService extends OrganizationService {
-  public register(email: string, name: string, phone: string): Promise<any> {
-    return axios.post(ApiConstants.COMPANY + "/register", {
-      email: email,
-      name: name,
-      phone: phone
-    });
-  }
-
+export class CompanyService {
   public getUserCompany(): Promise<any> {
     return axios.get(ApiConstants.COMPANY + '/my')
   }

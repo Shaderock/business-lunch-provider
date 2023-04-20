@@ -85,30 +85,15 @@
           <v-list-item append-icon="mdi-theme-light-dark" @click="switchTheme()">
             Switch theme
           </v-list-item>
-
-          <v-list-subheader v-if="useUserStore().isOnlyAppUser">
-            Register organization
-          </v-list-subheader>
-
           <v-list-item
             v-if="useUserStore().isOnlyAppUser"
-            append-icon="mdi-silverware"
-            title="Become a Company"
-            v-bind:to="'/company/registration'"
-            value="registerCompany"
-          ></v-list-item>
-
-          <v-list-item
-            v-if="useUserStore().isOnlyAppUser"
-            append-icon="mdi-food"
-            title="Become a Supplier"
-            v-bind:to="'/supplier/registration'"
-            value="registerSupplier"
-          ></v-list-item>
-
+            append-icon="mdi-domain"
+            title="Register Organization"
+            @click="showOrganizationRegistrationDialog = true"
+          />
         </v-list>
       </v-menu>
-
+      <OrganizationRegistration/>
     </v-app-bar>
   </v-card>
 </template>
@@ -118,8 +103,12 @@ import toastManager from "@/services/ToastManager";
 import router from "@/router";
 import {useTheme} from "vuetify";
 import {RouterPaths} from "@/services/RouterPaths";
+import OrganizationRegistration from "@/views/anonymous/OrganizationRegistration.vue";
+import {provide, Ref, ref, UnwrapRef} from "vue";
 
 const theme = useTheme();
+const showOrganizationRegistrationDialog: Ref<UnwrapRef<boolean>> = ref(false)
+provide('showOrganizationRegistrationDialog', showOrganizationRegistrationDialog)
 
 function switchTheme() {
   theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'

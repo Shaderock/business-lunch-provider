@@ -68,6 +68,29 @@ export const useAuthStore = defineStore('auth', {
   }
 })
 
+export const useOrganizationStore = defineStore('organization', {
+  state: () => ({
+    organization: null as OrganizationDetails | null
+  }),
+  getters: {
+    getOrganization(): OrganizationDetails | null {
+      return this.organization
+    },
+    hasOrganization(): boolean {
+      return this.organization !== null;
+    },
+  },
+  actions: {
+    clearOrganization() {
+      this.organization = null
+    },
+    async requestFreshOrganizationData() {
+      const response = await organizationService.getUserOrganization()
+      this.organization = response.data
+    }
+  }
+})
+
 export const useCompanyStore = defineStore('company', {
   state: () => ({
     company: null as Company | null,
@@ -94,7 +117,7 @@ export const useCompanyStore = defineStore('company', {
     clearCompanyPreferences() {
       return this.companyPreferences
     },
-    async requestFreshCompanyData() {
+    async requestFreshOrganizationData() {
       const response = await companyService.getUserCompany()
       this.company = response.data
       //     todo load preferences

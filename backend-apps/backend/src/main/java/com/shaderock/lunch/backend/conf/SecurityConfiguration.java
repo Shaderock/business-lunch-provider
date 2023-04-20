@@ -41,6 +41,8 @@ public class SecurityConfiguration {
             "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
         .requestMatchers("/api/login/**", "/api/register/**", "/api/food/**").permitAll()
         .requestMatchers("/api/sys-adm/**").hasRole(Role.SYSTEM_ADMIN.getName())
+        .requestMatchers("/api/organization-adm/**")
+        .hasAnyRole(Role.COMPANY_ADMIN.getName(), Role.SUPPLIER.getName())
         .requestMatchers("/api/supplier-adm/**").hasRole(Role.SUPPLIER.getName())
         .requestMatchers("/api/company-adm/**").hasRole(Role.COMPANY_ADMIN.getName())
         .requestMatchers("/api/employee/**").hasRole(Role.EMPLOYEE.getName())
