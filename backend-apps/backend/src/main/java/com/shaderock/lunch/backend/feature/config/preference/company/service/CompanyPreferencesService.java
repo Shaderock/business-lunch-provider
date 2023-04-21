@@ -64,7 +64,7 @@ public class CompanyPreferencesService {
     persistedPreferences.setDiscountPerDay(companyPreferences.getDiscountPerDay());
     persistedPreferences.setDeliverAt(companyPreferences.getDeliverAt());
 
-    return persistedPreferences;
+    return companyPreferenceRepository.save(persistedPreferences);
   }
 
   @Transactional

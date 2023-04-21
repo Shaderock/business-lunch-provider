@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-col cols="12" md="6">
+    <v-col cols="12" md="5">
       <v-card class="mx-auto" elevation="20">
         <v-toolbar>
           <v-toolbar-title>My Organization</v-toolbar-title>
@@ -58,66 +58,84 @@
   </v-row>
 
   <v-dialog v-model="show">
-    <v-col cols="12" md="4" sm="8">
-      <v-card>
-        <v-card-title>Edit Organization Details</v-card-title>
+    <v-row justify="center">
+      <v-col md="4" sm="8">
+        <v-card>
+          <v-card-title>Edit Organization Details</v-card-title>
 
-        <v-form ref="form" v-model="valid" validate-on="submit" @submit.prevent="submit()">
-          <v-card-text>
-            <v-text-field
-              v-model="org.name"
-              :rules="[rules.required]"
-              color="primary"
-              label="Name"
-            ></v-text-field>
+          <v-form ref="form" v-model="valid" validate-on="submit" @submit.prevent="submit()">
+            <v-card-text>
+              <v-text-field
+                v-model="org.name"
+                :rules="[rules.required]"
+                color="primary"
+                label="Name"
+              ></v-text-field>
 
-            <v-textarea
-              v-model="org.description"
-              :rules="[rules.required]"
-              color="primary"
-              hint="Any information you consider important to share"
-              label="Description"
-            ></v-textarea>
+              <v-textarea
+                v-model="org.description"
+                :rules="[rules.required]"
+                color="primary"
+                hint="Any information you consider important to share"
+                label="Description"
+              ></v-textarea>
 
-            <v-text-field
-              v-model="org.email"
-              :rules="[rules.required, rules.email]"
-              color="primary"
-              hint="email@example.com"
-              label="Email"
+              <v-text-field
+                v-model="org.email"
+                :rules="[rules.required, rules.email]"
+                color="primary"
+                hint="email@example.com"
+                label="Email"
 
-            ></v-text-field>
+              ></v-text-field>
 
-            <v-text-field
-              v-model="org.phone"
-              :rules="[rules.required, rules.phone]"
-              color="primary"
-              hint="+37311222333"
-              label="Phone"
-            ></v-text-field>
-          </v-card-text>
+              <v-text-field
+                v-model="org.phone"
+                :rules="[rules.required, rules.phone]"
+                color="primary"
+                hint="+37311222333"
+                label="Phone"
+              ></v-text-field>
+            </v-card-text>
 
-          <v-card-actions>
-            <v-btn color="primary" type="submit" variant="outlined">Save</v-btn>
-            <v-btn color="secondary" variant="plain" @click="show = false">Cancel</v-btn>
-          </v-card-actions>
-        </v-form>
-      </v-card>
-    </v-col>
+            <v-card-actions>
+              <v-btn color="primary" type="submit" variant="outlined">Save</v-btn>
+              <v-btn color="secondary" variant="plain" @click="show = false">Cancel</v-btn>
+            </v-card-actions>
+          </v-form>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-dialog>
 
 </template>
 <script lang="ts" setup>
-import {onMounted, ref} from "vue";
+import {onMounted, Ref, ref} from "vue";
 import {useProfileStore} from "@/store/user-app";
 import organizationService from "@/services/OrganizationService";
 import {OrganizationDetails} from "@/models/OrganizationDetails";
 import toastManager from "@/services/ToastManager";
 import {useOrganizationStore} from "@/store/employee-or-supplier-app";
+import {VForm} from "vuetify/components";
 
 onMounted(() => {
   useOrganizationStore().requestFreshOrganizationData()
 })
+
+const form = ref(null) as Ref<InstanceType<typeof VForm> | null>;
+const valid = ref(false);
+const show = ref(false)
+const rules = {
+  required: (value: string) => !!value || 'Required field.',
+  email: (value: string) => {
+    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return pattern.test(value) || 'Invalid e-mail.';
+  },
+  phone: (value: string) => {
+    const pattern = /^\+(?:\d ?){6,14}\d$/
+    return pattern.test(value) || 'Invalid phone number.';
+  }
+};
 
 function initDialogue() {
   show.value = true
@@ -129,6 +147,7 @@ function initDialogue() {
 }
 
 async function submit() {
+  await form.value?.validate()
   if (valid.value === true) {
     try {
       await organizationService.update(new OrganizationDetails(
@@ -148,20 +167,6 @@ async function submit() {
     }
   }
 }
-
-const valid = ref(false);
-const show = ref(false)
-const rules = {
-  required: (value: string) => !!value || 'Required field.',
-  email: (value: string) => {
-    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return pattern.test(value) || 'Invalid e-mail.';
-  },
-  phone: (value: string) => {
-    const pattern = /^\+(?:\d ?){6,14}\d$/
-    return pattern.test(value) || 'Invalid phone number.';
-  }
-};
 
 const org = ref({
   name: '',

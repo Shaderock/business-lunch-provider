@@ -1,10 +1,8 @@
 <template>
   <!--todo configure router guards-->
   <v-navigation-drawer
-    elevation="5"
+    elevation="10"
     expand-on-hover
-    floating
-    permanent
     rail
   >
     <v-list density="compact" nav>
@@ -69,7 +67,7 @@
           v-bind:to="RouterPaths.COMPANY_ADM_COMPANY_DASHBOARD"
         />
 
-        <v-list-item disabled title="Employees"/>
+        <v-list-item class="hide-when-collapsed" disabled title="Employees"/>
 
         <v-list-item
           prepend-icon="mdi-account-check"
@@ -168,4 +166,6 @@ import {useProfileStore} from "@/store/user-app";
 import {RouterPaths} from "@/services/RouterPaths";
 import OrganizationDetailsNavItem from "@/components/side-bar/OrganizationDetailsNavItem.vue";
 import SupplierSubscriptionsNavItem from "@/components/side-bar/SupplierSubscriptionsNavItem.vue";
-import EmployeeOrdersNavItems from "@/components/side-bar/EmployeeOrdersNavItems.vue";</script>
+import EmployeeOrdersNavItems from "@/components/side-bar/EmployeeOrdersNavItems.vue";
+import {VNavigationDrawer} from "vuetify/components";
+</script>

@@ -5,6 +5,7 @@ import com.shaderock.lunch.backend.feature.config.preference.company.type.Compan
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.UUID;
+import org.springframework.format.annotation.NumberFormat;
 
 /**
  * A DTO for the {@link CompanyPreferences} entity
@@ -12,6 +13,7 @@ import java.util.UUID;
 public record CompanyPreferencesDto(UUID id,
                                     UUID companyId,
                                     CompanyDiscountType companyDiscountType,
+                                    @NumberFormat(pattern = "^100$|^\\d{0,2}(\\.\\d{1,2})? *%?$")
                                     Integer discountPercentageFirstOrder,
                                     Double discountFixFirstOrder,
                                     Double maxDiscountFixFirstOrder,

@@ -71,14 +71,16 @@ onMounted(() => {
 async function login() {
   try {
     await useAuthStore().login(email.value, password.value)
-    await router.push({path: '/'})
   } catch (error) {
     console.log("Something wrong happened during login: ", error)
   }
 
-  if (useAuthStore().isAuthenticated)
+  if (useAuthStore().isAuthenticated) {
     toastManager.showSuccess("Login complete", "You are in the system. Enjoy!")
-  else
+    await router.push('/')
+  } else {
     toastManager.showError("Sign in problem", "Couldn't login. Try again later.")
+  }
+
 }
 </script>
