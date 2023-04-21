@@ -1,7 +1,5 @@
 <template>
-<v-card>
-  <v-card-title>Home</v-card-title>
-</v-card>
+  Home
 </template>
 
 <script lang="ts" setup></script>

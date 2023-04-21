@@ -14,17 +14,13 @@ import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,16 +73,5 @@ public class OrganizationController {
     OrganizationDetails organizationDetails = supplier.getOrganizationDetails();
 
     return ResponseEntity.ok(organizationDetailsMapper.toPublicDto(organizationDetails));
-  }
-
-  @PutMapping
-  public ResponseEntity<OrganizationDetailsDto> update(
-      @RequestBody @NonNull @Valid OrganizationDetailsDto organizationDetailsDto,
-      Principal principal) {
-    AppUserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-    OrganizationDetails updated = organizationDetailsService.update(organizationDetailsDto,
-        userDetails);
-
-    return ResponseEntity.ok(organizationDetailsMapper.toDto(updated));
   }
 }

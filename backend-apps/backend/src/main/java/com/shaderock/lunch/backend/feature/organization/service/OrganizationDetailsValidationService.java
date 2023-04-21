@@ -54,6 +54,15 @@ public class OrganizationDetailsValidationService {
     if (StringUtils.isBlank(details.getName())) {
       throw new CrudValidationException("Can not update organization without name");
     }
+    if (StringUtils.isBlank(details.getEmail())) {
+      throw new CrudValidationException("Can not update organization without email");
+    }
+    if (StringUtils.isBlank(details.getDescription())) {
+      throw new CrudValidationException("Can not update organization without description");
+    }
+    if (StringUtils.isBlank(details.getPhone())) {
+      throw new CrudValidationException("Can not update organization without phone");
+    }
   }
 
   public void validateRemoveUser(@NonNull AppUser appUser,

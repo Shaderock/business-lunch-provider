@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -28,6 +29,13 @@ public class GeneralControllerAdvice {
   public ErrorMessage handleAnyException(Exception e) {
     LOGGER.error("An exception happened", e);
     return new ErrorMessage(false, "Something went wrong");
+  }
+
+  @ExceptionHandler(BadCredentialsException.class)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  public ErrorMessage badCredentials(BadCredentialsException e) {
+    LOGGER.error(e.getMessage());
+    return new ErrorMessage(true, e.getMessage());
   }
 
   @ExceptionHandler(MissingServletRequestParameterException.class)

@@ -29,10 +29,10 @@ public class SupplierAdmPreferencesController {
   private final SupplierService supplierService;
   private final SupplierPreferencesService supplierPreferencesService;
 
-  @GetMapping
+  @GetMapping("/my")
   public ResponseEntity<SupplierPreferencesDto> read(Principal principal) {
     Supplier supplier = supplierService.read(principal);
-    SupplierPreferences preferences = supplierPreferencesService.read(supplier);
+    SupplierPreferences preferences = supplier.getPreferences();
     return ResponseEntity.ok(preferencesMapper.toDto(preferences));
   }
 

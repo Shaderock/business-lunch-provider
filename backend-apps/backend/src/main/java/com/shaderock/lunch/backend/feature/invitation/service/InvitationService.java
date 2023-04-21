@@ -34,7 +34,6 @@ public class InvitationService {
     return invitationRepository.save(invitation);
   }
 
-  @Transactional
   public Invitation create(Company company, AppUser appUser) {
     Invitation invitation = Invitation.builder()
         .company(company)

@@ -1,27 +1,13 @@
-import {AppSettings} from "./AppSettings";
-import {OrganizationService} from "./OrganizationService";
 import axios from "axios";
+import {ApiConstants} from "@/services/ApiConstants";
 
-export class CompanyService extends OrganizationService {
-  private companyUrl = AppSettings.API_URL + '/company'
-  private sysAdmCompaniesUrl = AppSettings.API_URL + '/sys-adm/company'
-  private registerUrl = this.companyUrl + "/register"
-  private userCompanyUrl = this.companyUrl + '/my'
-
-  public register(email: string, name: string, phone: string): Promise<any> {
-    return axios.post(this.registerUrl, {
-      email: email,
-      name: name,
-      phone: phone
-    });
-  }
-
+export class CompanyService {
   public getUserCompany(): Promise<any> {
-    return axios.get(this.userCompanyUrl)
+    return axios.get(ApiConstants.COMPANY + '/my')
   }
 
   async getAllCompanies(): Promise<any> {
-    return axios.get(this.sysAdmCompaniesUrl)
+    return axios.get(ApiConstants.SYS_ADM_COMPANY)
   }
 }
 

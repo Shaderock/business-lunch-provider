@@ -1,16 +1,10 @@
 <template>
-  <v-row justify="center">
-    <v-col align-self="center" lg="4">
-      <v-form
-        ref="userRegistrationForm"
-        @submit.prevent="registerSubmit"
-      >
-        <v-card>
-          <v-card-title>Register</v-card-title>
-
-          <v-divider/>
-
-          <v-card-item>
+  <v-row align="center" justify="center">
+    <v-col cols="12" md="5" sm="8">
+      <v-card elevation="20" shaped>
+        <v-card-title class="text-h5 text-center">Register</v-card-title>
+        <v-card-text>
+          <v-form>
             <v-text-field
               v-model="firstName"
               :error-messages="firstNameErrors"
@@ -20,10 +14,8 @@
               type="text"
               @blur="validateFirstName"
               @keypress="validateFirstName"
-            ></v-text-field>
-          </v-card-item>
-
-          <v-card-item>
+            >
+            </v-text-field>
             <v-text-field
               v-model="lastName"
               :error-messages="lastNameErrors"
@@ -34,9 +26,6 @@
               @blur="validateLastName"
               @keypress="validateLastName"
             ></v-text-field>
-          </v-card-item>
-
-          <v-card-item>
             <v-text-field
               v-model="email"
               :error-messages="emailErrors"
@@ -46,9 +35,6 @@
               @blur="validateEmail"
               @keypress="validateEmail"
             ></v-text-field>
-          </v-card-item>
-
-          <v-card-item>
             <v-text-field
               v-model="password"
               :error-messages="passwordErrors"
@@ -59,9 +45,6 @@
               @blur="validatePassword"
               @keypress="validatePassword"
             ></v-text-field>
-          </v-card-item>
-
-          <v-card-item>
             <v-text-field
               v-model="passwordRepeat"
               :error-messages="passwordRepeatErrors"
@@ -71,17 +54,22 @@
               @blur="validatePasswordRepeat"
               @keypress="validatePasswordRepeat"
             ></v-text-field>
-          </v-card-item>
-
-          <v-divider/>
-
-          <v-card-actions>
-            <v-btn color="primary" type="submit" variant="outlined">Sign up</v-btn>
-
-            <v-btn v-bind:to="'/login'">Sign in</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-form>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn class="flex-grow-1"
+                 color="primary"
+                 variant="outlined"
+                 @click="registerSubmit()">Register
+          </v-btn>
+          <v-btn color="secondary"
+                 size="small"
+                 v-bind:to="RouterPaths.ANONYMOUS_LOGIN"
+                 append-icon="mdi-login-variant"
+                 variant="plain">Login
+          </v-btn>
+        </v-card-actions>
+      </v-card>
     </v-col>
   </v-row>
 </template>
@@ -90,6 +78,7 @@ import toastManager from "@/services/ToastManager";
 import {ref} from "vue";
 import * as yup from 'yup';
 import authService from "@/services/AuthService";
+import {RouterPaths} from "@/services/RouterPaths";
 
 const firstName = ref("")
 const firstNameErrors = ref("")
@@ -123,10 +112,10 @@ async function validateLastName() {
 async function validateEmail() {
   try {
     await yup.string()
-      .required()
-      .email()
-      .label('Email')
-      .validate(email.value);
+    .required()
+    .email()
+    .label('Email')
+    .validate(email.value);
 
     emailErrors.value = ""
 
@@ -157,10 +146,10 @@ async function validatePasswordRepeat() {
   try {
     const pass = [password.value]
     await yup.string()
-      .required()
-      .label("Password Repeat")
-      .oneOf(pass, "Passwords do not match")
-      .validate(passwordRepeat.value)
+    .required()
+    .label("Password Repeat")
+    .oneOf(pass, "Passwords do not match")
+    .validate(passwordRepeat.value)
 
     passwordRepeatErrors.value = ""
   } catch (err: any) {

@@ -26,7 +26,8 @@
 
 <script lang="ts" setup>
 import {computed, onMounted, ref} from "vue";
-import {useSysAdmOrganizationStore} from "@/store/app";
+import {useSysAdmOrganizationStore} from "@/store/sys-adm-app";
+
 
 const headers = [
   {title: 'id', sortable: true, key: 'id'},

@@ -1,31 +1,25 @@
 import axios from "axios";
-import {AppSettings} from "./AppSettings";
+import {ApiConstants} from "@/services/ApiConstants";
 
 export class UserService {
-  private profileUrl = AppSettings.API_URL + '/user/profile';
-  private sysAdmUsersUrl = AppSettings.API_URL + '/sys-adm/user';
-  private sysAdmUsersDetailsUrl = AppSettings.API_URL + '/sys-adm/user/details';
-  private profileDetailsUrl = AppSettings.API_URL + '/user/profile/details';
-  private profilePreferencesUrl = AppSettings.API_URL + '/user/profile/preferences';
-
   public getProfile(): Promise<any> {
-    return axios.get(this.profileUrl)
+    return axios.get(ApiConstants.USER + '/profile')
   }
 
   public getProfileDetails(): Promise<any> {
-    return axios.get(this.profileDetailsUrl)
+    return axios.get(ApiConstants.USER_DETAILS + '/profile')
   }
 
   public getProfilePreferences(): Promise<any> {
-    return axios.get(this.profilePreferencesUrl)
+    return axios.get(ApiConstants.USER_EMPLOYEE_PREFERENCES)
   }
 
   async getAllUsers(): Promise<any> {
-    return axios.get(this.sysAdmUsersUrl)
+    return axios.get(ApiConstants.SYS_ADM_USER)
   }
 
   async getAllUsersDetails(): Promise<any> {
-    return axios.get(this.sysAdmUsersDetailsUrl)
+    return axios.get(ApiConstants.SYS_ADM_USER_DETAILS)
   }
 }
 

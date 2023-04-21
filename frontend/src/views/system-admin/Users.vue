@@ -12,8 +12,8 @@
       </v-toolbar>
       <v-text-field
         v-model="search"
-        label="Search"
         class="pa-4"
+        label="Search"
       ></v-text-field>
     </template>
   </v-data-table>
@@ -21,7 +21,8 @@
 
 <script lang="ts" setup>
 import {onMounted, ref} from "vue";
-import {useSysAdmUserStore} from "@/store/app";
+import {useSysAdmUserStore} from "@/store/sys-adm-app";
+
 
 const headers = [
   {title: 'id', sortable: true, key: 'id'},

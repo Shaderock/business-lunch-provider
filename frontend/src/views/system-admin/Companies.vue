@@ -1,10 +1,10 @@
 <template>
   <v-data-table
-      :headers="headers"
-      :items="companies"
-      :search="search"
-      class="elevation-1"
-      item-value="name">
+    :headers="headers"
+    :items="companies"
+    :search="search"
+    class="elevation-1"
+    item-value="name">
     <template v-slot:top>
       <v-card>
         <v-card-title>Companies</v-card-title>
@@ -41,7 +41,8 @@
 
 <script lang="ts" setup>
 import {computed, onMounted, ref} from "vue";
-import {useSysAdmOrganizationStore} from "@/store/app";
+import {useSysAdmOrganizationStore} from "@/store/sys-adm-app";
+
 
 const headers = [
   {title: 'id', sortable: true, key: 'id'},

@@ -1,5 +1,5 @@
 <template>
-  <v-app theme="dark">
+  <v-app>
     <the-app-bar></the-app-bar>
     <the-side-bar></the-side-bar>
     <v-main>
@@ -12,5 +12,6 @@
 
 <script lang="ts" setup>
 
-import TheAppBar from "@/components/TheAppBar.vue";
-import TheSideBar from "@/components/TheSideBar.vue";</script>
+import TheSideBar from "@/components/side-bar/TheSideBar.vue";
+import TheAppBar from "@/components/app-bar/TheAppBar.vue";
+</script>

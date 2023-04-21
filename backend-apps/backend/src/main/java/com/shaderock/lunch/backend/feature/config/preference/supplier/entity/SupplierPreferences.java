@@ -48,10 +48,10 @@ public class SupplierPreferences extends DeletableEntity {
   private LocalTime deliveryPeriodEndTime;
 
   @Column(columnDefinition = "int default 1")
-  private int minimumOrdersPerCompanyRequest;
+  private Integer minimumOrdersPerCompanyRequest;
 
   @Column(columnDefinition = "int default 1")
-  private int minimumCategoriesForEmployeeOrder;
+  private Integer minimumCategoriesForEmployeeOrder;
 
   @Column
   @Enumerated(EnumType.STRING)

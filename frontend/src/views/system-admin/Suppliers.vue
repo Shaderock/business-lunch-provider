@@ -2,9 +2,9 @@
   <v-data-table
     :headers="headers"
     :items="suppliers"
-    class="elevation-1" const
+    :search="search" class="elevation-1"
+    const
     item-value="name"
-    :search="search"
   >
     <template v-slot:top>
       <v-toolbar flat>
@@ -21,7 +21,8 @@
 
 <script lang="ts" setup>
 import {computed, onMounted, ref} from "vue";
-import {useSysAdmOrganizationStore} from "@/store/app";
+import {useSysAdmOrganizationStore} from "@/store/sys-adm-app";
+
 
 const headers = [
   {title: 'id', sortable: true, key: 'id'},

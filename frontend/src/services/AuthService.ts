@@ -1,13 +1,12 @@
-import axios from "axios";
-import {AppSettings} from "./AppSettings";
+import axios, {AxiosResponse} from "axios";
+import {ApiConstants} from "@/services/ApiConstants";
 
 export class AuthService {
-  private loginUrl = AppSettings.API_URL + '/login'
-  private registerUrl = AppSettings.API_URL + '/register'
-  private verifyUserRegisteredUrl = this.registerUrl + '/verify-user'
+  private registerUrl: string = ApiConstants.BACKEND_URL + '/register'
+  private verifyUserRegisteredUrl: string = this.registerUrl + '/verify-user'
 
-  login(email: string, password: string) {
-    return axios.post(this.loginUrl, {
+  login(email: string, password: string): Promise<AxiosResponse<any>> {
+    return axios.post(ApiConstants.BACKEND_URL + '/login', {
       email: email,
       password: password
     })
@@ -23,7 +22,7 @@ export class AuthService {
   }
 
   verifyUserNotRegistered(email: string) {
-    const params = new URLSearchParams([['email', email]])
+    const params: URLSearchParams = new URLSearchParams([['email', email]])
     return axios.get(this.verifyUserRegisteredUrl, {params});
   }
 }
