@@ -101,104 +101,113 @@
       </v-card>
     </v-col>
 
-    <!--todo refactor validations to not push confirm button twice-->
     <v-dialog v-model="show">
-      <v-col cols="12" lg="4" md="6" sm="8">
-        <v-card>
-          <v-card-title>Edit Organization Preferences</v-card-title>
+      <v-row justify="center">
+        <v-col md="4" sm="8">
+          <v-card>
+            <v-card-title>Edit Organization Preferences</v-card-title>
 
-          <v-form ref="form" v-model="valid" @submit.prevent="submit()">
-            <v-card-text>
-              <v-card-subtitle class="pt4"></v-card-subtitle>
-              <v-row>
-                <v-col>
-                  <v-text-field
-                    v-model="updatePreferences.offsetDays"
-                    :rules="[supplierPreferencesRules.minimumZero]"
-                    color="primary"
-                    label="Request Offset Days"
-                    type="number"
-                  />
-                </v-col>
-                <v-col>
-                  <v-text-field
-                    v-model="updatePreferences.offsetHours"
-                    :rules="[supplierPreferencesRules.minimumZero]"
-                    color="primary"
-                    label="Request Offset Hours"
-                    type="number"
-                  />
-                </v-col>
-                <v-col>
-                  <v-text-field
-                    v-model="updatePreferences.offsetMinutes"
-                    :rules="[supplierPreferencesRules.minimumZero]"
-                    color="primary"
-                    label="Request Offset Minutes"
-                    type="number"
-                  />
-                </v-col>
-              </v-row>
+            <v-form ref="form" v-model="valid" @submit.prevent="submit()">
+              <v-card-text>
+                <v-card-subtitle class="pt4">Request Offset</v-card-subtitle>
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="updatePreferences.offsetDays"
+                      :rules="[supplierPreferencesRules.minimumZero]"
+                      color="primary"
+                      label="Request Offset Days"
+                      type="number"
+                    />
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      v-model="updatePreferences.offsetHours"
+                      :rules="[supplierPreferencesRules.minimumZero]"
+                      color="primary"
+                      label="Request Offset Hours"
+                      type="number"
+                    />
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      v-model="updatePreferences.offsetMinutes"
+                      :rules="[supplierPreferencesRules.minimumZero]"
+                      color="primary"
+                      label="Request Offset Minutes"
+                      type="number"
+                    />
+                  </v-col>
+                </v-row>
 
-              <v-text-field
-                v-model="updatePreferences.deliveryStart"
-                :rules="[supplierPreferencesRules.required]"
-                color="primary"
-                hint="Enter the time when the first order can be delivered to the company"
-                label="Delivered not sooner than"
-                type="time"
-              ></v-text-field>
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="updatePreferences.deliveryStart"
+                      :rules="[supplierPreferencesRules.required]"
+                      color="primary"
+                      hint="Enter the time when the first order can be delivered to the company"
+                      label="Delivered not sooner than"
+                      type="time"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      v-model="updatePreferences.deliveryEnd"
+                      :rules="[supplierPreferencesRules.required]"
+                      color="primary"
+                      hint="Enter the time when the last order can be delivered to the company"
+                      label="Delivered not later than"
+                      type="time"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
 
-              <v-text-field
-                v-model="updatePreferences.deliveryEnd"
-                :rules="[supplierPreferencesRules.required]"
-                color="primary"
-                hint="Enter the time when the last order can be delivered to the company"
-                label="Delivered not later than"
-                type="time"
-              ></v-text-field>
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="updatePreferences.minimumOrders"
+                      :rules="[supplierPreferencesRules.required, supplierPreferencesRules.minimumOne]"
+                      color="primary"
+                      hint="Enter a minimum amount of employee orders required for a company request"
+                      label="Minimum orders in company request"
+                      type="number"/>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      v-model="updatePreferences.minimumCategories"
+                      color="primary"
+                      hint="Enter a minimum amount of categories required for employee's order"
+                      label="Minimum categories in employee's order"
+                      type="number"/>
+                  </v-col>
+                </v-row>
 
+                <v-row>
+                  <v-col>
+                    <v-select v-model="updatePreferences.orderType"
+                              :items="[OrderType.UnlimitedOptions, OrderType.OnlyOneOptionPerCategory]"
+                              :rules="[supplierPreferencesRules.required]"
+                              hint="Select the way employees orders will be created"
+                              label="Select order type"/>
+                  </v-col>
+                </v-row>
+              </v-card-text>
 
-              <v-text-field
-                v-model="updatePreferences.minimumOrders"
-                :rules="[supplierPreferencesRules.required, supplierPreferencesRules.minimumOne]"
-                color="primary"
-                hint="Enter a minimum amount of employee orders required for a company request"
-                label="Minimum orders in company request"
-                type="number"
-              ></v-text-field>
-
-              <v-text-field
-                v-model="updatePreferences.minimumCategories"
-                color="primary"
-                hint="Enter a minimum amount of categories required for employee's order"
-                label="Minimum categories in employee's order"
-
-                type="number"
-              ></v-text-field>
-
-
-              <v-select v-model="updatePreferences.orderType"
-                        :items="[OrderType.UnlimitedOptions, OrderType.OnlyOneOptionPerCategory]"
-                        :rules="[supplierPreferencesRules.required]"
-                        hint="Select the way employees orders will be created"
-                        label="Select order type"/>
-
-            </v-card-text>
-
-            <v-card-actions>
-              <v-btn color="primary" type="submit" variant="outlined">Save</v-btn>
-              <v-btn color="secondary" variant="plain" @click="show = false">Cancel</v-btn>
-            </v-card-actions>
-          </v-form>
-        </v-card>
-      </v-col>
+              <v-card-actions>
+                <v-btn color="primary" type="submit" variant="outlined">Save</v-btn>
+                <v-btn color="secondary" variant="plain" @click="show = false">Cancel</v-btn>
+              </v-card-actions>
+            </v-form>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-dialog>
   </v-row>
 
 </template>
 <script lang="ts" setup>
-import {onMounted, ref} from "vue";
+import {onMounted, Ref, ref} from "vue";
 import {useSupAdmSupPrefStore} from "@/store/supplier-adm-app";
 import {OrderType} from "@/models/OrderType";
 import supplierPreferencesService from "@/services/SupplierPreferencesService";
@@ -206,12 +215,14 @@ import {SupplierPreferences} from "@/models/SupplierPreferences";
 import moment from "moment";
 import toastManager from "@/services/ToastManager";
 import {Utils} from "@/models/Utils";
+import {VForm} from "vuetify/components";
 
 onMounted(() => {
   useSupAdmSupPrefStore().requestFreshPreferencesData()
-  // todo request price categories
+  //todo request price categories
 })
 
+const form = ref(null) as Ref<InstanceType<typeof VForm> | null>;
 const valid = ref(false);
 const show = ref(false)
 const updatePreferences = ref({
@@ -259,17 +270,15 @@ function initDialogue() {
   const startDate: Date | null = useSupAdmSupPrefStore().getStartTime
   const endDate: Date | null = useSupAdmSupPrefStore().getEndTime
 
-  let startTime: string = startDate != null ? Utils.dateToTimeAsString(startDate) : '10:00:00'
-  let endTime: string = endDate != null ? Utils.dateToTimeAsString(endDate) : '19:00:00'
-
-  updatePreferences.value.deliveryStart = startTime
-  updatePreferences.value.deliveryEnd = endTime
+  updatePreferences.value.deliveryStart = startDate != null ? Utils.dateToTimeAsString(startDate) : '10:00:00'
+  updatePreferences.value.deliveryEnd = endDate != null ? Utils.dateToTimeAsString(endDate) : '19:00:00'
   updatePreferences.value.minimumOrders = persistedPreferences?.minimumOrdersPerCompanyRequest ?? 1
   updatePreferences.value.minimumCategories = persistedPreferences?.minimumCategoriesForEmployeeOrder ?? 1
   updatePreferences.value.orderType = persistedPreferences?.orderType ?? OrderType.UnlimitedOptions
 }
 
 async function submit() {
+  await form.value?.validate()
   if (valid.value === true) {
     try {
       const days: number = updatePreferences.value.offsetDays
@@ -277,7 +286,6 @@ async function submit() {
       const minutes: number = updatePreferences.value.offsetMinutes
 
       const requestOffset: moment.Duration = moment.duration({days, hours, minutes})
-      console.log(requestOffset.humanize())
 
       await supplierPreferencesService.update(new SupplierPreferences(
         null,

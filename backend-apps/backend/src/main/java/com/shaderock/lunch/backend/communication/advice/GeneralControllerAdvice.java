@@ -2,6 +2,7 @@ package com.shaderock.lunch.backend.communication.advice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
 import com.shaderock.lunch.backend.communication.exception.TransferableApplicationException;
 import com.shaderock.lunch.backend.communication.message.ErrorMessage;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
@@ -42,7 +44,21 @@ public class GeneralControllerAdvice {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorMessage handleMissedRequestParameter(MissingServletRequestParameterException e) {
     LOGGER.warn("A parameter was not present in the request. Message: {}", e.getMessage());
-    return new ErrorMessage(false, e.getMessage());
+    return new ErrorMessage(true, e.getMessage());
+  }
+
+  @ExceptionHandler(InvalidFormatException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorMessage handleMissedRequestParameter(InvalidFormatException e) {
+    LOGGER.warn("A wrong format request. Message: {}", e.getMessage());
+    return new ErrorMessage(true, "Invalid format of a value received");
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorMessage handleMissedRequestParameter(HttpMessageNotReadableException e) {
+    LOGGER.warn("Could not read http message. Message: {}", e.getMessage());
+    return new ErrorMessage(true, "Could not read http message");
   }
 
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
