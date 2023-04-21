@@ -33,7 +33,8 @@
               </v-card-item>
 
               <v-card-actions class="justify-center">
-                <v-btn color="primary" type="submit" variant="outlined">Register Organization
+                <v-btn color="primary" type="submit" variant="outlined">
+                  Register Organization
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -48,7 +49,7 @@ import toastManager from "@/services/ToastManager";
 import {inject, Ref, ref, UnwrapRef} from "vue";
 import * as yup from 'yup';
 import router from "@/router";
-import {useUserStore} from "@/store/app";
+import {useProfileStore} from "@/store/user-app";
 import organizationService from "@/services/OrganizationService";
 import {RouterPaths} from "@/services/RouterPaths";
 
@@ -86,7 +87,7 @@ async function registerSubmit() {
 async function RegisterOrganization() {
   try {
     await organizationService.register(name.value, isSupplier.value)
-    await useUserStore().requestUserData()
+    await useProfileStore().requestUserData()
     await router.push(RouterPaths.EMPLOYEE_OR_SUPPLIER_ORGANIZATION_DETAILS)
 
     if (show)

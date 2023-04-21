@@ -1,7 +1,9 @@
 // Composables
 import {createRouter, createWebHistory, Router} from 'vue-router'
-import {useAuthStore, useOrganizationStore, useUserStore} from "@/store/app";
+
 import {RouterPaths} from "@/services/RouterPaths";
+import {useAuthStore, useProfileStore} from "@/store/user-app";
+import {useOrganizationStore} from "@/store/employee-or-supplier-app";
 
 const routes = [
   // anonymous
@@ -157,8 +159,8 @@ async function initializeStores() {
   if (!useAuthStore().hasToken)
     useAuthStore().initializeToken()
   if (useAuthStore().hasToken)
-    await useUserStore().requestUserData()
-  if (useUserStore().isEmployee || useUserStore().isSupplier) {
+    await useProfileStore().requestUserData()
+  if (useProfileStore().isEmployee || useProfileStore().isSupplier) {
     await useOrganizationStore().requestFreshOrganizationData()
   }
 }

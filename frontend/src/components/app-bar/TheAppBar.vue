@@ -19,7 +19,7 @@
           <v-icon>mdi-bell</v-icon>
         </v-btn>
 
-        <v-btn v-if="useUserStore().isEmployee" icon
+        <v-btn v-if="useProfileStore().isEmployee" icon
                v-bind:to="RouterPaths.EMPLOYEE_CART">
           <v-icon>mdi-cart</v-icon>
         </v-btn>
@@ -39,7 +39,7 @@
               Details
             </v-list-item>
 
-            <div v-if="useUserStore().isEmployee">
+            <div v-if="useProfileStore().isEmployee">
               <v-list-subheader>Settings</v-list-subheader>
 
               <v-list-item
@@ -86,7 +86,7 @@
             Switch theme
           </v-list-item>
           <v-list-item
-            v-if="useUserStore().isOnlyAppUser"
+            v-if="useProfileStore().isOnlyAppUser"
             append-icon="mdi-domain"
             title="Register Organization"
             @click="showOrganizationRegistrationDialog = true"
@@ -98,12 +98,12 @@
   </v-card>
 </template>
 <script lang="ts" setup>
-import {useAuthStore, useUserStore} from "@/store/app";
+import {useAuthStore, useProfileStore} from "@/store/user-app";
 import toastManager from "@/services/ToastManager";
 import router from "@/router";
 import {useTheme} from "vuetify";
 import {RouterPaths} from "@/services/RouterPaths";
-import OrganizationRegistration from "@/views/anonymous/OrganizationRegistration.vue";
+import OrganizationRegistration from "@/views/anonymous/OrganizationRegistrationDialog.vue";
 import {provide, Ref, ref, UnwrapRef} from "vue";
 
 const theme = useTheme();

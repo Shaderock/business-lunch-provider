@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it} from "vitest";
-import {useAuthStore, useUserStore} from "../../src/store/app";
+import {useAuthStore, useProfileStore} from "../../src/store/user-app";
 import {createPinia, setActivePinia} from "pinia";
 import {UserDetails} from "../../src/models/UserDetails";
 import {Role} from "../../src/models/Role";
@@ -18,7 +18,7 @@ describe('UserDetails Storage and Handling', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     useAuthStore().jwtToken = token
-    useUserStore().userDetails = userDetails
+    useProfileStore().userDetails = userDetails
   })
 
   it('correctly validates user has token', async () => {
@@ -30,16 +30,16 @@ describe('UserDetails Storage and Handling', () => {
   });
 
   it('correctly validates user is not an employee', async () => {
-    expect(useUserStore().isEmployee).toBe(false)
+    expect(useProfileStore().isEmployee).toBe(false)
   });
 
   it('correctly validates user is an employee', async () => {
-    useUserStore().user.roles.push(Role.Employee)
-    expect(useUserStore().isEmployee).toBe(true)
+    useProfileStore().user.roles.push(Role.Employee)
+    expect(useProfileStore().isEmployee).toBe(true)
   });
 
   it('clears user data', async () => {
-    useUserStore().clearUser()
-    expect(useUserStore().hasUser).toBe(false)
+    useProfileStore().clearUser()
+    expect(useProfileStore().hasUser).toBe(false)
   });
 })

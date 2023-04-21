@@ -16,7 +16,7 @@
 
       <v-divider/>
 
-      <div v-if="useUserStore().isOnlyAppUser">
+      <div v-if="useProfileStore().isOnlyAppUser">
         <v-list-item
           prepend-icon="mdi-email-plus"
           title="Companies Invitations"
@@ -24,7 +24,7 @@
         />
       </div>
 
-      <div v-if="useUserStore().isOnlyEmployee">
+      <div v-if="useProfileStore().isOnlyEmployee">
         <OrganizationDetailsNavItem/>
 
         <SupplierSubscriptionsNavItem/>
@@ -32,7 +32,7 @@
         <EmployeeOrdersNavItems/>
       </div>
 
-      <div v-if="useUserStore().isCompanyAdmin">
+      <div v-if="useProfileStore().isCompanyAdmin">
         <v-list-item disabled title="Organization"/>
 
         <OrganizationDetailsNavItem/>
@@ -84,7 +84,7 @@
         />
       </div>
 
-      <div v-if="useUserStore().isSupplier">
+      <div v-if="useProfileStore().isSupplier">
 
         <v-list-item disabled title="Organization"></v-list-item>
 
@@ -137,7 +137,7 @@
         />
       </div>
 
-      <div v-if="useUserStore().isSysAdmin">
+      <div v-if="useProfileStore().isSysAdmin">
         <v-list-item
           prepend-icon="mdi-silverware"
           title="Companies"
@@ -164,7 +164,7 @@
   </v-navigation-drawer>
 </template>
 <script lang="ts" setup>
-import {useUserStore} from "@/store/app";
+import {useProfileStore} from "@/store/user-app";
 import {RouterPaths} from "@/services/RouterPaths";
 import OrganizationDetailsNavItem from "@/components/side-bar/OrganizationDetailsNavItem.vue";
 import SupplierSubscriptionsNavItem from "@/components/side-bar/SupplierSubscriptionsNavItem.vue";

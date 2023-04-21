@@ -1,9 +1,10 @@
 <template>
   <v-container class="fill-height" fluid>
     <v-row align="center" justify="center">
-      <v-col cols="12" md="4" sm="8">
-        <v-card elevation="20" shaped>
+      <v-col md="5">
+        <v-card class="mx-auto" elevation="20" shaped>
           <v-card-title class="text-h5 text-center">Login</v-card-title>
+          <v-divider/>
           <v-card-text>
             <v-form>
               <v-text-field
@@ -12,35 +13,39 @@
                 placeholder="example@example.com"
                 required
                 type="email"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="password"
                 label="Password"
                 placeholder="Enter your password"
                 required
                 type="password"
-              ></v-text-field>
+              />
             </v-form>
           </v-card-text>
-          <v-card-actions class="justify-center">
-            <v-btn block color="primary" variant="outlined" @click="login()">Login</v-btn>
+          <v-card-actions>
+            <v-btn class="flex-grow-1"
+                   color="primary"
+                   variant="outlined"
+                   @click="login()">
+              Login
+            </v-btn>
+
+            <v-btn append-icon="mdi-lock-reset"
+                   color="secondary"
+                   size="small"
+                   variant="plain">
+              Reset password
+            </v-btn>
+
+            <v-btn append-icon="mdi-account-plus"
+                   color="secondary"
+                   size="small"
+                   v-bind:to="RouterPaths.ANONYMOUS_REGISTER"
+                   variant="plain">
+              Register
+            </v-btn>
           </v-card-actions>
-          <v-card-text class="text-center">
-            <v-col>
-              <div>
-                Don't have an account?
-                <v-btn color="secondary"
-                       size="small"
-                       v-bind:to="RouterPaths.ANONYMOUS_REGISTER"
-                       variant="plain">Sign up
-                </v-btn>
-              </div>
-              <div>
-                Forgot your password?
-                <v-btn color="secondary" size="small" variant="plain">Reset it</v-btn>
-              </div>
-            </v-col>
-          </v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -51,7 +56,7 @@
 import {onMounted, ref} from "vue";
 import router from "@/router";
 import toastManager from "@/services/ToastManager";
-import {useAuthStore} from "@/store/app";
+import {useAuthStore} from "@/store/user-app";
 import {RouterPaths} from "@/services/RouterPaths";
 
 const email = ref("")

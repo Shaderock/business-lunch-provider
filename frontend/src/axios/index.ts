@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {useRouter} from "vue-router";
-import {useAuthStore} from "@/store/app";
+import {useAuthStore} from "@/store/user-app";
 import {ToastManager} from "@/services/ToastManager";
 import {ApiConstants} from "@/services/ApiConstants";
 
