@@ -1,6 +1,7 @@
 import axios, {AxiosResponse} from "axios";
 import {ApiConstants} from "@/services/ApiConstants";
 import {SupplierPreferences} from "@/models/SupplierPreferences";
+import {Utils} from "@/models/Utils";
 
 export class SupplierPreferencesService {
 
@@ -9,11 +10,8 @@ export class SupplierPreferencesService {
   }
 
   update(preferences: SupplierPreferences): Promise<AxiosResponse<SupplierPreferences>> {
-
-    // return axios.put(ApiConstants.SUPPLIER_ADM_PREFERENCES, preferences)
-
-    const deliveryPeriodStartTimeString: string = preferences.deliveryPeriodStartTime.toISOString().substring(11, 19)
-    const deliveryPeriodEndTimeString: string = preferences.deliveryPeriodEndTime.toISOString().substring(11, 19)
+    const deliveryPeriodStartTimeString: string = Utils.dateToTimeAsString(preferences.deliveryPeriodStartTime)
+    const deliveryPeriodEndTimeString: string = Utils.dateToTimeAsString(preferences.deliveryPeriodEndTime)
 
     const serializedPreferences = {
       ...preferences,

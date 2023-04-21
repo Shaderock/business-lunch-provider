@@ -30,7 +30,7 @@ public class InvitationValidationService {
       throw new CrudValidationException("Can not create invitation without a user");
     }
 
-    if (appUser.getUserDetails().getRoles().size() != 1 &&
+    if (appUser.getUserDetails().getRoles().size() != 1 ||
         !appUser.getUserDetails().getRoles().contains(Role.USER)) {
       throw new CrudValidationException("User can not be invited to an organization");
     }

@@ -17,13 +17,13 @@ export const useSupAdmSupPrefStore = defineStore('supplierAdminSupplierPreferenc
     },
     getStartTime(): Date | null {
       if (this.supplierPreferences?.deliveryPeriodStartTime !== null)
-        return new Date(`1970-01-01T${this.supplierPreferences?.deliveryPeriodStartTime}Z`);
+        return moment(this.supplierPreferences?.deliveryPeriodStartTime, "HH:mm:ss").toDate()
       else
         return null
     },
     getEndTime(): Date | null {
       if (this.supplierPreferences?.deliveryPeriodEndTime !== null)
-        return new Date(`1970-01-01T${this.supplierPreferences?.deliveryPeriodEndTime}Z`);
+        return moment(this.supplierPreferences?.deliveryPeriodEndTime, "HH:mm:ss").toDate()
       else
         return null
     },

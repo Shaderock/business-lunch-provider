@@ -90,8 +90,8 @@
           <v-table>
             <thead>
             <tr>
-              <th>Categories (Amount)</th>
-              <th>Price (MDL)</th>
+              <th scope="col">Categories (Amount)</th>
+              <th scope="col">Price (MDL)</th>
             </tr>
             </thead>
             <tbody>
@@ -101,6 +101,7 @@
       </v-card>
     </v-col>
 
+    <!--todo refactor validations to not push confirm button twice-->
     <v-dialog v-model="show">
       <v-col cols="12" lg="4" md="6" sm="8">
         <v-card>
@@ -204,6 +205,7 @@ import supplierPreferencesService from "@/services/SupplierPreferencesService";
 import {SupplierPreferences} from "@/models/SupplierPreferences";
 import moment from "moment";
 import toastManager from "@/services/ToastManager";
+import {Utils} from "@/models/Utils";
 
 onMounted(() => {
   useSupAdmSupPrefStore().requestFreshPreferencesData()
@@ -257,11 +259,8 @@ function initDialogue() {
   const startDate: Date | null = useSupAdmSupPrefStore().getStartTime
   const endDate: Date | null = useSupAdmSupPrefStore().getEndTime
 
-  console.log(startDate)
-  console.log(endDate)
-
-  let startTime: string = startDate != null ? timeToString(startDate) : '10:00'
-  let endTime: string = endDate != null ? timeToString(endDate) : '19:00'
+  let startTime: string = startDate != null ? Utils.dateToTimeAsString(startDate) : '10:00:00'
+  let endTime: string = endDate != null ? Utils.dateToTimeAsString(endDate) : '19:00:00'
 
   updatePreferences.value.deliveryStart = startTime
   updatePreferences.value.deliveryEnd = endTime
@@ -284,8 +283,8 @@ async function submit() {
         null,
         null,
         requestOffset,
-        stringToTime(updatePreferences.value.deliveryStart),
-        stringToTime(updatePreferences.value.deliveryEnd),
+        Utils.stringToTime(updatePreferences.value.deliveryStart),
+        Utils.stringToTime(updatePreferences.value.deliveryEnd),
         updatePreferences.value.minimumOrders,
         updatePreferences.value.minimumCategories,
         updatePreferences.value.orderType,
@@ -301,23 +300,4 @@ async function submit() {
     }
   }
 }
-
-function timeToString(time: Date): string {
-  return padTo2Digits(time.getHours()) + ":" + padTo2Digits(time.getMinutes())
-}
-
-function stringToTime(timeString: string): Date {
-  const [hours, minutes] = timeString.split(':').map(Number)
-
-  const date = new Date()
-  date.setHours(hours)
-  date.setMinutes(minutes)
-  date.setSeconds(0)
-  return date
-}
-
-function padTo2Digits(num: number): string {
-  return String(num).padStart(2, '0');
-}
-
 </script>
