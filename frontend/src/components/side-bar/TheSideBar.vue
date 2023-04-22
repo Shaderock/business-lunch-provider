@@ -29,7 +29,7 @@
             />
           </div>
 
-          <div v-if="useProfileStore().isOnlyEmployee">
+          <div v-if="useProfileStore().isUserAndEmployee">
             <OrganizationDetailsNavItem/>
 
             <v-divider/>

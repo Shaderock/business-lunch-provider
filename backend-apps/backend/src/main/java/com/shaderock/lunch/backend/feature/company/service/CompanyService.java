@@ -88,8 +88,7 @@ public class CompanyService {
 
   public Company read(@NonNull AppUserDetails userDetails) {
     OrganizationDetails organizationDetails = organizationDetailsService.read(userDetails);
-    return companyRepository.findByOrganizationDetails(organizationDetails)
-        .orElseThrow(() -> new CrudValidationException("There is no company assigned"));
+    return read(organizationDetails);
   }
 
   public List<Company> read() {
@@ -101,6 +100,11 @@ public class CompanyService {
         String.format("Company(id=[%s] not found", companyId)));
   }
 
+
+  public Company read(OrganizationDetails organizationDetails) {
+    return companyRepository.findByOrganizationDetails(organizationDetails)
+        .orElseThrow(() -> new CrudValidationException("Company not found"));
+  }
 
   @Transactional
   public Company update(@NonNull Company company) {

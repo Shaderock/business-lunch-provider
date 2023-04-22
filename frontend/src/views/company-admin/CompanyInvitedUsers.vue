@@ -70,17 +70,17 @@
 <script lang="ts" setup>
 
 import {computed, ComputedRef, onMounted, ref} from "vue";
-import {useInvitationStore} from "@/store/company-adm-app";
+import {useCompAdmInvitationStore} from "@/store/company-adm-app";
 import {Invitation} from "@/models/Invitation";
 
 // todo add loader
 onMounted(() => {
-  useInvitationStore().requestFreshInvitationData()
+  useCompAdmInvitationStore().requestFreshInvitationData()
 })
 
 const showInviteDialog = ref(false)
 const invitationUserEmail = ref('')
-const invitations: ComputedRef<Invitation[]> = computed(() => useInvitationStore().getInvitations)
+const invitations: ComputedRef<Invitation[]> = computed(() => useCompAdmInvitationStore().getInvitations)
 const headers = [
   {title: 'Email', key: 'userEmail'},
   {title: 'Invitation Date', key: 'formattedCreatedAt'},
@@ -88,11 +88,11 @@ const headers = [
 ]
 
 async function sendInvitation() {
-  await useInvitationStore().send(invitationUserEmail.value)
+  await useCompAdmInvitationStore().send(invitationUserEmail.value)
   showInviteDialog.value = false
 }
 
 function dismissInvitation(invitation: Invitation) {
-  useInvitationStore().dismissInvitation(invitation.userEmail)
+  useCompAdmInvitationStore().dismissInvitation(invitation.userEmail)
 }
 </script>

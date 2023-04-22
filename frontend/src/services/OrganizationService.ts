@@ -35,6 +35,10 @@ export class OrganizationService {
   update(organizationDetails: OrganizationDetails): Promise<AxiosResponse<OrganizationDetails>> {
     return axios.put(ApiConstants.ORGANIZATION_ADM_ORGANIZATION, organizationDetails)
   }
+
+  async getAllUserInvitingOrganizations() {
+    return axios.get(`${ApiConstants.ORGANIZATION}/invitation/all`);
+  }
 }
 
 const organizationService: OrganizationService = new OrganizationService()
