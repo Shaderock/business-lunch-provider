@@ -1,8 +1,4 @@
 <template>
-  <v-divider/>
-
-  <v-list-item disabled title="My Orders"/>
-
   <v-list-item
     prepend-icon="mdi-shopping"
     title="Order History"

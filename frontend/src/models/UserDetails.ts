@@ -1,14 +1,14 @@
 import {Role} from "./Role";
 
 export class UserDetails {
-  public id: number
+  public id: string | null
   public appUserId: number
   public email: string
   public firstName: string
   public lastName: string
   public roles: Role[]
 
-  constructor(id: number,
+  constructor(id: string | null,
               appUserId: number,
               email: string,
               firstName: string,

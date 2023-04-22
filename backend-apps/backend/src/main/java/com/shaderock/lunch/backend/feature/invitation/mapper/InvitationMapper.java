@@ -12,7 +12,7 @@ import org.mapstruct.MappingConstants.ComponentModel;
 public interface InvitationMapper extends BaseMapper {
 
   @Mapping(target = "companyId", source = "company.id")
-  @Mapping(target = "appUserId", source = "appUser.id")
+  @Mapping(target = "userEmail", source = "appUser.userDetails.email")
   InvitationDto toDto(Invitation invitation);
 
   @InheritInverseConfiguration

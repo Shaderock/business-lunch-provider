@@ -1,8 +1,4 @@
 <template>
-  <v-divider/>
-
-  <v-list-item disabled title="Subscriptions"/>
-
   <v-list-item
     prepend-icon="mdi-briefcase-arrow-left-right"
     title="Supplier Subscriptions"

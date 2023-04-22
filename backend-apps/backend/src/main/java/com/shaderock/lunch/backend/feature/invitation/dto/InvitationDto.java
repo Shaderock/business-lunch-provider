@@ -10,6 +10,6 @@ import java.util.UUID;
 public record InvitationDto(UUID id,
                             LocalDateTime createdAt,
                             UUID companyId,
-                            UUID appUserId) implements Serializable {
+                            String userEmail) implements Serializable {
 
 }
