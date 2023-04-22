@@ -115,7 +115,7 @@ public class StartupEntitiesGenerator implements
 
   private void generateDefaultEmployees() {
     Company company = companyService.read(Organization.COMPANY.adminEmail);
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 20; i++) {
       Optional<AppUserDetails> generatedUser = generateUser(
           String.format("employee%s@dummy.test.mail", i),
           "test",

@@ -36,6 +36,7 @@ public class SupplierService {
   private final SupplierPreferencesService supplierPreferencesService;
   private final SupplierMapper supplierMapper;
   private final OrganizationDetailsValidationService organizationDetailsValidationService;
+  private final SupplierValidationService supplierValidationService;
 
   @Transactional(TxType.REQUIRES_NEW)
   public Supplier register(@NonNull OrganizationRegistrationForm form,
@@ -106,16 +107,33 @@ public class SupplierService {
     return update(supplier);
   }
 
+  public Supplier update(SupplierDto supplierDto, AppUserDetails userDetails) {
+    Supplier persistedSupplier = read(userDetails.getEmail());
+    Supplier supplierToUpdate = supplierMapper.toEntity(supplierDto);
+    supplierToUpdate.setId(persistedSupplier.getId());
+    return update(supplierToUpdate);
+  }
+
   @Transactional
+  // todo perform validations
   public Supplier update(@NonNull Supplier supplier) {
     LOGGER.info("Attempting to update {}", supplier);
-
+    boolean newIsPublic = supplier.isPublic();
     Supplier persistedSupplier = read(supplier.getId());
     persistedSupplier.setWebsiteUrl(supplier.getWebsiteUrl());
     persistedSupplier.setMenuUrl(supplier.getMenuUrl());
 
+    // todo check if this rollbacks correctly after validation
+    persistedSupplier = supplierRepository.save(persistedSupplier);
+
+    if (newIsPublic && !persistedSupplier.isPublic()) {
+      supplierValidationService.validateSupplierProfileIsCompleted(persistedSupplier);
+    }
+
+    persistedSupplier.setPublic(newIsPublic);
+
     LOGGER.info("Updated {}", persistedSupplier);
-    return persistedSupplier;
+    return supplierRepository.save(persistedSupplier);
   }
 
   @Transactional

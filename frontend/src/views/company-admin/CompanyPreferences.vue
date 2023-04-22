@@ -7,84 +7,70 @@
           <v-btn color="primary" @click="initDialogue()">Edit Preferences</v-btn>
         </v-toolbar>
 
-        <v-card-subtitle class="pt-4">
-          <span>Discount </span>
-          <span class="text-red font-weight-bold">percentage (%)</span>
-          <span> for the first employee order</span>
-        </v-card-subtitle>
-        <v-card-text v-if="useCompAdmCompPrefStore().getPreferences?.discountPercentageFirstOrder">
-          {{ useCompAdmCompPrefStore().getPreferences.discountPercentageFirstOrder }} %
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+        <v-list>
+          <v-list-subheader title="Discounts"/>
 
-        <v-card-subtitle>
-          <span class="text-red font-weight-bold">Fix</span>
-          <span> discount for the first employee order</span>
-        </v-card-subtitle>
-        <v-card-text v-if="useCompAdmCompPrefStore().getPreferences?.discountFixFirstOrder">
-          {{ useCompAdmCompPrefStore().getPreferences.discountFixFirstOrder }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+          <v-list-item :subtitle="useCompAdmCompPrefStore().getPreferences.companyDiscountType"
+                       prepend-icon="mdi-sale" title="Employees' discount configuration"/>
+          <v-divider inset/>
 
-        <v-card-subtitle>
-          <span>Maximum </span>
-          <span class="text-red font-weight-bold">Fix</span>
-          <span> discount for the first employee order</span>
-        </v-card-subtitle>
-        <v-card-text v-if="useCompAdmCompPrefStore().getPreferences?.maxDiscountFixFirstOrder">
-          {{ useCompAdmCompPrefStore().getPreferences.maxDiscountFixFirstOrder }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+          <v-list-item>
+            <v-list-item-title>
+              <span>Discount </span>
+              <span class="text-info font-weight-bold">Percentage (%)</span>
+              <span> for the first employee order</span>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              {{ useCompAdmCompPrefStore().getPreferences.discountPercentageFirstOrder }}
+            </v-list-item-subtitle>
+          </v-list-item>
+          <v-divider inset/>
 
-        <v-card-subtitle>
-          <span class="text-red font-weight-bold">Fix</span>
-          <span> discount for employee daily</span>
-        </v-card-subtitle>
-        <v-card-text v-if="useCompAdmCompPrefStore().getPreferences?.discountPerDay">
-          {{ useCompAdmCompPrefStore().getPreferences.discountPerDay }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+          <v-list-item>
+            <v-list-item-title>
+              <span class="text-info font-weight-bold">Fix</span>
+              <span> discount for the first employee order</span>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              {{ useCompAdmCompPrefStore().getPreferences.discountFixFirstOrder }}
+            </v-list-item-subtitle>
+          </v-list-item>
+          <v-divider inset/>
 
-        <v-card-subtitle>
-          <v-icon icon="mdi-timer-music"/>
-          Default lunch deliver time
-        </v-card-subtitle>
-        <v-card-text v-if="useCompAdmCompPrefStore().getPreferences?.deliverAt">
-          {{ useCompAdmCompPrefStore().getPreferences.deliverAt }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+          <v-list-item>
+            <v-list-item-title>
+              <span>Maximum </span>
+              <span class="text-info font-weight-bold">Fix</span>
+              <span> discount for the first employee order</span>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              {{ useCompAdmCompPrefStore().getPreferences.maxDiscountFixFirstOrder }}
+            </v-list-item-subtitle>
+          </v-list-item>
+          <v-divider inset/>
 
-        <v-card-subtitle>
-          <v-icon icon="mdi-map-marker"/>
-          Delivery Address
-        </v-card-subtitle>
-        <v-card-text v-if="useCompAdmCompPrefStore().getPreferences?.deliveryAddress">
-          {{ useCompAdmCompPrefStore().getPreferences.deliveryAddress }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+          <v-list-item>
+            <v-list-item-title>
+              <span class="text-info font-weight-bold">Fix</span>
+              <span> discount for employee daily</span>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              {{ useCompAdmCompPrefStore().getPreferences.discountPerDay }}
+            </v-list-item-subtitle>
+          </v-list-item>
+          <v-divider inset/>
 
-        <v-card-subtitle>
-          <v-icon icon="mdi-sale"/>
-          Employees' discount configuration
-        </v-card-subtitle>
-        <v-card-text v-if="useCompAdmCompPrefStore().getPreferences?.companyDiscountType">
-          {{ useCompAdmCompPrefStore().getPreferences.companyDiscountType }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+          <v-list-subheader title="Delivery"/>
+
+          <v-list-item :subtitle="useCompAdmCompPrefStore().getPreferences.deliverAt?.toString()"
+                       prepend-icon="mdi-timer-music" title="Default lunch deliver time"/>
+          <v-divider inset/>
+
+          <v-list-item :subtitle="useCompAdmCompPrefStore().getPreferences.deliveryAddress"
+                       prepend-icon="mdi-map-marker title=" title="Default lunch deliver time"/>
+          <v-divider inset/>
+
+        </v-list>
       </v-card>
     </v-col>
 

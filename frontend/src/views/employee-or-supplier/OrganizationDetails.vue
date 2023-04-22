@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
-    <v-col cols="12" md="5">
-      <v-card class="mx-auto" elevation="20">
+    <v-col cols="auto" md="5">
+      <v-card elevation="20">
         <v-toolbar>
           <v-toolbar-title>My Organization</v-toolbar-title>
 
@@ -11,48 +11,66 @@
           </v-btn>
         </v-toolbar>
 
-        <v-card-subtitle class="pt-4">Name</v-card-subtitle>
-        <v-card-text v-if="useOrganizationStore().getOrganization?.name">
-          {{ useOrganizationStore().getOrganization.name }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+        <v-list>
+          <v-list-item :subtitle="useOrganizationStore().getOrganization.name" title="Name"/>
+          <v-divider inset/>
+          <v-list-item :subtitle="useOrganizationStore().getOrganization.email"
+                       prepend-icon="mdi-email"
+                       title="Email"/>
+          <v-divider inset/>
+          <v-list-item :subtitle="useOrganizationStore().getOrganization.phone"
+                       prepend-icon="mdi-phone"
+                       title="Phone"/>
+          <v-divider inset/>
+          <div v-if="useProfileStore().isSupplier">
+            <v-list-item :subtitle="useSupAdmSupStore().getSupplier.websiteUrl"
+                         prepend-icon="mdi-web"
+                         title="Website URL"/>
+            <v-divider inset/>
+            <v-list-item :subtitle="useSupAdmSupStore().getSupplier.menuUrl" prepend-icon="mdi-web"
+                         title="Menu URL"/>
+            <v-divider inset/>
+            <v-list-item>
+              <template v-slot:prepend="{ isPublic }">
+                <v-list-item-action start>
+                  <v-checkbox-btn v-model="persistedSupplier.isPublic" disabled
+                                  v-bind="isPublic"></v-checkbox-btn>
+                </v-list-item-action>
+              </template>
+              <v-list-item-title>Whether supplier is public</v-list-item-title>
+              <v-list-item-subtitle>Supplier can be found on main page</v-list-item-subtitle>
+            </v-list-item>
+            <v-divider inset/>
+          </div>
+          <v-list-item :subtitle="useOrganizationStore().getOrganization.description"
+                       title="Description"/>
+          <v-divider/>
+        </v-list>
 
+        <v-card-actions v-if="useProfileStore().isSupplier">
+          <v-btn v-if="!useSupAdmSupStore().getPublic"
+                 :disabled="!useSupAdmSupPrefStore().arePreferencesCompleted ||
+                 !useOrganizationStore().areDetailsCompleted"
+                 color="primary"
+                 variant="outlined"
+                 @click="updatePublic(true)">
+            Become public
+          </v-btn>
+          <v-btn v-if="useSupAdmSupStore().getPublic"
+                 color="secondary"
+                 @click="updatePublic(false)">
+            Become private
+          </v-btn>
 
-        <v-card-subtitle>
-          <v-icon icon="mdi-email"/>
-          Email
-        </v-card-subtitle>
-        <v-card-text v-if="useOrganizationStore().getOrganization?.email">
-          {{ useOrganizationStore().getOrganization.email }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
-
-
-        <v-card-subtitle>
-          <v-icon icon="mdi-phone"/>
-          Phone
-        </v-card-subtitle>
-        <v-card-text v-if="useOrganizationStore().getOrganization?.phone">
-          {{ useOrganizationStore().getOrganization.phone }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
-
-
-        <v-card-subtitle>
-          Description
-        </v-card-subtitle>
-        <v-card-text v-if="useOrganizationStore().getOrganization?.description">
-          {{ useOrganizationStore().getOrganization.description }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+          <v-tooltip
+            v-if="!useSupAdmSupPrefStore().arePreferencesCompleted || !useOrganizationStore().areDetailsCompleted">
+            <template v-slot:activator="{ props }">
+              <v-spacer/>
+              <v-icon color="info" icon="mdi-information" v-bind="props"/>
+            </template>
+            Complete profile and preferences in order to allow users to order from you
+          </v-tooltip>
+        </v-card-actions>
       </v-card>
     </v-col>
   </v-row>
@@ -63,39 +81,56 @@
         <v-card>
           <v-card-title>Edit Organization Details</v-card-title>
 
-          <v-form ref="form" v-model="valid" validate-on="submit" @submit.prevent="submit()">
+          <v-form ref="form" v-model="valid" @submit.prevent="submit()">
             <v-card-text>
               <v-text-field
-                v-model="org.name"
+                v-model="organizationToUpdate.name"
                 :rules="[rules.required]"
                 color="primary"
                 label="Name"
-              ></v-text-field>
+              />
 
               <v-textarea
-                v-model="org.description"
+                v-model="organizationToUpdate.description"
                 :rules="[rules.required]"
                 color="primary"
                 hint="Any information you consider important to share"
                 label="Description"
-              ></v-textarea>
+              />
 
               <v-text-field
-                v-model="org.email"
+                v-model="organizationToUpdate.email"
                 :rules="[rules.required, rules.email]"
                 color="primary"
                 hint="email@example.com"
                 label="Email"
-
-              ></v-text-field>
+              />
 
               <v-text-field
-                v-model="org.phone"
-                :rules="[rules.required, rules.phone]"
+                v-model="organizationToUpdate.phone"
+                :rules="[rules.required]"
                 color="primary"
                 hint="+37311222333"
                 label="Phone"
-              ></v-text-field>
+              />
+
+              <div v-if="useProfileStore().isSupplier">
+                <v-text-field
+                  v-model="supplierToUpdate.websiteUrl"
+                  color="primary"
+                  hint="https://my-website.com"
+                  label="Website URL"
+                  type="url"
+                />
+
+                <v-text-field
+                  v-model="supplierToUpdate.menuUrl"
+                  color="primary"
+                  hint="https://my-website.com/menu"
+                  label="Menu URL"
+                  type="url"
+                />
+              </div>
             </v-card-text>
 
             <v-card-actions>
@@ -110,18 +145,25 @@
 
 </template>
 <script lang="ts" setup>
-import {onMounted, Ref, ref} from "vue";
+import {computed, onMounted, Ref, ref} from "vue";
 import {useProfileStore} from "@/store/user-app";
 import organizationService from "@/services/OrganizationService";
 import {OrganizationDetails} from "@/models/OrganizationDetails";
 import toastManager from "@/services/ToastManager";
 import {useOrganizationStore} from "@/store/employee-or-supplier-app";
 import {VForm} from "vuetify/components";
+import {useSupAdmSupPrefStore, useSupAdmSupStore} from "@/store/supplier-adm-app";
 
 onMounted(() => {
   useOrganizationStore().requestFreshOrganizationData()
+  if (useProfileStore().isSupplier) {
+    useSupAdmSupStore().requestFreshSupplierData()
+    useSupAdmSupPrefStore().requestFreshPreferencesData()
+  }
 })
 
+
+const persistedSupplier = computed(() => useSupAdmSupStore().getSupplier)
 const form = ref(null) as Ref<InstanceType<typeof VForm> | null>;
 const valid = ref(false);
 const show = ref(false)
@@ -140,10 +182,14 @@ const rules = {
 function initDialogue() {
   show.value = true
   const organization = useOrganizationStore().getOrganization;
-  org.value.name = organization?.name ?? '';
-  org.value.email = organization?.email ?? '';
-  org.value.phone = organization?.phone ?? '';
-  org.value.description = organization?.description ?? '';
+  organizationToUpdate.value.name = organization?.name ?? '';
+  organizationToUpdate.value.email = organization?.email ?? '';
+  organizationToUpdate.value.phone = organization?.phone ?? '';
+  organizationToUpdate.value.description = organization?.description ?? '';
+
+  const supplier = useSupAdmSupStore().getSupplier
+  supplierToUpdate.value.menuUrl = supplier.menuUrl
+  supplierToUpdate.value.websiteUrl = supplier.websiteUrl
 }
 
 async function submit() {
@@ -152,12 +198,17 @@ async function submit() {
     try {
       await organizationService.update(new OrganizationDetails(
         null,
-        org.value.name,
-        org.value.description,
-        org.value.email,
-        org.value.phone,
+        organizationToUpdate.value.name,
+        organizationToUpdate.value.description,
+        organizationToUpdate.value.email,
+        organizationToUpdate.value.phone,
         null
       ))
+
+      if (useProfileStore().isSupplier) {
+        await useSupAdmSupStore().update(supplierToUpdate.value.websiteUrl, supplierToUpdate.value.menuUrl)
+      }
+
       toastManager.showSuccess("Updated!", "Your organization details were updated successfully")
       show.value = false
       await useOrganizationStore().requestFreshOrganizationData();
@@ -168,11 +219,21 @@ async function submit() {
   }
 }
 
-const org = ref({
+async function updatePublic(isPublic: boolean) {
+  useSupAdmSupStore().updatePublic(isPublic)
+}
+
+const organizationToUpdate = ref({
   name: '',
   description: '',
   email: '',
   phone: '',
 });
+
+const supplierToUpdate = ref({
+  websiteUrl: '',
+  menuUrl: '',
+  isPublic: false
+})
 
 </script>

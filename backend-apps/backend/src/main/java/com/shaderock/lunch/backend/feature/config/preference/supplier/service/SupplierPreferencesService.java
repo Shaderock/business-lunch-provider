@@ -67,6 +67,7 @@ public class SupplierPreferencesService {
     persisted.setMinimumCategoriesForEmployeeOrder(
         preferences.getMinimumCategoriesForEmployeeOrder());
     persisted.setOrderType(preferences.getOrderType());
+    persisted.setCategoriesTags(preferences.getCategoriesTags());
 
     return supplierPreferencesRepository.save(persisted);
   }

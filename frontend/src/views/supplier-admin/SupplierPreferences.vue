@@ -8,73 +8,63 @@
           <v-btn color="primary" @click="initDialogue()">Edit Preferences</v-btn>
         </v-toolbar>
 
-        <v-card-subtitle class="pt-4">
-          <v-icon icon="mdi-car-clock"/>
-          Request offset
-        </v-card-subtitle>
-        <v-card-text v-if="useSupAdmSupPrefStore().getPreferences?.requestOffset">
-          {{ useSupAdmSupPrefStore().getRequestOffset.days() }} Days
-          {{ useSupAdmSupPrefStore().getRequestOffset.hours() }} Hours
-          {{ useSupAdmSupPrefStore().getRequestOffset.minutes() }} Minutes
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+        <v-list>
+          <v-list-subheader>Delivery</v-list-subheader>
 
-        <v-card-subtitle>
-          <v-icon icon="mdi-clock-start"/>
-          Delivered not sooner than
-        </v-card-subtitle>
-        <v-card-text v-if="useSupAdmSupPrefStore().getPreferences?.deliveryPeriodStartTime">
-          {{ useSupAdmSupPrefStore().getPreferences.deliveryPeriodStartTime }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+          <v-list-item prepend-icon="mdi-car-clock" title="Request offset">
+            <v-list-item-subtitle>
+              {{ useSupAdmSupPrefStore().getRequestOffset.days() }} Days
+              {{ useSupAdmSupPrefStore().getRequestOffset.hours() }} Hours
+              {{ useSupAdmSupPrefStore().getRequestOffset.minutes() }} Minutes
+            </v-list-item-subtitle>
+          </v-list-item>
+          <v-divider inset/>
 
+          <v-list-item
+            :subtitle="useSupAdmSupPrefStore().getPreferences.deliveryPeriodStartTime?.toString()"
+            prepend-icon="mdi-clock-start"
+            title="Delivered not sooner than"/>
+          <v-divider inset/>
 
-        <v-card-subtitle>
-          <v-icon icon="mdi-clock-end"/>
-          Delivered not later than
-        </v-card-subtitle>
-        <v-card-text v-if="useSupAdmSupPrefStore().getPreferences?.deliveryPeriodEndTime">
-          {{ useSupAdmSupPrefStore().getPreferences.deliveryPeriodEndTime }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+          <v-list-item
+            :subtitle="useSupAdmSupPrefStore().getPreferences.deliveryPeriodEndTime?.toString()"
+            prepend-icon="mdi-clock-end"
+            title="Delivered not later than"/>
+          <v-divider inset/>
 
+          <v-list-subheader>Orders</v-list-subheader>
 
-        <v-card-subtitle>
-          Minimum orders in a company request
-        </v-card-subtitle>
-        <v-card-text v-if="useSupAdmSupPrefStore().getPreferences?.minimumOrdersPerCompanyRequest">
-          {{ useSupAdmSupPrefStore().getPreferences.minimumOrdersPerCompanyRequest }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+          <v-list-item
+            :subtitle="useSupAdmSupPrefStore().getPreferences.minimumOrdersPerCompanyRequest"
+            title="Minimum orders in a company request"/>
+          <v-divider inset/>
 
-        <v-card-subtitle>
-          Minimum categories in the order
-        </v-card-subtitle>
-        <v-card-text
-          v-if="useSupAdmSupPrefStore().getPreferences?.minimumCategoriesForEmployeeOrder">
-          {{ useSupAdmSupPrefStore().getPreferences.minimumCategoriesForEmployeeOrder }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+          <v-list-item
+            :subtitle="useSupAdmSupPrefStore().getPreferences.minimumOrdersPerCompanyRequest"
+            title="Minimum orders in a company request"/>
+          <v-divider inset/>
 
-        <v-card-subtitle>
-          Minimum categories in the order
-        </v-card-subtitle>
-        <v-card-text v-if="useSupAdmSupPrefStore().getPreferences?.orderType">
-          {{ useSupAdmSupPrefStore().getPreferences.orderType }}
-        </v-card-text>
-        <v-card-text v-else class="text-caption">
-          Empty
-        </v-card-text>
+          <v-list-item
+            :subtitle="useSupAdmSupPrefStore().getPreferences.minimumCategoriesForEmployeeOrder"
+            title="Minimum categories in the order"/>
+          <v-divider inset/>
+
+          <v-list-item :subtitle="useSupAdmSupPrefStore().getPreferences.orderType"
+                       title="OrderType"/>
+          <v-divider inset/>
+
+          <v-list-item title="Categories types">
+            <v-select v-if="useSupAdmSupPrefStore().getPreferences.categoriesTags"
+                      v-model="tags"
+                      :items="useSupAdmSupPrefStore().getPreferences.categoriesTags as CategoryTag[]"
+                      chips
+                      disabled
+                      multiple
+                      variant="solo">
+            </v-select>
+          </v-list-item>
+          <v-divider inset/>
+        </v-list>
       </v-card>
     </v-col>
 
@@ -192,6 +182,24 @@
                               label="Select order type"/>
                   </v-col>
                 </v-row>
+
+                <v-row>
+                  <v-col>
+                    <v-select v-model="updatePreferences.categoriesTags"
+                              :items="[CategoryTag.BURGERS, CategoryTag.PIZZA, CategoryTag.SUSHI, CategoryTag.KEBAB,
+                              CategoryTag.PASTRY, CategoryTag.STEAK, CategoryTag.BBQ, CategoryTag.PASTA,
+                              CategoryTag.SEAFOOD, CategoryTag.WOK, CategoryTag.MEDITERRANEAN, CategoryTag.TRADITIONAL,
+                              CategoryTag.BREAKFAST, CategoryTag.PANCAKES, CategoryTag.ORIENTAL, CategoryTag.VEGETARIAN,
+                              CategoryTag.SALADS,  CategoryTag.DESSERTS,  CategoryTag.OTHER]"
+                              :rules="[supplierPreferencesRules.required]"
+                              chips
+                              clearable
+                              closable-chips
+                              hint="What types of categories do you offer?"
+                              label="Tune your menu"
+                              multiple/>
+                  </v-col>
+                </v-row>
               </v-card-text>
 
               <v-card-actions>
@@ -207,7 +215,7 @@
 
 </template>
 <script lang="ts" setup>
-import {onMounted, Ref, ref} from "vue";
+import {computed, onMounted, Ref, ref} from "vue";
 import {useSupAdmSupPrefStore} from "@/store/supplier-adm-app";
 import {OrderType} from "@/models/OrderType";
 import supplierPreferencesService from "@/services/SupplierPreferencesService";
@@ -216,6 +224,7 @@ import moment from "moment";
 import toastManager from "@/services/ToastManager";
 import {Utils} from "@/models/Utils";
 import {VForm} from "vuetify/components";
+import {CategoryTag} from "@/models/CategoryTag";
 
 onMounted(() => {
   useSupAdmSupPrefStore().requestFreshPreferencesData()
@@ -223,6 +232,7 @@ onMounted(() => {
 })
 
 const form = ref(null) as Ref<InstanceType<typeof VForm> | null>;
+const tags = computed(() => useSupAdmSupPrefStore().getPreferences.categoriesTags)
 const valid = ref(false);
 const show = ref(false)
 const updatePreferences = ref({
@@ -234,6 +244,7 @@ const updatePreferences = ref({
   minimumOrders: 1,
   minimumCategories: 1,
   orderType: OrderType.UnlimitedOptions,
+  categoriesTags: [CategoryTag.SALADS]
 });
 
 const supplierPreferencesRules = {
@@ -275,6 +286,7 @@ function initDialogue() {
   updatePreferences.value.minimumOrders = persistedPreferences?.minimumOrdersPerCompanyRequest ?? 1
   updatePreferences.value.minimumCategories = persistedPreferences?.minimumCategoriesForEmployeeOrder ?? 1
   updatePreferences.value.orderType = persistedPreferences?.orderType ?? OrderType.UnlimitedOptions
+  updatePreferences.value.categoriesTags = persistedPreferences?.categoriesTags ?? [CategoryTag.SALADS]
 }
 
 async function submit() {
@@ -297,7 +309,8 @@ async function submit() {
         updatePreferences.value.minimumCategories,
         updatePreferences.value.orderType,
         null,
-        null
+        null,
+        updatePreferences.value.categoriesTags
       ))
       toastManager.showSuccess("Updated!", "Your organization preferences were updated successfully")
       show.value = false

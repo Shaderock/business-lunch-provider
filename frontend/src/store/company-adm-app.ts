@@ -12,6 +12,7 @@ import {Invitation} from "@/models/Invitation";
 import invitationService from "@/services/InvitationService";
 import toastManager from "@/services/ToastManager";
 import {Utils} from "@/models/Utils";
+import {CompanyDiscountType} from "@/models/CompanyDiscountType";
 
 export const useCompanyAdmCompanyStore = defineStore('company', {
   state: () => ({
@@ -49,10 +50,20 @@ export const useCompanyAdmCompanyStore = defineStore('company', {
 
 export const useCompAdmCompPrefStore = defineStore('companyAdminCompanyPreferences', {
   state: () => ({
-    companyPreferences: null as CompanyPreferences | null
+    companyPreferences: new CompanyPreferences(
+      null,
+      null,
+      CompanyDiscountType.SpecificAmountFirst,
+      0,
+      0,
+      0,
+      0,
+      new Date(),
+      ""
+    )
   }),
   getters: {
-    getPreferences(): CompanyPreferences | null {
+    getPreferences(): CompanyPreferences {
       return this.companyPreferences
     },
     getDeliveryTime(): Date | null {
@@ -66,9 +77,6 @@ export const useCompAdmCompPrefStore = defineStore('companyAdminCompanyPreferenc
     },
   },
   actions: {
-    clearPreferences() {
-      this.companyPreferences = null
-    },
     async requestFreshPreferencesData() {
       const response: AxiosResponse<CompanyPreferences> = await companyPreferencesService.getCompanyPreferences()
       this.companyPreferences = response.data

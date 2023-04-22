@@ -81,9 +81,8 @@ import {computed, ComputedRef, onMounted, ref} from "vue";
 import {Employee, useCompAdmUserStore} from "@/store/company-adm-app";
 import {useProfileStore} from "@/store/user-app";
 
-// todo add loader
 onMounted(() => {
-  useCompAdmUserStore().requestFreshEmployeesData().then(() => loading.value = false)
+  useCompAdmUserStore().requestFreshEmployeesData().finally(() => loading.value = false)
 })
 
 const loading = ref(true)

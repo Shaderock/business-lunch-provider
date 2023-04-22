@@ -1,10 +1,13 @@
 package com.shaderock.lunch.backend.feature.config.preference.supplier.entity;
 
 import com.shaderock.lunch.backend.data.entity.DeletableEntity;
+import com.shaderock.lunch.backend.feature.config.preference.supplier.type.CategoryTag;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.type.OrderType;
 import com.shaderock.lunch.backend.feature.food.price.entity.PriceForCategories;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -14,6 +17,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -63,4 +68,11 @@ public class SupplierPreferences extends DeletableEntity {
 
   @OneToOne(mappedBy = "preferences")
   private OrderCapacity orderCapacity;
+
+  @ElementCollection
+  @Column(name = "category_tag")
+  @CollectionTable(name = "supplier_preferences_category_tag",
+      joinColumns = @JoinColumn(name = "owner_id"))
+  private List<CategoryTag> categoriesTags = new ArrayList<>();
+
 }
