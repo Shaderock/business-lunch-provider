@@ -11,6 +11,7 @@ import {Role} from "@/models/Role";
 import {Employee} from "@/models/Employee";
 import {Invitation} from "@/models/Invitation";
 import invitationService from "@/services/InvitationService";
+import toastManager from "@/services/ToastManager";
 
 export const useCompanyAdmCompanyStore = defineStore('company', {
   state: () => ({
@@ -88,9 +89,34 @@ export const useInvitationStore = defineStore('companyAdminInvitations', {
     clearInvitations() {
       this.invitations = []
     },
+    async send(userEmail: string) {
+      try {
+        await invitationService.send(userEmail)
+        await this.requestFreshInvitationData()
+        toastManager.showInfo("Invited!", `Invitation for user ${userEmail} has been sent`)
+      } catch (error) {
+        console.log("Error during user invitation")
+      }
+    },
+    async dismissInvitation(userEmail: string) {
+      try {
+        await invitationService.dismissInvitation(userEmail)
+        this.invitations = this.invitations.filter(invitation => invitation.userEmail !== userEmail)
+      } catch (error) {
+        console.log("Couldn't dismiss invitation")
+      }
+    },
     async requestFreshInvitationData() {
+      this.clearInvitations()
       const response: AxiosResponse<Invitation[]> = await invitationService.getAllCompAdmInvitations()
       this.invitations = response.data
+      this.invitations = this.invitations.map(invitation => {
+        return {
+          ...invitation,
+          formattedCreatedAt: moment(invitation.createdAt).format('YYYY/MM/DD')
+        };
+      });
+
     }
   }
 })
