@@ -8,6 +8,8 @@ import com.shaderock.lunch.backend.feature.invitation.dto.InvitationDto;
 import com.shaderock.lunch.backend.feature.invitation.entity.Invitation;
 import com.shaderock.lunch.backend.feature.invitation.mapper.InvitationMapper;
 import com.shaderock.lunch.backend.feature.invitation.service.InvitationService;
+import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
+import com.shaderock.lunch.backend.feature.organization.service.OrganizationDetailsService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.constraints.NotNull;
@@ -34,6 +36,7 @@ public class InvitationController {
   private final InvitationService invitationService;
   private final CompanyService companyService;
   private final InvitationMapper invitationMapper;
+  private final OrganizationDetailsService organizationDetailsService;
 
   @GetMapping("/all")
   public ResponseEntity<List<InvitationDto>> read(Principal principal) {
@@ -46,7 +49,8 @@ public class InvitationController {
   @PostMapping
   public ResponseEntity<Void> accept(@RequestParam @NotNull UUID companyId, Principal principal) {
     AppUserDetails userDetails = userDetailsService.read(principal);
-    Company company = companyService.read(companyId);
+    OrganizationDetails organizationDetails = organizationDetailsService.read(companyId);
+    Company company = companyService.read(organizationDetails);
 
     Invitation invitation = invitationService.read(company, userDetails.getAppUser());
     companyService.addEmployee(userDetails.getAppUser(), company);
@@ -54,13 +58,16 @@ public class InvitationController {
     invitationService.delete(invitation,
         Optional.of(String.format("Invitation for User (%s) was accepted", userDetails.getEmail())),
         Optional.empty());
+    invitationService.delete(userDetails.getAppUser(),
+        String.format("Invitation for User (%s) was declined", userDetails.getEmail()));
     return ResponseEntity.noContent().build();
   }
 
   @DeleteMapping
   public ResponseEntity<Void> decline(@RequestParam @NotNull UUID companyId, Principal principal) {
     AppUserDetails userDetails = userDetailsService.read(principal);
-    Company company = companyService.read(companyId);
+    OrganizationDetails organizationDetails = organizationDetailsService.read(companyId);
+    Company company = companyService.read(organizationDetails);
 
     Invitation invitation = invitationService.read(company, userDetails.getAppUser());
     invitationService.delete(invitation, Optional.of(

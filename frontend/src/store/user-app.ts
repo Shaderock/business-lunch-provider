@@ -7,6 +7,12 @@ import {Role} from "@/models/Role";
 import userService from "@/services/UserService";
 import toastManager from "@/services/ToastManager";
 import {User} from "@/models/User";
+import {Invitation} from "@/models/Invitation";
+import invitationService from "@/services/InvitationService";
+import {AxiosResponse} from "axios";
+import {PublicOrganizationDetails} from "@/models/PublicOrganizationDetails";
+import {Utils} from "@/models/Utils";
+import organizationService from "@/services/OrganizationService";
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -85,6 +91,9 @@ export const useProfileStore = defineStore('user', {
     isOnlyEmployee(): boolean {
       return roleService.hasOnlyRole(this.userDetails, Role.Employee)
     },
+    isUserAndEmployee(): boolean {
+      return roleService.hasRoles(this.userDetails, [Role.User, Role.Employee])
+    },
     isCompanyAdmin(): boolean {
       return roleService.hasRole(this.userDetails, Role.CompanyAdmin)
     },
@@ -111,5 +120,75 @@ export const useProfileStore = defineStore('user', {
           "Couldn't load profile data. Try again later.")
       }
     },
+  }
+})
+
+export interface InvitingCompany {
+  id: string
+  name: string
+  description: string
+  email: string
+  phone: string
+  formattedCreatedAt: string | null
+}
+
+export const useInvitationStore = defineStore('userInvitations', {
+  state: () => ({
+    invitations: [] as Invitation[],
+    companiesDetails: [] as PublicOrganizationDetails[]
+  }),
+  getters: {
+    getInvitations(): Invitation[] {
+      return this.invitations
+    },
+    getInvitingCompaniesDetails(): PublicOrganizationDetails[] {
+      return this.companiesDetails;
+    },
+    getInvitingCompanies(): InvitingCompany[] {
+      return this.companiesDetails.map(company => {
+        const invitation = this.invitations.find(invitation => invitation.companyId === company.id);
+        const formattedCreatedAt = invitation ? invitation.formattedCreatedAt : null;
+        return {
+          id: company.id,
+          name: company.name,
+          description: company.description,
+          email: company.email,
+          phone: company.phone,
+          formattedCreatedAt,
+        };
+      });
+    },
+  },
+  actions: {
+    async accept(companyId: string) {
+      await invitationService.acceptInvitation(companyId)
+    },
+    async decline(companyId: string) {
+      try {
+        await invitationService.declineInvitation(companyId)
+        await this.requestFreshInvitationData()
+      } catch (error) {
+        console.log("Error during invitation decline")
+      }
+    },
+    async requestFreshInvitationData() {
+      this.invitations = []
+      this.companiesDetails = []
+
+      const invitationsResponse: AxiosResponse<Invitation[]> =
+        await invitationService.getAllUserInvitation()
+      this.invitations = invitationsResponse.data
+
+      const organizationsResponse: AxiosResponse<PublicOrganizationDetails[]> =
+        await organizationService.getAllUserInvitingOrganizations()
+      this.companiesDetails = organizationsResponse.data
+
+      this.invitations = this.invitations.map(invitation => {
+        return {
+          ...invitation,
+          formattedCreatedAt: Utils.dateToDateString(invitation.createdAt)
+        };
+      });
+    }
   }
 })

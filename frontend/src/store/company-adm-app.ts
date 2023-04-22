@@ -8,10 +8,10 @@ import companyPreferencesService from "@/services/CompanyPreferencesService";
 import {UserDetails} from "@/models/UserDetails";
 import userService from "@/services/UserService";
 import {Role} from "@/models/Role";
-import {Employee} from "@/models/Employee";
 import {Invitation} from "@/models/Invitation";
 import invitationService from "@/services/InvitationService";
 import toastManager from "@/services/ToastManager";
+import {Utils} from "@/models/Utils";
 
 export const useCompanyAdmCompanyStore = defineStore('company', {
   state: () => ({
@@ -76,7 +76,7 @@ export const useCompAdmCompPrefStore = defineStore('companyAdminCompanyPreferenc
   }
 })
 
-export const useInvitationStore = defineStore('companyAdminInvitations', {
+export const useCompAdmInvitationStore = defineStore('companyAdminInvitations', {
   state: () => ({
     invitations: [] as Invitation[]
   }),
@@ -113,13 +113,20 @@ export const useInvitationStore = defineStore('companyAdminInvitations', {
       this.invitations = this.invitations.map(invitation => {
         return {
           ...invitation,
-          formattedCreatedAt: moment(invitation.createdAt).format('YYYY/MM/DD')
+          formattedCreatedAt: Utils.dateToDateString(invitation.createdAt)
         };
       });
 
     }
   }
 })
+
+export interface Employee {
+  email: string
+  firstName: string
+  lastName: string
+  isAdmin: boolean
+}
 
 export const useCompAdmUserStore = defineStore('companyAdminEmployees', {
   state: () => ({
@@ -152,7 +159,7 @@ export const useCompAdmUserStore = defineStore('companyAdminEmployees', {
       try {
         await userService.grantAdmin(email)
         const employee = this.employees.find(employee => employee.email === email);
-        console.log(employee)
+
         if (employee) {
           employee.roles = [Role.Employee, Role.CompanyAdmin]
         }
@@ -165,7 +172,7 @@ export const useCompAdmUserStore = defineStore('companyAdminEmployees', {
       try {
         await userService.revokeAdmin(email)
         const employee = this.employees.find(employee => employee.email === email);
-        console.log(employee)
+
         if (employee) {
           employee.roles = [Role.Employee]
         }

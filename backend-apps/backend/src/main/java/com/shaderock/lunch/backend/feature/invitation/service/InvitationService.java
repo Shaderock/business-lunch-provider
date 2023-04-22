@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -81,14 +82,19 @@ public class InvitationService {
     });
 
     userNotificationContent.ifPresent(content -> {
-          Notification userNotification = Notification.builder()
-              .content(content)
-              .build();
+      Notification userNotification = Notification.builder()
+          .content(content)
+          .build();
 
-          notificationService.create(userNotification, List.of(userDetails), true);
-        }
-    );
+      notificationService.create(userNotification, List.of(userDetails), true);
+    });
 
     invitationRepository.delete(invitation);
+  }
+
+  public void delete(@NonNull AppUser appUser, @NonNull String companyAdminsNotificationContent) {
+    for (Invitation invitation : appUser.getInvitations()) {
+      delete(invitation, Optional.of(companyAdminsNotificationContent), Optional.empty());
+    }
   }
 }

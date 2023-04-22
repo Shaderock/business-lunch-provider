@@ -11,7 +11,7 @@ import org.mapstruct.MappingConstants.ComponentModel;
 @Mapper(componentModel = ComponentModel.SPRING)
 public interface InvitationMapper extends BaseMapper {
 
-  @Mapping(target = "companyId", source = "company.id")
+  @Mapping(target = "companyId", source = "company.organizationDetails.id")
   @Mapping(target = "userEmail", source = "appUser.userDetails.email")
   InvitationDto toDto(Invitation invitation);
 

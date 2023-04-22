@@ -6,8 +6,12 @@
         :headers="employeesHeaders"
         :items="employees">
         <template v-slot:top>
-          <v-toolbar>
+          <v-toolbar extended extension-height="1">
             <v-toolbar-title>Employees</v-toolbar-title>
+
+            <template v-slot:extension>
+              <v-progress-linear v-if="loading" indeterminate/>
+            </template>
           </v-toolbar>
         </template>
 
@@ -73,16 +77,16 @@
 
 <script lang="ts" setup>
 
-import {computed, ComputedRef, onMounted} from "vue";
-import {useCompAdmUserStore} from "@/store/company-adm-app";
-import {Employee} from "@/models/Employee";
+import {computed, ComputedRef, onMounted, ref} from "vue";
+import {Employee, useCompAdmUserStore} from "@/store/company-adm-app";
 import {useProfileStore} from "@/store/user-app";
 
 // todo add loader
 onMounted(() => {
-  useCompAdmUserStore().requestFreshEmployeesData()
+  useCompAdmUserStore().requestFreshEmployeesData().then(() => loading.value = false)
 })
 
+const loading = ref(true)
 const employees: ComputedRef<Employee[]> = computed(() => useCompAdmUserStore().getEmployees)
 const employeesHeaders = [
   {title: 'Email', key: 'email'},

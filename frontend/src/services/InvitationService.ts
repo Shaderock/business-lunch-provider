@@ -16,6 +16,20 @@ export class InvitationService {
     const params: URLSearchParams = new URLSearchParams([['userEmail', userEmail]])
     return axios.delete(ApiConstants.COMPANY_ADM_INVITATION, {params})
   }
+
+  async getAllUserInvitation() {
+    return axios.get(`${ApiConstants.INVITATION}/all`)
+  }
+
+  async acceptInvitation(companyId: string) {
+    const params: URLSearchParams = new URLSearchParams([['companyId', companyId]])
+    return axios.post(ApiConstants.INVITATION, null, {params})
+  }
+
+  async declineInvitation(companyId: string) {
+    const params: URLSearchParams = new URLSearchParams([['companyId', companyId]])
+    return axios.delete(ApiConstants.INVITATION, {params})
+  }
 }
 
 const invitationService: InvitationService = new InvitationService()
