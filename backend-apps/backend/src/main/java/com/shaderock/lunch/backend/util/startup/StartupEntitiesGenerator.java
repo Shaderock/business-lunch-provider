@@ -19,6 +19,7 @@ import jakarta.transaction.Transactional;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,47 +60,73 @@ public class StartupEntitiesGenerator implements
 
   private void generateDefaultOrganizations() {
     try {
-      supplierService.register(new OrganizationRegistrationForm(Organization.SUPPLIER.name),
-          appUserDetailsService.loadUserByUsername(Organization.SUPPLIER.adminEmail));
-      Supplier supplier = supplierService.read(Organization.SUPPLIER.adminEmail);
-      supplier.setPublic(true);
-
-      OrganizationDetails organizationDetails = supplier.getOrganizationDetails();
-      organizationDetails.setEmail(Organization.SUPPLIER.adminEmail);
-      organizationDetails.setPhone("+37377777777");
-      organizationDetails.setDescription("A dummy supplier");
-
-      SupplierPreferences preferences = supplier.getPreferences();
-      preferences.setDeliveryPeriodStartTime(LocalTime.of(10, 0));
-      preferences.setDeliveryPeriodEndTime(LocalTime.of(18, 0));
-      preferences.setMinimumOrdersPerCompanyRequest(2);
-      preferences.setOrderType(OrderType.UNLIMITED_OPTIONS);
-      preferences.setRequestOffset(Duration.of(2, ChronoUnit.HOURS));
+      generateDefaultSupplier();
     } catch (Exception e) {
       LOGGER.error("Couldn't generate default supplier. Reason: {}", e.getMessage());
     }
 
     try {
-      companyService.register(new OrganizationRegistrationForm(Organization.COMPANY.name),
-          appUserDetailsService.loadUserByUsername(Organization.COMPANY.adminEmail));
-
-      Company company = companyService.read(Organization.COMPANY.adminEmail);
-
-      OrganizationDetails organizationDetails = company.getOrganizationDetails();
-      organizationDetails.setEmail(Organization.COMPANY.adminEmail);
-      organizationDetails.setPhone("+37388888888");
-      organizationDetails.setDescription("A dummy company");
-
-      CompanyPreferences preferences = company.getPreferences();
-      preferences.setDeliveryAddress("A dummy delivery address");
-      preferences.setCompanyDiscountType(CompanyDiscountType.SPECIFIC_PER_DAY);
-      preferences.setDiscountPerDay(55.55);
-      preferences.setDiscountFixFirstOrder(44.44);
-      preferences.setMaxDiscountFixFirstOrder(33.33);
-      preferences.setDiscountPercentageFirstOrder(50);
-      preferences.setDeliverAt(LocalTime.of(13, 0));
+      generateDefaultCompany();
+      generateDefaultEmployees();
     } catch (Exception e) {
       LOGGER.error("Couldn't generate default company. Reason: {}", e.getMessage());
+    }
+  }
+
+  private void generateDefaultSupplier() {
+    supplierService.register(new OrganizationRegistrationForm(Organization.SUPPLIER.name),
+        appUserDetailsService.loadUserByUsername(Organization.SUPPLIER.adminEmail));
+    Supplier supplier = supplierService.read(Organization.SUPPLIER.adminEmail);
+    supplier.setPublic(true);
+
+    OrganizationDetails organizationDetails = supplier.getOrganizationDetails();
+    organizationDetails.setEmail(Organization.SUPPLIER.adminEmail);
+    organizationDetails.setPhone("+37377777777");
+    organizationDetails.setDescription("A dummy supplier");
+
+    SupplierPreferences preferences = supplier.getPreferences();
+    preferences.setDeliveryPeriodStartTime(LocalTime.of(10, 0));
+    preferences.setDeliveryPeriodEndTime(LocalTime.of(18, 0));
+    preferences.setMinimumOrdersPerCompanyRequest(2);
+    preferences.setOrderType(OrderType.UNLIMITED_OPTIONS);
+    preferences.setRequestOffset(Duration.of(2, ChronoUnit.HOURS));
+  }
+
+  private void generateDefaultCompany() {
+    companyService.register(new OrganizationRegistrationForm(Organization.COMPANY.name),
+        appUserDetailsService.loadUserByUsername(Organization.COMPANY.adminEmail));
+
+    Company company = companyService.read(Organization.COMPANY.adminEmail);
+
+    OrganizationDetails organizationDetails = company.getOrganizationDetails();
+    organizationDetails.setEmail(Organization.COMPANY.adminEmail);
+    organizationDetails.setPhone("+37388888888");
+    organizationDetails.setDescription("A dummy company");
+
+    CompanyPreferences preferences = company.getPreferences();
+    preferences.setDeliveryAddress("A dummy delivery address");
+    preferences.setCompanyDiscountType(CompanyDiscountType.SPECIFIC_PER_DAY);
+    preferences.setDiscountPerDay(55.55);
+    preferences.setDiscountFixFirstOrder(44.44);
+    preferences.setMaxDiscountFixFirstOrder(33.33);
+    preferences.setDiscountPercentageFirstOrder(50);
+    preferences.setDeliverAt(LocalTime.of(13, 0));
+  }
+
+  private void generateDefaultEmployees() {
+    Company company = companyService.read(Organization.COMPANY.adminEmail);
+    for (int i = 0; i < 100; i++) {
+      Optional<AppUserDetails> generatedUser = generateUser(
+          String.format("employee%s@dummy.test.mail", i),
+          "test",
+          String.format("First Name [%s]", i),
+          String.format("Last Name [%s]", i),
+          Set.of(Role.EMPLOYEE));
+
+      generatedUser.ifPresent(userDetails -> {
+        userDetails.getAppUser().setOrganizationDetails(company.getOrganizationDetails());
+        company.getOrganizationDetails().getUsers().add(userDetails.getAppUser());
+      });
     }
   }
 
@@ -110,23 +137,27 @@ public class StartupEntitiesGenerator implements
     }
   }
 
-  private void generateUser(String email, String password, String firstName, String lastName,
+  private Optional<AppUserDetails> generateUser(String email, String password, String firstName,
+      String lastName,
       Set<Role> roles) {
     UserRegistrationForm registrationForm = new UserRegistrationForm(email, password, firstName,
         lastName);
+    AppUserDetails userDetails;
     LOGGER.info("Generating [{}]", registrationForm);
 
     try {
       authService.registerUser(registrationForm, false);
-      AppUserDetails userDetails = appUserDetailsService.loadUserByUsername(
+
+      userDetails = appUserDetailsService.loadUserByUsername(
           registrationForm.email());
       roles.forEach(role -> userDetails.getRoles().add(role));
     } catch (Exception e) {
       LOGGER.error("Couldn't generate user. Reason: {}", e.getMessage());
-      return;
+      return Optional.empty();
     }
 
     LOGGER.info("User generated");
+    return Optional.of(userDetails);
   }
 
   private void generateSystemAdmin() {

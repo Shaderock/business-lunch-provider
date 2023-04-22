@@ -5,6 +5,13 @@ import companyService from "@/services/CompanyService";
 import moment from "moment/moment";
 import {AxiosResponse} from "axios";
 import companyPreferencesService from "@/services/CompanyPreferencesService";
+import {UserDetails} from "@/models/UserDetails";
+import userService from "@/services/UserService";
+import {Role} from "@/models/Role";
+import {Employee} from "@/models/Employee";
+import {Invitation} from "@/models/Invitation";
+import invitationService from "@/services/InvitationService";
+import toastManager from "@/services/ToastManager";
 
 export const useCompanyAdmCompanyStore = defineStore('company', {
   state: () => ({
@@ -68,3 +75,109 @@ export const useCompAdmCompPrefStore = defineStore('companyAdminCompanyPreferenc
     }
   }
 })
+
+export const useInvitationStore = defineStore('companyAdminInvitations', {
+  state: () => ({
+    invitations: [] as Invitation[]
+  }),
+  getters: {
+    getInvitations(): Invitation[] {
+      return this.invitations
+    },
+  },
+  actions: {
+    clearInvitations() {
+      this.invitations = []
+    },
+    async send(userEmail: string) {
+      try {
+        await invitationService.send(userEmail)
+        await this.requestFreshInvitationData()
+        toastManager.showInfo("Invited!", `Invitation for user ${userEmail} has been sent`)
+      } catch (error) {
+        console.log("Error during user invitation")
+      }
+    },
+    async dismissInvitation(userEmail: string) {
+      try {
+        await invitationService.dismissInvitation(userEmail)
+        this.invitations = this.invitations.filter(invitation => invitation.userEmail !== userEmail)
+      } catch (error) {
+        console.log("Couldn't dismiss invitation")
+      }
+    },
+    async requestFreshInvitationData() {
+      this.clearInvitations()
+      const response: AxiosResponse<Invitation[]> = await invitationService.getAllCompAdmInvitations()
+      this.invitations = response.data
+      this.invitations = this.invitations.map(invitation => {
+        return {
+          ...invitation,
+          formattedCreatedAt: moment(invitation.createdAt).format('YYYY/MM/DD')
+        };
+      });
+
+    }
+  }
+})
+
+export const useCompAdmUserStore = defineStore('companyAdminEmployees', {
+  state: () => ({
+    employees: [] as UserDetails[]
+  }),
+  getters: {
+    getEmployeesDetails(): UserDetails[] {
+      return this.employees
+    },
+    getEmployees(): Employee[] {
+      return this.employees.map(employee => ({
+        ...employee,
+        isAdmin: employee.roles.includes(Role.CompanyAdmin)
+      }))
+    }
+  },
+  actions: {
+    clearEmployees() {
+      this.employees = []
+    },
+    async removeEmployeeByEmail(email: string) {
+      try {
+        await userService.deleteEmployee(email)
+        this.employees = this.employees.filter(employee => employee.email !== email)
+      } catch (error) {
+        console.log("Couldn't remove employee")
+      }
+    },
+    async grantAdminRights(email: string) {
+      try {
+        await userService.grantAdmin(email)
+        const employee = this.employees.find(employee => employee.email === email);
+        console.log(employee)
+        if (employee) {
+          employee.roles = [Role.Employee, Role.CompanyAdmin]
+        }
+      } catch (error) {
+        console.log("Couldn't grant rights")
+      }
+    },
+
+    async revokeAdminRights(email: string) {
+      try {
+        await userService.revokeAdmin(email)
+        const employee = this.employees.find(employee => employee.email === email);
+        console.log(employee)
+        if (employee) {
+          employee.roles = [Role.Employee]
+        }
+      } catch (error) {
+        console.log("Couldn't revoke rights")
+      }
+    },
+    async requestFreshEmployeesData() {
+      const response: AxiosResponse<UserDetails[]> = await userService.requestEmployeesDetails()
+      this.employees = response.data
+    }
+  }
+})
+
+

@@ -27,6 +27,7 @@ import lombok.ToString.Exclude;
 @Builder
 @ToString
 @Entity
+//todo add isOrderingEnabled functionality
 public class CompanyPreferences extends DeletableEntity {
 
   @OneToOne(fetch = FetchType.LAZY, optional = false)
