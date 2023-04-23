@@ -102,7 +102,7 @@
 
             <v-list-item
               prepend-icon="mdi-account-clock"
-              title="Invited users"
+              title="Users Invitations"
               v-bind:to="RouterPaths.COMPANY_ADM_INVITED_USERS"
             />
           </div>

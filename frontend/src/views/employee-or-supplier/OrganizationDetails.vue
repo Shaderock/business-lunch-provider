@@ -42,9 +42,11 @@
             </v-list-item>
             <v-divider inset/>
           </div>
-          <v-list-item :subtitle="useOrganizationStore().getOrganization.description"
-                       title="Description"/>
-          <v-divider/>
+          <v-list-subheader title="Description"/>
+          <v-container>
+            {{ useOrganizationStore().getOrganization.description }}
+          </v-container>
+          <v-divider v-if="useProfileStore().isSupplier"/>
         </v-list>
 
         <v-card-actions v-if="useProfileStore().isSupplier">

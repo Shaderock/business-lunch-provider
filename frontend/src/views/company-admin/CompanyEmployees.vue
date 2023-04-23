@@ -1,6 +1,7 @@
 <template>
   <v-row justify="center">
     <v-col cols="12">
+      <!--todo add search-->
       <v-data-table
         :class="`elevation-20`"
         :headers="employeesHeaders"

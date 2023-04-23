@@ -67,7 +67,7 @@
           <v-divider inset/>
 
           <v-list-item :subtitle="useCompAdmCompPrefStore().getPreferences.deliveryAddress"
-                       prepend-icon="mdi-map-marker title=" title="Default lunch deliver time"/>
+                       prepend-icon="mdi-map-marker title=" title="Delivery address"/>
           <v-divider inset/>
 
         </v-list>

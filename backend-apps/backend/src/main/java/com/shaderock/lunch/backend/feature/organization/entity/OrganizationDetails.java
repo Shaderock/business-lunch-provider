@@ -29,7 +29,7 @@ public class OrganizationDetails extends DeletableEntity {
 
   @Column(nullable = false)
   private String name;
-  @Column
+  @Column(length = 1024)
   private String description;
   @Column
   private String email;

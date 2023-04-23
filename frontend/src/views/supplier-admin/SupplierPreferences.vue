@@ -40,11 +40,6 @@
           <v-divider inset/>
 
           <v-list-item
-            :subtitle="useSupAdmSupPrefStore().getPreferences.minimumOrdersPerCompanyRequest"
-            title="Minimum orders in a company request"/>
-          <v-divider inset/>
-
-          <v-list-item
             :subtitle="useSupAdmSupPrefStore().getPreferences.minimumCategoriesForEmployeeOrder"
             title="Minimum categories in the order"/>
           <v-divider inset/>
