@@ -8,6 +8,7 @@ import com.shaderock.lunch.backend.feature.config.preference.supplier.repository
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,10 @@ public class SupplierPreferencesService {
   @Transactional
   public SupplierPreferences create(@NonNull SupplierPreferences supplierPreferences) {
     return supplierPreferencesRepository.save(supplierPreferences);
+  }
+
+  public List<SupplierPreferences> read() {
+    return supplierPreferencesRepository.findAll();
   }
 
   public SupplierPreferences read(@NonNull AppUserDetails userDetails) {
@@ -61,12 +66,13 @@ public class SupplierPreferencesService {
     SupplierPreferences persisted = read(userDetails);
 
     persisted.setRequestOffset(preferences.getRequestOffset());
-    persisted.setDeliveryPeriodStartTime(preferences.getDeliveryPeriodStartTime());
-    persisted.setDeliveryPeriodEndTime(preferences.getDeliveryPeriodEndTime());
+    persisted.setWorkDayStart(preferences.getWorkDayStart());
+    persisted.setWorkDayEnd(preferences.getWorkDayEnd());
     persisted.setMinimumOrdersPerCompanyRequest(preferences.getMinimumOrdersPerCompanyRequest());
     persisted.setMinimumCategoriesForEmployeeOrder(
         preferences.getMinimumCategoriesForEmployeeOrder());
     persisted.setOrderType(preferences.getOrderType());
+    persisted.setCategoriesTags(preferences.getCategoriesTags());
 
     return supplierPreferencesRepository.save(persisted);
   }

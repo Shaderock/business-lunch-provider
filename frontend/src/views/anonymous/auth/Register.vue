@@ -1,77 +1,79 @@
 <template>
-  <v-row align="center" justify="center">
-    <v-col cols="12" md="5" sm="8">
-      <v-card elevation="20" shaped>
-        <v-card-title class="text-h5 text-center">Register</v-card-title>
-        <v-card-text>
-          <v-form>
-            <v-text-field
-              v-model="firstName"
-              :error-messages="firstNameErrors"
-              counter="20"
-              label="First Name"
-              required
-              type="text"
-              @blur="validateFirstName"
-              @keypress="validateFirstName"
-            >
-            </v-text-field>
-            <v-text-field
-              v-model="lastName"
-              :error-messages="lastNameErrors"
-              counter="20"
-              label="Last Name"
-              required
-              type="text"
-              @blur="validateLastName"
-              @keypress="validateLastName"
-            ></v-text-field>
-            <v-text-field
-              v-model="email"
-              :error-messages="emailErrors"
-              label="Email"
-              required
-              type="email"
-              @blur="validateEmail"
-              @keypress="validateEmail"
-            ></v-text-field>
-            <v-text-field
-              v-model="password"
-              :error-messages="passwordErrors"
-              counter="25"
-              label="Password"
-              required
-              type="password"
-              @blur="validatePassword"
-              @keypress="validatePassword"
-            ></v-text-field>
-            <v-text-field
-              v-model="passwordRepeat"
-              :error-messages="passwordRepeatErrors"
-              label="Repeat Password"
-              required
-              type="password"
-              @blur="validatePasswordRepeat"
-              @keypress="validatePasswordRepeat"
-            ></v-text-field>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn class="flex-grow-1"
-                 color="primary"
-                 variant="outlined"
-                 @click="registerSubmit()">Register
-          </v-btn>
-          <v-btn color="secondary"
-                 size="small"
-                 v-bind:to="RouterPaths.ANONYMOUS_LOGIN"
-                 append-icon="mdi-login-variant"
-                 variant="plain">Login
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-col>
-  </v-row>
+  <v-container>
+    <v-row align="center" justify="center">
+      <v-col cols="12" md="5" sm="8">
+        <v-card elevation="20" shaped>
+          <v-card-title class="text-h5 text-center">Register</v-card-title>
+          <v-card-text>
+            <v-form>
+              <v-text-field
+                v-model="firstName"
+                :error-messages="firstNameErrors"
+                counter="20"
+                label="First Name"
+                required
+                type="text"
+                @blur="validateFirstName"
+                @keypress="validateFirstName"
+              >
+              </v-text-field>
+              <v-text-field
+                v-model="lastName"
+                :error-messages="lastNameErrors"
+                counter="20"
+                label="Last Name"
+                required
+                type="text"
+                @blur="validateLastName"
+                @keypress="validateLastName"
+              ></v-text-field>
+              <v-text-field
+                v-model="email"
+                :error-messages="emailErrors"
+                label="Email"
+                required
+                type="email"
+                @blur="validateEmail"
+                @keypress="validateEmail"
+              ></v-text-field>
+              <v-text-field
+                v-model="password"
+                :error-messages="passwordErrors"
+                counter="25"
+                label="Password"
+                required
+                type="password"
+                @blur="validatePassword"
+                @keypress="validatePassword"
+              ></v-text-field>
+              <v-text-field
+                v-model="passwordRepeat"
+                :error-messages="passwordRepeatErrors"
+                label="Repeat Password"
+                required
+                type="password"
+                @blur="validatePasswordRepeat"
+                @keypress="validatePasswordRepeat"
+              ></v-text-field>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn class="flex-grow-1"
+                   color="primary"
+                   variant="outlined"
+                   @click="registerSubmit()">Register
+            </v-btn>
+            <v-btn append-icon="mdi-login-variant"
+                   color="secondary"
+                   size="small"
+                   v-bind:to="RouterPaths.ANONYMOUS_LOGIN"
+                   variant="plain">Login
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script lang="ts" setup>
 import toastManager from "@/services/ToastManager";

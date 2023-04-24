@@ -11,8 +11,6 @@ export class CompanyPreferencesService {
 
   update(preferences: CompanyPreferences): Promise<AxiosResponse<CompanyPreferences>> {
     const deliveryAtString: string = Utils.dateToTimeAsString(preferences.deliverAt)
-    console.log(deliveryAtString)
-    console.log(Utils.dateToTimeAsString(preferences.deliverAt))
 
     const serializedPreferences = {
       ...preferences,

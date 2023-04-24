@@ -10,6 +10,7 @@ import com.shaderock.lunch.backend.feature.invitation.mapper.InvitationMapper;
 import com.shaderock.lunch.backend.feature.invitation.service.InvitationService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.List;
@@ -35,6 +36,7 @@ public class CompanyAdmInvitationController {
   private final CompanyService companyService;
 
   @GetMapping("/all")
+  @Transactional
   public ResponseEntity<List<InvitationDto>> read(Principal principal) {
     Company company = companyService.read(principal);
     List<Invitation> invitations = company.getInvitations();
@@ -42,6 +44,7 @@ public class CompanyAdmInvitationController {
   }
 
   @PostMapping
+  @Transactional
   public ResponseEntity<InvitationDto> invite(@RequestParam @NotNull String userEmail,
       Principal principal) {
     Company company = companyService.read(principal);
@@ -51,6 +54,7 @@ public class CompanyAdmInvitationController {
   }
 
   @DeleteMapping
+  @Transactional
   public ResponseEntity<Void> dismiss(@RequestParam @NotNull String userEmail,
       Principal principal) {
     Company company = companyService.read(principal);

@@ -40,6 +40,7 @@ public class SecurityConfiguration {
         .requestMatchers("/swagger-ui.html", "/swagger-ui/**",
             "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
         .requestMatchers("/api/login/**", "/api/register/**", "/api/food/**").permitAll()
+        .requestMatchers("/api/anonym/**").permitAll()
         .requestMatchers("/api/sys-adm/**").hasRole(Role.SYSTEM_ADMIN.getName())
         .requestMatchers("/api/organization-adm/**")
         .hasAnyRole(Role.COMPANY_ADMIN.getName(), Role.SUPPLIER.getName())

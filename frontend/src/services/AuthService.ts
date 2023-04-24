@@ -2,18 +2,15 @@ import axios, {AxiosResponse} from "axios";
 import {ApiConstants} from "@/services/ApiConstants";
 
 export class AuthService {
-  private registerUrl: string = ApiConstants.BACKEND_URL + '/register'
-  private verifyUserRegisteredUrl: string = this.registerUrl + '/verify-user'
-
   login(email: string, password: string): Promise<AxiosResponse<any>> {
-    return axios.post(ApiConstants.BACKEND_URL + '/login', {
+    return axios.post(ApiConstants.LOGIN, {
       email: email,
       password: password
     })
   }
 
   register(email: string, password: string, firstName: string, lastName: string) {
-    return axios.post(this.registerUrl, {
+    return axios.post(ApiConstants.REGISTER, {
       email: email,
       password: password,
       firstName: firstName,
@@ -23,7 +20,7 @@ export class AuthService {
 
   verifyUserNotRegistered(email: string) {
     const params: URLSearchParams = new URLSearchParams([['email', email]])
-    return axios.get(this.verifyUserRegisteredUrl, {params});
+    return axios.get(`${ApiConstants.REGISTER}/verify-user`, {params});
   }
 }
 

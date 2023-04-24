@@ -5,7 +5,6 @@ export class PublicOrganizationDetails {
   public email: string
   public phone: string
 
-
   constructor(id: string, name: string, description: string, email: string, phone: string) {
     this.id = id;
     this.name = name;

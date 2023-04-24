@@ -7,6 +7,7 @@ import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.config.preference.company.entity.CompanyPreferences;
 import com.shaderock.lunch.backend.feature.config.preference.company.type.CompanyDiscountType;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.entity.SupplierPreferences;
+import com.shaderock.lunch.backend.feature.config.preference.supplier.type.CategoryTag;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.type.OrderType;
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
@@ -16,16 +17,25 @@ import com.shaderock.lunch.backend.feature.organization.form.OrganizationRegistr
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import jakarta.transaction.Transactional;
+import java.io.InputStream;
+import java.net.URI;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -39,6 +49,9 @@ public class StartupEntitiesGenerator implements
   private final AppUserDetailsService appUserDetailsService;
   private final SupplierService supplierService;
   private final CompanyService companyService;
+  private final Faker faker;
+  private final ResourceLoader resourceLoader;
+  private final ResourcePatternResolver resourceResolver;
   @Value(value = "${lunch.backend.system.admin.email}")
   private String sysAdminEmail;
   @Value(value = "${lunch.backend.system.admin.password}")
@@ -60,67 +73,113 @@ public class StartupEntitiesGenerator implements
 
   private void generateDefaultOrganizations() {
     try {
-      generateDefaultSupplier();
+      generateSupplier(appUserDetailsService.loadUserByUsername(Organization.SUPPLIER.adminEmail));
+      generateDummySuppliers();
     } catch (Exception e) {
       LOGGER.error("Couldn't generate default supplier. Reason: {}", e.getMessage());
     }
 
     try {
-      generateDefaultCompany();
-      generateDefaultEmployees();
+      generateCompany(appUserDetailsService.loadUserByUsername(Organization.COMPANY.adminEmail));
+      generateDummyEmployees();
     } catch (Exception e) {
       LOGGER.error("Couldn't generate default company. Reason: {}", e.getMessage());
     }
   }
 
-  private void generateDefaultSupplier() {
-    supplierService.register(new OrganizationRegistrationForm(Organization.SUPPLIER.name),
-        appUserDetailsService.loadUserByUsername(Organization.SUPPLIER.adminEmail));
-    Supplier supplier = supplierService.read(Organization.SUPPLIER.adminEmail);
+  private void generateDummySuppliers() {
+    for (int i = 0; i < 50; i++) {
+      Optional<AppUserDetails> generatedUser = generateUser(
+          faker.internet().safeEmailAddress(),
+          "test",
+          faker.name().firstName(),
+          faker.name().lastName(),
+          Set.of(Role.USER));
+
+      generatedUser.ifPresent(this::generateSupplier);
+    }
+  }
+
+  @SneakyThrows
+  private void generateSupplier(AppUserDetails userDetails) {
+    supplierService.register(
+        new OrganizationRegistrationForm(
+            faker.restaurant().name() + faker.number().numberBetween(1, 100)),
+        userDetails);
+    Supplier supplier = supplierService.read(userDetails.getEmail());
     supplier.setPublic(true);
+    String websiteUrl = faker.internet().url();
+    supplier.setWebsiteUrl(new URI(websiteUrl));
+    supplier.setMenuUrl(new URI(websiteUrl + "/menu"));
 
     OrganizationDetails organizationDetails = supplier.getOrganizationDetails();
-    organizationDetails.setEmail(Organization.SUPPLIER.adminEmail);
-    organizationDetails.setPhone("+37377777777");
-    organizationDetails.setDescription("A dummy supplier");
+    organizationDetails.setEmail(faker.internet().safeEmailAddress());
+    organizationDetails.setPhone(faker.phoneNumber().phoneNumberInternational());
+    organizationDetails.setDescription(faker.restaurant().description());
+
+    organizationDetails.setLogo(getImageBytes(String.valueOf(faker.number().numberBetween(1, 40))));
 
     SupplierPreferences preferences = supplier.getPreferences();
-    preferences.setDeliveryPeriodStartTime(LocalTime.of(10, 0));
-    preferences.setDeliveryPeriodEndTime(LocalTime.of(18, 0));
-    preferences.setMinimumOrdersPerCompanyRequest(2);
-    preferences.setOrderType(OrderType.UNLIMITED_OPTIONS);
-    preferences.setRequestOffset(Duration.of(2, ChronoUnit.HOURS));
+    preferences.setWorkDayStart(
+        LocalTime.of(faker.number().numberBetween(8, 11), faker.number().numberBetween(0, 59)));
+
+    preferences.setWorkDayEnd(
+        LocalTime.of(faker.number().numberBetween(15, 21), faker.number().numberBetween(0, 59)));
+
+    preferences.setMinimumOrdersPerCompanyRequest(faker.number().numberBetween(1, 20));
+    preferences.setMinimumCategoriesForEmployeeOrder(faker.number().numberBetween(1, 3));
+
+    preferences.setRequestOffset(Duration.ofDays(faker.number().numberBetween(0, 1))
+        .plusHours(faker.number().numberBetween(0, 3))
+        .plusMinutes(faker.number().numberBetween(15, 45)));
+
+    List<OrderType> orderTypes = Arrays.asList(OrderType.values());
+    preferences.setOrderType(orderTypes.get(faker.number().numberBetween(0, orderTypes.size())));
+
+    List<CategoryTag> categoryTagList = new ArrayList<>(Arrays.asList(CategoryTag.values()));
+    int categoriesNumber = faker.number().numberBetween(1, 7);
+    List<CategoryTag> supplierCategoriesTags = new ArrayList<>();
+    for (int i = 0; i < categoriesNumber; i++) {
+      int index = faker.number().numberBetween(0, categoryTagList.size());
+      CategoryTag tag = categoryTagList.remove(index);
+      supplierCategoriesTags.add(tag);
+    }
+    preferences.setCategoriesTags(supplierCategoriesTags);
   }
 
-  private void generateDefaultCompany() {
-    companyService.register(new OrganizationRegistrationForm(Organization.COMPANY.name),
-        appUserDetailsService.loadUserByUsername(Organization.COMPANY.adminEmail));
+  private void generateCompany(AppUserDetails userDetails) {
+    companyService.register(new OrganizationRegistrationForm(faker.company().name()), userDetails);
 
-    Company company = companyService.read(Organization.COMPANY.adminEmail);
+    Company company = companyService.read(userDetails.getEmail());
 
     OrganizationDetails organizationDetails = company.getOrganizationDetails();
-    organizationDetails.setEmail(Organization.COMPANY.adminEmail);
-    organizationDetails.setPhone("+37388888888");
-    organizationDetails.setDescription("A dummy company");
+    organizationDetails.setEmail(faker.internet().safeEmailAddress());
+    organizationDetails.setPhone(faker.phoneNumber().phoneNumberInternational());
+    organizationDetails.setDescription(faker.company().catchPhrase());
 
     CompanyPreferences preferences = company.getPreferences();
-    preferences.setDeliveryAddress("A dummy delivery address");
-    preferences.setCompanyDiscountType(CompanyDiscountType.SPECIFIC_PER_DAY);
-    preferences.setDiscountPerDay(55.55);
-    preferences.setDiscountFixFirstOrder(44.44);
-    preferences.setMaxDiscountFixFirstOrder(33.33);
-    preferences.setDiscountPercentageFirstOrder(50);
-    preferences.setDeliverAt(LocalTime.of(13, 0));
+    preferences.setDeliveryAddress(faker.address().fullAddress());
+    preferences.setDiscountPerDay(faker.number().randomDouble(2, 0, 50));
+    preferences.setDiscountFixFirstOrder(faker.number().randomDouble(2, 0, 40));
+    preferences.setMaxDiscountFixFirstOrder(faker.number().randomDouble(2, 0, 40));
+    preferences.setDiscountPercentageFirstOrder(faker.number().numberBetween(15, 50));
+    preferences.setDeliverAt(LocalTime.of(faker.number().numberBetween(11, 19),
+        faker.number().numberBetween(0, 59)));
+
+    List<CompanyDiscountType> companyDiscountTypes = Arrays.asList(CompanyDiscountType.values());
+
+    preferences.setCompanyDiscountType(
+        companyDiscountTypes.get(faker.number().numberBetween(0, companyDiscountTypes.size())));
   }
 
-  private void generateDefaultEmployees() {
+  private void generateDummyEmployees() {
     Company company = companyService.read(Organization.COMPANY.adminEmail);
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 20; i++) {
       Optional<AppUserDetails> generatedUser = generateUser(
-          String.format("employee%s@dummy.test.mail", i),
+          faker.internet().safeEmailAddress(),
           "test",
-          String.format("First Name [%s]", i),
-          String.format("Last Name [%s]", i),
+          faker.name().firstName(),
+          faker.name().lastName(),
           Set.of(Role.EMPLOYEE));
 
       generatedUser.ifPresent(userDetails -> {
@@ -164,6 +223,17 @@ public class StartupEntitiesGenerator implements
     LOGGER.info("Generating default system admin. Check vault for credentials.");
     generateUser(sysAdminEmail, sysAdminPassword, "sysadmin", "sysadmin",
         Set.of(Role.SYSTEM_ADMIN, Role.USER));
+  }
+
+  public byte[] getImageBytes(String fileName) {
+    try {
+      Resource resource = resourceLoader.getResource(
+          "classpath:generation/" + fileName + ".jpg");
+      InputStream inputStream = resource.getInputStream();
+      return inputStream.readAllBytes();
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   @RequiredArgsConstructor

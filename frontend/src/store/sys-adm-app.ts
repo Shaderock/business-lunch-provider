@@ -16,7 +16,7 @@ export const useSysAdmOrganizationStore = defineStore('sysAdmOrganization', {
   state: () => ({
     organizationsDetails: [] as OrganizationDetails[],
     suppliers: [] as Supplier[],
-    supplierPreferences: [] as SupplierPreferences[],
+    preferences: [] as SupplierPreferences[],
     companies: [] as Company[],
     companiesPreferences: [] as CompanyPreferences[]
   }),
@@ -28,12 +28,12 @@ export const useSysAdmOrganizationStore = defineStore('sysAdmOrganization', {
       return this.suppliers
     },
     getSuppliersPreferences(): SupplierPreferences[] {
-      return this.supplierPreferences
+      return this.preferences
     },
     getCompanies(): Company[] {
       return this.companies
     },
-    getCompaniesPreferences(): CompanyPreferences {
+    getCompaniesPreferences(): CompanyPreferences[] {
       return this.companiesPreferences
     }
   },
@@ -41,7 +41,8 @@ export const useSysAdmOrganizationStore = defineStore('sysAdmOrganization', {
     async requestFreshOrganizationsData() {
       const organizationsResponse = await organizationService.getAllOrganizations()
       if (!isEqual(organizationsResponse.data, this.organizationsDetails)) {
-        this.organizationsDetails = organizationsResponse.data
+        // this.organizationsDetails = organizationsResponse.data
+        // todo refactor
       }
     },
     async requestFreshSuppliersData() {

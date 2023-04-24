@@ -2,6 +2,13 @@ import axios from "axios";
 import {ApiConstants} from "@/services/ApiConstants";
 
 export class CompanyService {
+
+  public register(name: string): Promise<any> {
+    return axios.post(`${ApiConstants.COMPANY}/register`, {
+      name: name,
+    });
+  }
+
   public getUserCompany(): Promise<any> {
     return axios.get(ApiConstants.COMPANY + '/my')
   }

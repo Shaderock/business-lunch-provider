@@ -50,6 +50,10 @@ spring:
       password: ${lunch.backend.actuator.password}
   config:
     import: vault://
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
 
 management:
   endpoints:

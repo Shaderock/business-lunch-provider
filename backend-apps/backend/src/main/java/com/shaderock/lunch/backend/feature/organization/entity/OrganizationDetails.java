@@ -2,6 +2,7 @@ package com.shaderock.lunch.backend.feature.organization.entity;
 
 import com.shaderock.lunch.backend.data.entity.DeletableEntity;
 import com.shaderock.lunch.backend.feature.user.entity.AppUser;
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -29,14 +30,16 @@ public class OrganizationDetails extends DeletableEntity {
 
   @Column(nullable = false)
   private String name;
-  @Column
+  @Column(length = 1024)
   private String description;
   @Column
   private String email;
   @Column
   private String phone;
   @Lob
-  @Column
+  @Basic(fetch = FetchType.LAZY)
+  @Column(length = 2048)
+  @Exclude
   private byte[] logo;
 
   @OneToMany(mappedBy = "organizationDetails", fetch = FetchType.LAZY)

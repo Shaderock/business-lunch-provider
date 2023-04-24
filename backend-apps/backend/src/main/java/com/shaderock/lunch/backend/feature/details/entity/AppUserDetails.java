@@ -49,6 +49,7 @@ public class AppUserDetails extends BaseEntity implements UserDetails {
   private String email;
 
   @Column(nullable = false)
+  @Exclude
   private String password;
 
   @Column(nullable = false)

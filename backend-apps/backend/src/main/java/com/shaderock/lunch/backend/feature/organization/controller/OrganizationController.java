@@ -1,6 +1,7 @@
 package com.shaderock.lunch.backend.feature.organization.controller;
 
 import com.shaderock.lunch.backend.feature.company.entity.Company;
+import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
 import com.shaderock.lunch.backend.feature.invitation.entity.Invitation;
@@ -13,12 +14,16 @@ import com.shaderock.lunch.backend.feature.organization.service.OrganizationDeta
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.util.ApiConstants;
+import com.shaderock.lunch.backend.util.ImageService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +41,8 @@ public class OrganizationController {
   private final AppUserDetailsService userDetailsService;
   private final SupplierService supplierService;
   private final InvitationService invitationService;
+  private final ImageService imageService;
+  private final CompanyService companyService;
 
   @GetMapping("/verify-name")
   public ResponseEntity<Boolean> isOrganizationNameValid(@RequestParam @NotNull final String name) {
@@ -49,12 +56,23 @@ public class OrganizationController {
   }
 
   @GetMapping("/my")
+  @Transactional
   public ResponseEntity<OrganizationDetailsDto> read(Principal principal) {
     OrganizationDetails organizationDetails = organizationDetailsService.read(principal.getName());
     return ResponseEntity.ok(organizationDetailsMapper.toDto(organizationDetails));
   }
 
+  @GetMapping
+  @Transactional
+  public ResponseEntity<PublicOrganizationDetailsDto> read(@NotNull @RequestParam UUID supplierId) {
+    Supplier supplier = supplierService.read(supplierId);
+    OrganizationDetails organizationDetails = supplier.getOrganizationDetails();
+
+    return ResponseEntity.ok(organizationDetailsMapper.toPublicDto(organizationDetails));
+  }
+
   @GetMapping("/invitation/all")
+  @Transactional
   public ResponseEntity<List<PublicOrganizationDetailsDto>> readByInvitations(Principal principal) {
     AppUserDetails userDetails = userDetailsService.read(principal);
     List<Invitation> invitations = invitationService.read(userDetails.getAppUser());
@@ -67,11 +85,35 @@ public class OrganizationController {
         organizationDetailsList.stream().map(organizationDetailsMapper::toPublicDto).toList());
   }
 
-  @GetMapping
-  public ResponseEntity<PublicOrganizationDetailsDto> read(@NotNull @RequestParam UUID supplierId) {
-    Supplier supplier = supplierService.read(supplierId);
-    OrganizationDetails organizationDetails = supplier.getOrganizationDetails();
+  @GetMapping(value = "/invitation/logo", produces = MediaType.IMAGE_JPEG_VALUE)
+  @Transactional
+  public byte[] readByInvitations(
+      @RequestParam @NotNull UUID companyId, @RequestParam @NotNull boolean isThumbnail,
+      Principal principal) {
+    AppUserDetails userDetails = userDetailsService.read(principal);
 
-    return ResponseEntity.ok(organizationDetailsMapper.toPublicDto(organizationDetails));
+    OrganizationDetails organizationDetails = organizationDetailsService.read(companyId);
+    Company company = companyService.read(organizationDetails);
+
+    Invitation invitation = invitationService.read(company, userDetails.getAppUser());
+    byte[] logo = invitation.getCompany().getOrganizationDetails().getLogo();
+
+    if (isThumbnail && logo != null) {
+      return imageService.resizeToThumbnail(logo);
+    }
+
+    return logo;
+  }
+
+  @SneakyThrows
+  @GetMapping(value = "/my/logo", produces = MediaType.IMAGE_JPEG_VALUE)
+  @Transactional
+  public byte[] readMenuImage(Principal principal, @RequestParam @NotNull boolean isThumbnail) {
+    OrganizationDetails organizationDetails = organizationDetailsService.read(principal.getName());
+    byte[] logo = organizationDetails.getLogo();
+    if (logo != null && isThumbnail) {
+      logo = imageService.resizeToThumbnail(logo);
+    }
+    return logo;
   }
 }

@@ -6,14 +6,11 @@ import com.shaderock.lunch.backend.feature.food.category.dto.CategoryDto;
 import com.shaderock.lunch.backend.feature.food.category.entity.Category;
 import com.shaderock.lunch.backend.feature.food.category.mapper.CategoryMapper;
 import com.shaderock.lunch.backend.feature.food.category.repository.CategoryRepository;
-import com.shaderock.lunch.backend.feature.food.category.type.DefaultCategory;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierValidationService;
 import jakarta.transaction.Transactional;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,14 +74,6 @@ public class CategoryService {
   public List<Category> read(@NonNull Supplier supplier) {
     return categoryRepository.findByMenu_Supplier_Id(supplier.getId());
   }
-
-  public List<CategoryDto> readAllDefault() {
-    return Stream.of(DefaultCategory.values())
-        .map(defaultCategory ->
-            new CategoryDto(null, defaultCategory.getName(), Collections.emptySet(), true))
-        .toList();
-  }
-
   @Transactional
   public Category update(@NonNull CategoryDto categoryDto, @NonNull Supplier supplier) {
     LOGGER.info("Converting [{}] to Category", categoryDto);

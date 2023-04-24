@@ -53,6 +53,8 @@
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-tracing-bridge-brave</artifactId>
     </dependency>
+
+
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
@@ -63,12 +65,22 @@
       <artifactId>java-jwt</artifactId>
       <version>4.2.1</version>
     </dependency>
-
     <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
       <version>${org.mapstruct.version}</version>
     </dependency>
+    <dependency>
+      <artifactId>datafaker</artifactId>
+      <groupId>net.datafaker</groupId>
+      <version>1.9.0</version>
+    </dependency>
+    <dependency>
+      <artifactId>imgscalr-lib</artifactId>
+      <groupId>org.imgscalr</groupId>
+      <version>4.2</version>
+    </dependency>
+
 
     <dependency>
       <groupId>org.springdoc</groupId>

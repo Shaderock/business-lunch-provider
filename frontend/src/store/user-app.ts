@@ -13,6 +13,14 @@ import {AxiosResponse} from "axios";
 import {PublicOrganizationDetails} from "@/models/PublicOrganizationDetails";
 import {Utils} from "@/models/Utils";
 import organizationService from "@/services/OrganizationService";
+import {Supplier} from "@/models/Supplier";
+import {PublicSupplierPreferences} from "@/models/PublicSupplierPreferences";
+import {Duration} from "moment/moment";
+import {OrderType} from "@/models/OrderType";
+import {CategoryTag} from "@/models/CategoryTag";
+import supplierService from "@/services/SupplierService";
+import supplierPreferencesService from "@/services/SupplierPreferencesService";
+import moment from "moment";
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -130,12 +138,21 @@ export interface InvitingCompany {
   email: string
   phone: string
   formattedCreatedAt: string | null
+  logo: string
+  logoThumbnail: string
+}
+
+interface InvitingCompanyLogo {
+  companyId: string
+  logo: string
+  logoThumbnail: string
 }
 
 export const useInvitationStore = defineStore('userInvitations', {
   state: () => ({
     invitations: [] as Invitation[],
-    companiesDetails: [] as PublicOrganizationDetails[]
+    companiesDetails: [] as PublicOrganizationDetails[],
+    invitingCompaniesLogos: [] as InvitingCompanyLogo[]
   }),
   getters: {
     getInvitations(): Invitation[] {
@@ -146,14 +163,18 @@ export const useInvitationStore = defineStore('userInvitations', {
     },
     getInvitingCompanies(): InvitingCompany[] {
       return this.companiesDetails.map(company => {
-        const invitation = this.invitations.find(invitation => invitation.companyId === company.id);
-        const formattedCreatedAt = invitation ? invitation.formattedCreatedAt : null;
+        const invitation = this.invitations.find(invitation => invitation.companyId === company.id)
+        const formattedCreatedAt = invitation ? invitation.formattedCreatedAt : null
+        const companyWithLogo = this.invitingCompaniesLogos.find(companyWithLogos => companyWithLogos.companyId === company.id);
+
         return {
           id: company.id,
           name: company.name,
           description: company.description,
           email: company.email,
           phone: company.phone,
+          logo: companyWithLogo?.logo || '',
+          logoThumbnail: companyWithLogo?.logoThumbnail || '',
           formattedCreatedAt,
         };
       });
@@ -166,7 +187,9 @@ export const useInvitationStore = defineStore('userInvitations', {
     async decline(companyId: string) {
       try {
         await invitationService.declineInvitation(companyId)
-        await this.requestFreshInvitationData()
+        this.invitations = this.invitations.filter(invitation => invitation.companyId !== companyId)
+        this.companiesDetails = this.companiesDetails.filter(details => details.id !== companyId)
+        this.invitingCompaniesLogos = this.invitingCompaniesLogos.filter(company => company.companyId !== companyId)
       } catch (error) {
         console.log("Error during invitation decline")
       }
@@ -189,6 +212,134 @@ export const useInvitationStore = defineStore('userInvitations', {
           formattedCreatedAt: Utils.dateToDateString(invitation.createdAt)
         };
       });
+      console.log(this.invitingCompaniesLogos)
+      this.invitingCompaniesLogos = await Promise.all(this.companiesDetails.map(async company => {
+        const logoThumbnail = await organizationService.requestInvitingCompanyLogo(company.id, true);
+        return {
+          companyId: company.id,
+          logo: '',
+          logoThumbnail
+        }
+      }))
+      console.log(this.invitingCompaniesLogos)
+    },
+    async requestCompaniesLogos() {
+      this.invitingCompaniesLogos = await Promise.all(this.invitingCompaniesLogos.map(async company => {
+        const logo = await organizationService.requestInvitingCompanyLogo(company.companyId, false);
+        return {
+          companyId: company.companyId,
+          logo: logo,
+          logoThumbnail: company.logoThumbnail
+        }
+      }))
+    }
+  }
+})
+
+export interface WorkingSupplier {
+  // details
+  name: string
+  description: string
+  email: string
+  phone: string
+
+  // supplier
+  supplierId: string
+  websiteUrl: string
+  menuUrl: string
+
+  // preferences
+  requestOffset: Duration
+  workDayStart: Date
+  workDayEnd: Date
+  minimumOrdersPerCompanyRequest: number
+  minimumCategoriesForEmployeeOrder: number
+  orderType: OrderType
+  pricesForCategoriesIds: string[] | null
+  categoriesTags: CategoryTag[]
+}
+
+export const userWorkingSuppliersStore = defineStore('publicSuppliers', {
+  state: () => ({
+    publicSuppliers: [] as Supplier[],
+    publicSuppliersDetails: [] as PublicOrganizationDetails[],
+    publicSuppliersPreferences: [] as PublicSupplierPreferences[],
+    suppliersLimit: 12 as number,
+
+    //filters
+    filterShowClosed: null as boolean | null,
+
+    filterShowByOrderType: false,
+    filterOrderTypes: [] as OrderType[],
+
+    filterShowByMinimumOrders: false,
+    // todo create filters
+  }),
+  getters: {
+    getSuppliers(): Supplier[] {
+      return this.publicSuppliers
+    },
+    getPreferences(): PublicSupplierPreferences[] {
+      return this.publicSuppliersPreferences
+    },
+    getDetails(): PublicOrganizationDetails[] {
+      return this.publicSuppliersDetails
+    },
+    getWorkingSuppliers(): WorkingSupplier[] {
+      return this.publicSuppliers.map(supplier => {
+        const details = this.publicSuppliersDetails.find(d => d.id === supplier.organizationDetailsId)
+        const preferences = this.publicSuppliersPreferences.find(p => p.id === supplier.preferencesId)
+        return {
+          name: details?.name ?? '',
+          description: details?.description ?? '',
+          email: details?.email ?? '',
+          phone: details?.phone ?? '',
+
+          supplierId: supplier.id ?? '',
+          websiteUrl: supplier.websiteUrl,
+          menuUrl: supplier.menuUrl,
+
+          requestOffset: preferences?.requestOffset ?? moment.duration(),
+          workDayStart: preferences?.workDayStart ?? new Date(),
+          workDayEnd: preferences?.workDayEnd ?? new Date(),
+          minimumOrdersPerCompanyRequest: preferences?.minimumOrdersPerCompanyRequest ?? 0,
+          minimumCategoriesForEmployeeOrder: preferences?.minimumCategoriesForEmployeeOrder ?? 0,
+          orderType: preferences?.orderType ?? OrderType.UnlimitedOptions,
+          pricesForCategoriesIds: preferences?.pricesForCategoriesIds ?? [],
+          categoriesTags: preferences?.categoriesTags ?? []
+        }
+      })
+    },
+    getWorkingSuppliersLimited(): WorkingSupplier[] {
+      return this.getWorkingSuppliers.slice(0, this.suppliersLimit)
+    },
+    getWorkingsSuppliersLimitedFiltered(): WorkingSupplier[] {
+      return this.getWorkingSuppliersLimited
+    }
+  },
+  actions: {
+    async requestFreshData() {
+      this.publicSuppliers = []
+      this.publicSuppliersDetails = []
+      this.publicSuppliersPreferences = []
+
+      const suppliersResponse: AxiosResponse<Supplier[]> = await supplierService.anonymousRequestForSuppliers()
+      this.publicSuppliers = suppliersResponse.data
+
+      const detailsResponse: AxiosResponse<PublicOrganizationDetails[]> =
+        await organizationService.anonymousRequestForDetails()
+      this.publicSuppliersDetails = detailsResponse.data
+
+      const preferencesResponse: AxiosResponse<PublicSupplierPreferences[]> =
+        await supplierPreferencesService.anonymousRequestForPreferences()
+      this.publicSuppliersPreferences = preferencesResponse.data
+    },
+    async requestFreshDataIfNothingCached() {
+      if (this.publicSuppliers.length === 0)
+        await this.requestFreshData()
+    },
+    incrementLimit() {
+      this.suppliersLimit++
     }
   }
 })

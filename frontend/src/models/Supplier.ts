@@ -1,21 +1,17 @@
 export class Supplier {
-  public id: string
-  public organizationDetailsId: string
+  public id: string | null
+  public organizationDetailsId: string | null
   public websiteUrl: string
   public menuUrl: string
-  public subscribersIds: number[]
-  public subscriptionsRequestsIds: number[]
-  public menuId: number
-  public preferencesId: number
+  public isPublic: boolean | null
+  public preferencesId: number | null
 
-  constructor(id: string, organizationDetailsId: string, websiteUrl: string, menuUrl: string, subscribersIds: number[], subscriptionsRequestsIds: number[], menuId: number, preferencesId: number) {
+  constructor(id: string | null, organizationDetailsId: string | null, websiteUrl: string, menuUrl: string, isPublic: boolean | null, preferencesId: number | null) {
     this.id = id;
     this.organizationDetailsId = organizationDetailsId;
     this.websiteUrl = websiteUrl;
     this.menuUrl = menuUrl;
-    this.subscribersIds = subscribersIds;
-    this.subscriptionsRequestsIds = subscriptionsRequestsIds;
-    this.menuId = menuId;
+    this.isPublic = isPublic;
     this.preferencesId = preferencesId;
   }
 }

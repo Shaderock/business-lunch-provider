@@ -4,32 +4,31 @@
       <v-row justify="center">
         <v-col cols="12" lg="4" md="6" sm="8">
           <v-form
-              ref="companyRegistrationForm"
-              @submit.prevent="registerSubmit()"
-          >
+            ref="companyRegistrationForm"
+            @submit.prevent="registerSubmit()">
             <v-card>
               <v-card-title class="text-center">Register Organization</v-card-title>
 
               <v-card-item>
                 <v-text-field
-                    v-model="name"
-                    :error-messages="nameErrors"
-                    :label="isSupplier ? 'Supplier Name' : 'Company Name'"
-                    counter="35"
-                    required
-                    type="text"
-                    @blur="validateName"
-                    @keypress="validateName"
-                ></v-text-field>
+                  v-model="name"
+                  :error-messages="nameErrors"
+                  :label="isSupplier ? 'Supplier Name' : 'Company Name'"
+                  counter="35"
+                  required
+                  type="text"
+                  @blur="validateName"
+                  @keypress="validateName"
+                />
               </v-card-item>
 
               <v-card-item>
                 <v-switch
-                    v-model="isSupplier"
-                    color="secondary"
-                    inset
-                    label="Register as Supplier"
-                ></v-switch>
+                  v-model="isSupplier"
+                  color="secondary"
+                  inset
+                  label="Register as Supplier"
+                />
               </v-card-item>
 
               <v-card-actions class="justify-center">
@@ -52,6 +51,8 @@ import router from "@/router";
 import {useProfileStore} from "@/store/user-app";
 import organizationService from "@/services/OrganizationService";
 import {RouterPaths} from "@/services/RouterPaths";
+import supplierService from "@/services/SupplierService";
+import companyService from "@/services/CompanyService";
 
 const name: Ref<UnwrapRef<string>> = ref("")
 const nameErrors: Ref<UnwrapRef<string>> = ref("")
@@ -86,12 +87,16 @@ async function registerSubmit() {
 
 async function RegisterOrganization() {
   try {
-    await organizationService.register(name.value, isSupplier.value)
+    if (isSupplier.value) {
+      supplierService.register(name.value)
+    } else {
+      companyService.register(name.value)
+    }
+
     await useProfileStore().requestUserData()
     await router.push(RouterPaths.EMPLOYEE_OR_SUPPLIER_ORGANIZATION_DETAILS)
 
-    if (show)
-      show.value = false
+    if (show) show.value = false
 
     toastManager.showSuccess('Successful organization registration', 'Your organization has just been created')
   } catch (error) {
@@ -100,7 +105,3 @@ async function RegisterOrganization() {
   }
 }
 </script>
-
-<style scoped>
-
-</style>
