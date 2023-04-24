@@ -8,7 +8,6 @@ spring:
   datasource:
     hikari:
       schema: blp_schema
-      auto-commit: false
     username: ${lunch.database.username}
     password: ${lunch.database.password}
     url: jdbc:postgresql://${lunch.database.address}/business-lunch-provider-db

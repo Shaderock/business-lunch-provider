@@ -124,7 +124,6 @@ export const useCompAdmInvitationStore = defineStore('companyAdminInvitations', 
           formattedCreatedAt: Utils.dateToDateString(invitation.createdAt)
         };
       });
-
     }
   }
 })

@@ -18,18 +18,12 @@
         Filters
       </v-tab>
     </v-tabs>
+    <v-progress-linear v-if="isLoading" indeterminate striped/>
   </v-banner>
 
   <v-row v-if="isLoading" justify="space-evenly" justify-sm="center">
     <v-col v-for="n in 20" :key="n">
       <v-card :width="cardWidth" elevation="20" height="400">
-        <v-card-text>
-          <v-row align="center" justify="center">
-            <v-col align-self="center">
-              <v-progress-linear indeterminate size="100"/>
-            </v-col>
-          </v-row>
-        </v-card-text>
       </v-card>
     </v-col>
   </v-row>
@@ -38,8 +32,8 @@
     <v-window v-model="tab">
       <v-window-item value="suppliers">
         <v-container>
-          <v-row v-scroll:#scroll-target="onScroll" justify="space-evenly" justify-sm="center">
-            <v-col v-for="workingSupplier in userWorkingSuppliersStore().getWorkingSuppliers"
+          <v-row justify="space-evenly" justify-sm="center">
+            <v-col v-for="workingSupplier in userWorkingSuppliersStore().getWorkingSuppliersLimited"
                    :key="workingSupplier.name"
                    cols="auto">
               <v-card :title="workingSupplier.name" :width="cardWidth" elevation="20"
@@ -54,7 +48,9 @@
                               '?supplierId='+workingSupplier.supplierId +
                               '&width=' + useOrganizationStore().getLogoCardWidth +
                               '&maxHeight='+ useOrganizationStore().getLogoCardMaxHeight"
-                  :width="useOrganizationStore().getLogoCardWidth">
+                  :width="useOrganizationStore().getLogoCardWidth"
+                  @error="supplierLogoLoaded()"
+                  @load="supplierLogoLoaded()">
                   <template v-slot:placeholder>
                     <v-row justify="center">
                       <v-icon :size="useOrganizationStore().getLogoCardMaxHeight"
@@ -117,15 +113,13 @@ onMounted(() => {
 const isLoading = ref(true)
 const tab = ref(1)
 const cardWidth: number = 352
-const offsetTop = ref(0)
 
 async function openSupplierProfile(workingSupplier: WorkingSupplier) {
   // todo
 }
 
-function onScroll(e: any) {
-  offsetTop.value = e.target.scrolltop
-  console.log(offsetTop.value)
+async function supplierLogoLoaded() {
+  userWorkingSuppliersStore().incrementLimit()
 }
 </script>
 

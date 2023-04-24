@@ -103,7 +103,8 @@ public class StartupEntitiesGenerator implements
   @SneakyThrows
   private void generateSupplier(AppUserDetails userDetails) {
     supplierService.register(
-        new OrganizationRegistrationForm(faker.restaurant().name() + faker.random().nextInt()),
+        new OrganizationRegistrationForm(
+            faker.restaurant().name() + faker.number().numberBetween(1, 100)),
         userDetails);
     Supplier supplier = supplierService.read(userDetails.getEmail());
     supplier.setPublic(true);

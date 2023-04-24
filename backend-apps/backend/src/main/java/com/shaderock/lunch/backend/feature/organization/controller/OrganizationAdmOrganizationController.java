@@ -8,6 +8,7 @@ import com.shaderock.lunch.backend.feature.organization.mapper.OrganizationDetai
 import com.shaderock.lunch.backend.feature.organization.service.OrganizationDetailsService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
@@ -31,6 +32,7 @@ public class OrganizationAdmOrganizationController {
   private final AppUserDetailsService userDetailsService;
 
   @PutMapping
+  @Transactional
   public ResponseEntity<OrganizationDetailsDto> update(
       @RequestBody @NonNull @Valid OrganizationDetailsDto organizationDetailsDto,
       Principal principal) {
@@ -42,6 +44,7 @@ public class OrganizationAdmOrganizationController {
   }
 
   @PutMapping("/logo")
+  @Transactional
   public ResponseEntity<Void> uploadImage(@RequestBody @NotNull MultipartFile logo,
       Principal principal) {
     OrganizationDetails organizationDetails = organizationDetailsService.read(principal.getName());

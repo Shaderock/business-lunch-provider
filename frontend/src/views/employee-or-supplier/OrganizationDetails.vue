@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="auto" md="6">
+      <v-col cols="auto" md="8">
         <v-card elevation="20">
           <v-toolbar extended extension-height="1">
             <v-toolbar-title>My Organization</v-toolbar-title>
@@ -98,7 +98,7 @@
     </v-row>
   </v-container>
 
-  <v-dialog v-model="show">
+  <v-dialog v-model="show" persistent>
     <v-row justify="center">
       <v-col md="4" sm="8">
         <v-card>
@@ -111,6 +111,7 @@
                 :multiple="false"
                 :rules="[rules.fileSize, rules.required]"
                 accept="image/*"
+                :loading="isUpdateInProgress"
                 clearable
                 hint="Max 2MB"
                 label="Upload logo (Max 2MB)"
@@ -172,8 +173,12 @@
             </v-card-text>
 
             <v-card-actions>
-              <v-btn color="primary" type="submit" variant="outlined">Save</v-btn>
-              <v-btn color="secondary" variant="plain" @click="show = false">Cancel</v-btn>
+              <v-btn :disabled="isUpdateInProgress" color="primary" type="submit"
+                     variant="outlined">Save
+              </v-btn>
+              <v-btn :disabled="isUpdateInProgress" color="secondary" variant="plain"
+                     @click="show = false">Cancel
+              </v-btn>
             </v-card-actions>
           </v-form>
         </v-card>
@@ -208,6 +213,7 @@ const valid: Ref<UnwrapRef<boolean>> = ref(false);
 const show: Ref<UnwrapRef<boolean>> = ref(false)
 const maxFileSize = 1024 * 1024 * 2 // 2MB
 const isLoadingLogo = ref(true)
+const isUpdateInProgress = ref(false)
 
 const rules = {
   required: (value: string) => !!value || 'Required field.',
@@ -245,6 +251,12 @@ async function submit() {
   await form.value?.validate()
   if (valid.value === true) {
     try {
+      isUpdateInProgress.value = true
+
+      if (organizationToUpdate.value.logo[0]?.size > 0) {
+        await useOrganizationStore().updateLogo(organizationToUpdate.value.logo[0])
+      }
+
       await organizationService.update(new OrganizationDetails(
         null,
         organizationToUpdate.value.name,
@@ -258,16 +270,15 @@ async function submit() {
         await useSupAdmSupStore().update(supplierToUpdate.value.websiteUrl, supplierToUpdate.value.menuUrl)
       }
 
-      if (organizationToUpdate.value.logo[0]?.size > 0) {
-        await useOrganizationStore().updateLogo(organizationToUpdate.value.logo[0])
-      }
-
       toastManager.showSuccess("Updated!", "Your organization details were updated successfully")
-      show.value = false
+
       await useOrganizationStore().requestFreshOrganizationData();
+      show.value = false
     } catch (error) {
       console.log('Something wrong happened during organization details update: ' + error)
       toastManager.showDefaultError("There was an error during organization details update")
+    } finally {
+      isUpdateInProgress.value = false
     }
   }
 }

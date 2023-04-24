@@ -46,8 +46,8 @@ export const useOrganizationStore = defineStore('organization', {
       this.organization = response.data
     },
     async requestLogo(): Promise<void> {
-      this.logoThumbnail = await organizationService.requestOrganizationLogoThumbnail()
-      this.logo = await organizationService.requestOrganizationLogo()
+      this.logoThumbnail = await organizationService.requestUserOrganizationLogo(true)
+      this.logo = await organizationService.requestUserOrganizationLogo(false)
     },
     async updateLogo(file: File): Promise<void> {
       await organizationService.updateOrganizationLogo(file)

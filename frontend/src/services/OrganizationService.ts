@@ -35,8 +35,18 @@ export class OrganizationService {
     return axios.get(`${ApiConstants.ANONYM_ORGANIZATION}/supplier/all`);
   }
 
-  async requestOrganizationLogo(): Promise<string> {
-    const params: URLSearchParams = new URLSearchParams([['isThumbnail', 'false']])
+  async requestInvitingCompanyLogo(companyId: string, isThumbnail: boolean): Promise<string> {
+    const params: URLSearchParams = new URLSearchParams([['isThumbnail', isThumbnail + ''], ['companyId', companyId]])
+    const response = await axios.get(`${ApiConstants.ORGANIZATION}/invitation/logo`, {
+      params,
+      responseType: 'arraybuffer'
+    });
+    console.log(response.data)
+    return Utils.byteArrayToBase64String(response.data)
+  }
+
+  async requestUserOrganizationLogo(isThumbnail: boolean): Promise<string> {
+    const params: URLSearchParams = new URLSearchParams([['isThumbnail', isThumbnail + '']])
     const response = await axios.get(`${ApiConstants.ORGANIZATION}/my/logo`, {
       params,
       responseType: 'arraybuffer'
@@ -50,15 +60,6 @@ export class OrganizationService {
     console.log(formData)
     console.log(formData.get('logo'))
     return axios.put(`${ApiConstants.ORGANIZATION_ADM_ORGANIZATION}/logo`, formData);
-  }
-
-  async requestOrganizationLogoThumbnail(): Promise<string> {
-    const params: URLSearchParams = new URLSearchParams([['isThumbnail', 'true']])
-    const response = await axios.get(`${ApiConstants.ORGANIZATION}/my/logo`, {
-      params,
-      responseType: 'arraybuffer'
-    });
-    return Utils.byteArrayToBase64String(response.data)
   }
 }
 

@@ -1,8 +1,20 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col v-for="(invitingCompany) in invitingCompanies" :key="invitingCompany.id" cols="4">
+      <v-col v-for="(invitingCompany) in useInvitationStore().getInvitingCompanies"
+             :key="invitingCompany.id" cols="4">
         <v-card :title="invitingCompany.name" elevation="20" max-width="400">
+          <v-progress-linear v-if="invitingCompany.logo === ''" indeterminate/>
+          <v-card-text>
+            <v-img
+              :lazy-src="`data:image/jpeg;base64,${invitingCompany.logoThumbnail}`"
+              :max-height="useOrganizationStore().getLogoCardMaxHeight + 200"
+              :max-width="useOrganizationStore().getLogoCardWidth + 100"
+              :src="`data:image/jpeg;base64,${invitingCompany.logo}`"/>
+          </v-card-text>
+
+          <v-divider/>
+
           <v-list>
             <v-list-item :subtitle="invitingCompany.email" prepend-icon="mdi-email" title="Email"/>
             <v-divider inset/>
@@ -18,7 +30,6 @@
             <v-container>
               {{ invitingCompany.description }}
             </v-container>
-
           </v-list>
 
           <v-card-actions>
@@ -36,18 +47,17 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, ComputedRef, onMounted} from "vue";
+import {onBeforeMount} from "vue";
 
 import {InvitingCompany, useInvitationStore, useProfileStore} from "@/store/user-app";
 import toastManager from "@/services/ToastManager";
 import router from "@/router";
 import {RouterPaths} from "@/services/RouterPaths";
+import {useOrganizationStore} from "@/store/employee-or-supplier-app";
 
-onMounted(() => {
-  useInvitationStore().requestFreshInvitationData()
+onBeforeMount(() => {
+  useInvitationStore().requestFreshInvitationData().finally(() => useInvitationStore().requestCompaniesLogos())
 })
-
-const invitingCompanies: ComputedRef<InvitingCompany[]> = computed(() => useInvitationStore().getInvitingCompanies)
 
 async function acceptInvitation(invitingCompany: InvitingCompany) {
   try {

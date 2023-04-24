@@ -138,12 +138,21 @@ export interface InvitingCompany {
   email: string
   phone: string
   formattedCreatedAt: string | null
+  logo: string
+  logoThumbnail: string
+}
+
+interface InvitingCompanyLogo {
+  companyId: string
+  logo: string
+  logoThumbnail: string
 }
 
 export const useInvitationStore = defineStore('userInvitations', {
   state: () => ({
     invitations: [] as Invitation[],
-    companiesDetails: [] as PublicOrganizationDetails[]
+    companiesDetails: [] as PublicOrganizationDetails[],
+    invitingCompaniesLogos: [] as InvitingCompanyLogo[]
   }),
   getters: {
     getInvitations(): Invitation[] {
@@ -154,14 +163,18 @@ export const useInvitationStore = defineStore('userInvitations', {
     },
     getInvitingCompanies(): InvitingCompany[] {
       return this.companiesDetails.map(company => {
-        const invitation = this.invitations.find(invitation => invitation.companyId === company.id);
-        const formattedCreatedAt = invitation ? invitation.formattedCreatedAt : null;
+        const invitation = this.invitations.find(invitation => invitation.companyId === company.id)
+        const formattedCreatedAt = invitation ? invitation.formattedCreatedAt : null
+        const companyWithLogo = this.invitingCompaniesLogos.find(companyWithLogos => companyWithLogos.companyId === company.id);
+
         return {
           id: company.id,
           name: company.name,
           description: company.description,
           email: company.email,
           phone: company.phone,
+          logo: companyWithLogo?.logo || '',
+          logoThumbnail: companyWithLogo?.logoThumbnail || '',
           formattedCreatedAt,
         };
       });
@@ -174,7 +187,9 @@ export const useInvitationStore = defineStore('userInvitations', {
     async decline(companyId: string) {
       try {
         await invitationService.declineInvitation(companyId)
-        await this.requestFreshInvitationData()
+        this.invitations = this.invitations.filter(invitation => invitation.companyId !== companyId)
+        this.companiesDetails = this.companiesDetails.filter(details => details.id !== companyId)
+        this.invitingCompaniesLogos = this.invitingCompaniesLogos.filter(company => company.companyId !== companyId)
       } catch (error) {
         console.log("Error during invitation decline")
       }
@@ -197,6 +212,26 @@ export const useInvitationStore = defineStore('userInvitations', {
           formattedCreatedAt: Utils.dateToDateString(invitation.createdAt)
         };
       });
+      console.log(this.invitingCompaniesLogos)
+      this.invitingCompaniesLogos = await Promise.all(this.companiesDetails.map(async company => {
+        const logoThumbnail = await organizationService.requestInvitingCompanyLogo(company.id, true);
+        return {
+          companyId: company.id,
+          logo: '',
+          logoThumbnail
+        }
+      }))
+      console.log(this.invitingCompaniesLogos)
+    },
+    async requestCompaniesLogos() {
+      this.invitingCompaniesLogos = await Promise.all(this.invitingCompaniesLogos.map(async company => {
+        const logo = await organizationService.requestInvitingCompanyLogo(company.companyId, false);
+        return {
+          companyId: company.companyId,
+          logo: logo,
+          logoThumbnail: company.logoThumbnail
+        }
+      }))
     }
   }
 })
@@ -229,7 +264,7 @@ export const userWorkingSuppliersStore = defineStore('publicSuppliers', {
     publicSuppliers: [] as Supplier[],
     publicSuppliersDetails: [] as PublicOrganizationDetails[],
     publicSuppliersPreferences: [] as PublicSupplierPreferences[],
-    suppliersLimit: 10 as number
+    suppliersLimit: 12 as number
   }),
   getters: {
     getSuppliers(): Supplier[] {
@@ -293,7 +328,7 @@ export const userWorkingSuppliersStore = defineStore('publicSuppliers', {
         await this.requestFreshData()
     },
     incrementLimit() {
-      this.suppliersLimit += 10
+      this.suppliersLimit++
     }
   }
 })
