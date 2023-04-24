@@ -6,6 +6,16 @@ import moment, {Duration} from "moment";
 import {Supplier} from "@/models/Supplier";
 import supplierService from "@/services/SupplierService";
 import {OrderType} from "@/models/OrderType";
+import {OrganizationDetails} from "@/models/OrganizationDetails";
+import {Subscription} from "@/models/Subscription";
+import {SubscriptionStatus} from "@/models/SubscriptionStatus";
+import {Utils} from "@/models/Utils";
+import subscriptionService from "@/services/SubscriptionService";
+import organizationService from "@/services/OrganizationService";
+import {PublicCompanyPreferences} from "@/models/PublicCompanyPreferences";
+import {Company} from "@/models/Company";
+import companyService from "@/services/CompanyService";
+import companyPreferencesService from "@/services/CompanyPreferencesService";
 
 export const useSupAdmSupPrefStore = defineStore('supplierAdminSupplierPreferences', {
   state: () => ({
@@ -97,6 +107,104 @@ export const useSupAdmSupStore = defineStore('supplierAdminSupplier', {
     async requestFreshSupplierData() {
       const response: AxiosResponse<Supplier> = await supplierService.getUserSupplier()
       this.supplier = response.data
+    }
+  }
+})
+
+
+export interface SubscriberCompany {
+  // company
+  companyId: string
+
+  // details
+  name: string
+  phone: string
+  email: string
+
+  // preferences
+  deliveryAddress: string
+
+  // subscription
+  subscriptionId: string
+  subscriptionStatus: SubscriptionStatus
+  subscriptionDate: string
+}
+
+export const useSubscribersCompaniesStore = defineStore('supplierAdminSubcribersCompanies', {
+  state: () => ({
+    companies: [] as Company[],
+    companiesPreferences: [] as PublicCompanyPreferences[],
+    companiesDetails: [] as OrganizationDetails[],
+    subscriptions: [] as Subscription[]
+  }),
+  getters: {
+    getCompanies(): Company[] {
+      return this.companies
+    },
+    getCompaniesPreferences(): PublicCompanyPreferences[] {
+      return this.companiesPreferences
+    },
+    getCompaniesDetails(): OrganizationDetails[] {
+      return this.companiesDetails
+    },
+    getSubscribersCompanies(): SubscriberCompany[] {
+      return this.companies.map(company => {
+        const preferences = this.companiesPreferences.find(p => p.id === company.preferencesId)
+        const details = this.companiesDetails.find(d => d.id === company.organizationDetailsId)
+        const subscription = this.subscriptions.find(s => s.companyId === company.id)
+
+        return {
+          name: details?.name ?? '',
+          email: details?.email ?? '',
+          phone: details?.phone ?? '',
+
+          companyId: company.id,
+
+          deliveryAddress: preferences?.deliveryAddress ?? '',
+
+          subscriptionId: subscription?.id ?? '',
+          subscriptionStatus: subscription?.subscriptionStatus ?? SubscriptionStatus.Pending,
+          subscriptionDate: subscription?.createdAt ? Utils.dateToDateString(subscription.createdAt) : ''
+        }
+      })
+    }
+  },
+  actions: {
+    async acceptSubscription(companyId: string) {
+      try {
+        console.log("store:" + companyId)
+        await subscriptionService.acceptSubscription(companyId);
+        const subscription = this.subscriptions.find(subscription => subscription.companyId === companyId);
+        if (subscription)
+          subscription.subscriptionStatus = SubscriptionStatus.Accepted
+      } catch (error) {
+        console.log("Couldn't accept a subscription")
+      }
+    },
+    async declineSubscription(companyId: string) {
+      try {
+        await subscriptionService.declineSubscription(companyId)
+        this.companies = this.companies.filter(s => s.id !== companyId)
+      } catch (error) {
+        console.log("Couldn't decline a subscription")
+      }
+    },
+    async requestFreshData() {
+      const companiesResponse: AxiosResponse<Company[]> =
+        await companyService.requestSupplierSubscribers()
+      this.companies = companiesResponse.data
+
+      const preferencesResponse: AxiosResponse<PublicCompanyPreferences[]> =
+        await companyPreferencesService.requestSubscribersCompaniesPreferences()
+      this.companiesPreferences = preferencesResponse.data
+
+      const detailsResponse: AxiosResponse<OrganizationDetails[]> =
+        await organizationService.requestSubscribersCompaniesDetails()
+      this.companiesDetails = detailsResponse.data
+
+      const subscriptionsResponse: AxiosResponse<Subscription[]> =
+        await subscriptionService.requestSupplierSubscribers()
+      this.subscriptions = subscriptionsResponse.data
     }
   }
 })

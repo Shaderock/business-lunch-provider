@@ -40,7 +40,7 @@ const routes = [
 
   {
     path: RouterPaths.EMPLOYEE_COMPANY_SUPPLIERS_SUBSCRIPTIONS, name: 'My Company Suppliers Subscriptions',
-    component: () => import('@/views/employee/SupplierSubscriptions.vue')
+    component: () => import('@/views/company-admin/SupplierSubscriptions.vue')
   },
   {
     path: RouterPaths.EMPLOYEE_ORDER_HISTORY, name: 'Employee Order History',

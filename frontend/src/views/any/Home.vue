@@ -33,7 +33,7 @@
       <v-window-item value="suppliers">
         <v-container>
           <v-row justify="space-evenly" justify-sm="center">
-            <v-col v-for="workingSupplier in userWorkingSuppliersStore().getWorkingSuppliersLimited"
+            <v-col v-for="workingSupplier in useWorkingSuppliersStore().getWorkingSuppliersLimited"
                    :key="workingSupplier.name"
                    cols="auto">
               <v-card :title="workingSupplier.name" :width="cardWidth" elevation="20"
@@ -99,13 +99,13 @@
 
 <script lang="ts" setup>
 import {onMounted, ref} from "vue";
-import {userWorkingSuppliersStore, WorkingSupplier} from "@/store/user-app";
+import {useWorkingSuppliersStore, WorkingSupplier} from "@/store/user-app";
 import {Utils} from "@/models/Utils";
 import {ApiConstants} from "@/services/ApiConstants";
 import {useOrganizationStore} from "@/store/employee-or-supplier-app";
 
 onMounted(() => {
-  userWorkingSuppliersStore().requestFreshDataIfNothingCached().finally(() => {
+  useWorkingSuppliersStore().requestFreshDataIfNothingCached().finally(() => {
     isLoading.value = false
   })
 })
@@ -119,7 +119,7 @@ async function openSupplierProfile(workingSupplier: WorkingSupplier) {
 }
 
 async function supplierLogoLoaded() {
-  userWorkingSuppliersStore().incrementLimit()
+  useWorkingSuppliersStore().incrementLimit()
 }
 </script>
 

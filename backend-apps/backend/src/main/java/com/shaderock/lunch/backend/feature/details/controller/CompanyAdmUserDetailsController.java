@@ -7,6 +7,7 @@ import com.shaderock.lunch.backend.feature.details.mapper.AppUserDetailsMapper;
 import com.shaderock.lunch.backend.feature.user.entity.AppUser;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class CompanyAdmUserDetailsController {
   private final AppUserDetailsMapper userDetailsMapper;
 
   @GetMapping("/all")
+  @Transactional
   public ResponseEntity<List<AppUserDetailsDto>> read(Principal principal) {
     Company company = companyService.read(principal);
 

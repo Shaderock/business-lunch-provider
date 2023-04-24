@@ -88,9 +88,9 @@ async function registerSubmit() {
 async function RegisterOrganization() {
   try {
     if (isSupplier.value) {
-      supplierService.register(name.value)
+      await supplierService.register(name.value)
     } else {
-      companyService.register(name.value)
+      await companyService.register(name.value)
     }
 
     await useProfileStore().requestUserData()

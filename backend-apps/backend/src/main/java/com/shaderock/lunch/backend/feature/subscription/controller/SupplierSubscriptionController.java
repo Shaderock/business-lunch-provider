@@ -51,7 +51,7 @@ public class SupplierSubscriptionController {
     return ResponseEntity.ok(subscriptionMapper.toDto(updated));
   }
 
-  @DeleteMapping
+  @DeleteMapping("/decline")
   public ResponseEntity<Void> declineSubscription(@RequestParam @NotNull UUID companyId,
       Principal principal) {
     Supplier supplier = supplierService.read(principal);

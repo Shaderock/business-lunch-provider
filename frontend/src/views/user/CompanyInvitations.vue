@@ -4,7 +4,9 @@
       <v-col v-for="(invitingCompany) in useInvitationStore().getInvitingCompanies"
              :key="invitingCompany.id" cols="4">
         <v-card :title="invitingCompany.name" elevation="20" max-width="400">
-          <v-progress-linear v-if="invitingCompany.logo === ''" indeterminate/>
+          <v-progress-linear
+            v-if="invitingCompany.logo === '' && invitingCompany.logoThumbnail !== ''"
+            indeterminate/>
           <v-card-text>
             <v-img
               :lazy-src="`data:image/jpeg;base64,${invitingCompany.logoThumbnail}`"

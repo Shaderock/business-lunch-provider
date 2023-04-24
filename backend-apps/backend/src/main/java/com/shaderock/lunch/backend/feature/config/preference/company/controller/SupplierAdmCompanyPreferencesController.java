@@ -10,6 +10,7 @@ import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,8 @@ public class SupplierAdmCompanyPreferencesController {
   private final SubscriptionService subscriptionService;
   private final CompanyPreferencesMapper companyPreferencesMapper;
 
-  @GetMapping("/subscribers")
+  @GetMapping("/subscriber/all")
+  @Transactional
   public ResponseEntity<List<PublicCompanyPreferencesDto>> read(Principal principal) {
     Supplier supplier = supplierService.read(principal);
     List<Subscription> subscriptions = subscriptionService.read(supplier);
