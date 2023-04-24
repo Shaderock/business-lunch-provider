@@ -120,10 +120,10 @@ public class StartupEntitiesGenerator implements
     organizationDetails.setLogo(getImageBytes(String.valueOf(faker.number().numberBetween(1, 40))));
 
     SupplierPreferences preferences = supplier.getPreferences();
-    preferences.setDeliveryPeriodStartTime(
+    preferences.setWorkDayStart(
         LocalTime.of(faker.number().numberBetween(8, 11), faker.number().numberBetween(0, 59)));
 
-    preferences.setDeliveryPeriodEndTime(
+    preferences.setWorkDayEnd(
         LocalTime.of(faker.number().numberBetween(15, 21), faker.number().numberBetween(0, 59)));
 
     preferences.setMinimumOrdersPerCompanyRequest(faker.number().numberBetween(1, 20));

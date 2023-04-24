@@ -22,13 +22,13 @@
             <v-divider inset/>
 
             <v-list-item
-              :subtitle="useSupAdmSupPrefStore().getPreferences.deliveryPeriodStartTime?.toString()"
+              :subtitle="useSupAdmSupPrefStore().getPreferences.workDayStart?.toString()"
               prepend-icon="mdi-clock-start"
               title="Delivered not sooner than"/>
             <v-divider inset/>
 
             <v-list-item
-              :subtitle="useSupAdmSupPrefStore().getPreferences.deliveryPeriodEndTime?.toString()"
+              :subtitle="useSupAdmSupPrefStore().getPreferences.workDayEnd?.toString()"
               prepend-icon="mdi-clock-end"
               title="Delivered not later than"/>
             <v-divider inset/>
@@ -130,20 +130,20 @@
                         v-model="updatePreferences.deliveryStart"
                         :rules="[supplierPreferencesRules.required]"
                         color="primary"
-                        hint="Enter the time when the first order can be delivered to the company"
-                        label="Delivered not sooner than"
+                        hint="Enter the time when you start accepting lunch requests"
+                        label="Start work at"
                         type="time"
-                      ></v-text-field>
+                      />
                     </v-col>
                     <v-col>
                       <v-text-field
                         v-model="updatePreferences.deliveryEnd"
                         :rules="[supplierPreferencesRules.required]"
                         color="primary"
-                        hint="Enter the time when the last order can be delivered to the company"
-                        label="Delivered not later than"
+                        hint="Enter the time when you stop accepting lunch requests"
+                        label="End work at"
                         type="time"
-                      ></v-text-field>
+                      />
                     </v-col>
                   </v-row>
 

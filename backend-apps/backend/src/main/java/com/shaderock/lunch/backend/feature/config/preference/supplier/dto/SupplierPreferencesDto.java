@@ -19,8 +19,8 @@ public record SupplierPreferencesDto(
     UUID id,
     UUID supplierId,
     Duration requestOffset,
-    LocalTime deliveryPeriodStartTime,
-    LocalTime deliveryPeriodEndTime,
+    LocalTime workDayStart,
+    LocalTime workDayEnd,
     @NotNull
     @Min(value = 1, message = "minimumOrdersPerCompanyRequest must be greater than 0")
     Integer minimumOrdersPerCompanyRequest,

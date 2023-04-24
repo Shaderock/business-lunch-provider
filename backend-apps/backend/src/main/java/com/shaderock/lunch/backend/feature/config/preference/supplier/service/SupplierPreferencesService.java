@@ -66,8 +66,8 @@ public class SupplierPreferencesService {
     SupplierPreferences persisted = read(userDetails);
 
     persisted.setRequestOffset(preferences.getRequestOffset());
-    persisted.setDeliveryPeriodStartTime(preferences.getDeliveryPeriodStartTime());
-    persisted.setDeliveryPeriodEndTime(preferences.getDeliveryPeriodEndTime());
+    persisted.setWorkDayStart(preferences.getWorkDayStart());
+    persisted.setWorkDayEnd(preferences.getWorkDayEnd());
     persisted.setMinimumOrdersPerCompanyRequest(preferences.getMinimumOrdersPerCompanyRequest());
     persisted.setMinimumCategoriesForEmployeeOrder(
         preferences.getMinimumCategoriesForEmployeeOrder());

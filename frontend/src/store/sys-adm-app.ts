@@ -41,7 +41,8 @@ export const useSysAdmOrganizationStore = defineStore('sysAdmOrganization', {
     async requestFreshOrganizationsData() {
       const organizationsResponse = await organizationService.getAllOrganizations()
       if (!isEqual(organizationsResponse.data, this.organizationsDetails)) {
-        this.organizationsDetails = organizationsResponse.data
+        // this.organizationsDetails = organizationsResponse.data
+        // todo refactor
       }
     },
     async requestFreshSuppliersData() {

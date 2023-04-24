@@ -72,10 +72,10 @@
                 <v-card-text>
                   <v-chip-group class="disable-events">
                     <v-chip
-                      :text="Utils.stringToTimeAsStringWithoutSeconds(workingSupplier.deliveryPeriodStartTime.toString())"
+                      :text="Utils.stringToTimeAsStringWithoutSeconds(workingSupplier.workDayStart.toString())"
                       clickable="false" label prepend-icon="mdi-clock-start"/>
                     <v-chip
-                      :text="Utils.stringToTimeAsStringWithoutSeconds(workingSupplier.deliveryPeriodEndTime.toString())"
+                      :text="Utils.stringToTimeAsStringWithoutSeconds(workingSupplier.workDayEnd.toString())"
                       append-icon="mdi-clock-end" label/>
                   </v-chip-group>
                 </v-card-text>

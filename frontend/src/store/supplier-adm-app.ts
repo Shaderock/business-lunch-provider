@@ -29,26 +29,26 @@ export const useSupAdmSupPrefStore = defineStore('supplierAdminSupplierPreferenc
       return moment.duration(this.preferences.requestOffset)
     },
     getStartTime(): Date | null {
-      if (this.preferences.deliveryPeriodStartTime !== null)
-        return moment(this.preferences?.deliveryPeriodStartTime, "HH:mm:ss").toDate()
+      if (this.preferences.workDayStart !== null)
+        return moment(this.preferences?.workDayStart, "HH:mm:ss").toDate()
       else
         return null
     },
     getEndTime(): Date | null {
-      if (this.preferences.deliveryPeriodEndTime !== null)
-        return moment(this.preferences.deliveryPeriodEndTime, "HH:mm:ss").toDate()
+      if (this.preferences.workDayEnd !== null)
+        return moment(this.preferences.workDayEnd, "HH:mm:ss").toDate()
       else
         return null
     },
     arePreferencesCompleted(): boolean {
       if (!this.preferences) return false
       return !(!this.preferences.requestOffset ||
-        !this.preferences.deliveryPeriodStartTime ||
-        !this.preferences.deliveryPeriodEndTime ||
+        !this.preferences.workDayStart ||
+        !this.preferences.workDayEnd ||
         !this.preferences.minimumOrdersPerCompanyRequest ||
         !this.preferences.minimumCategoriesForEmployeeOrder ||
         !this.preferences.orderType ||
-        !this.preferences.deliveryPeriodEndTime ||
+        !this.preferences.workDayEnd ||
         !this.preferences.categoriesTags ||
         this.preferences.categoriesTags.length == 0);
     },

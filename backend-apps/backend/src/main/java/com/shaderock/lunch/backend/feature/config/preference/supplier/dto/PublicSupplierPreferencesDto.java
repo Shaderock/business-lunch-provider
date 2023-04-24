@@ -16,8 +16,8 @@ import java.util.UUID;
 public record PublicSupplierPreferencesDto(
     UUID id,
     Duration requestOffset,
-    LocalTime deliveryPeriodStartTime,
-    LocalTime deliveryPeriodEndTime,
+    LocalTime workDayStart,
+    LocalTime workDayEnd,
     Integer minimumOrdersPerRequest,
     Integer minimumCategoriesForEmployeeOrder,
     Set<UUID> pricesForCategoriesIds,

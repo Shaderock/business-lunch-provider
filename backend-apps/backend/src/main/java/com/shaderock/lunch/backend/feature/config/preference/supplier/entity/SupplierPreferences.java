@@ -37,6 +37,7 @@ import org.hibernate.annotations.SQLDelete;
 @ToString
 @Entity
 @SQLDelete(sql = "UPDATE supplier_preferences SET is_deleted = true WHERE id=?")
+// todo add min/max delivery time
 public class SupplierPreferences extends DeletableEntity {
 
   @OneToOne(optional = false, fetch = FetchType.LAZY)
@@ -47,10 +48,10 @@ public class SupplierPreferences extends DeletableEntity {
   private Duration requestOffset;
 
   @Column
-  private LocalTime deliveryPeriodStartTime;
+  private LocalTime workDayStart;
 
   @Column
-  private LocalTime deliveryPeriodEndTime;
+  private LocalTime workDayEnd;
 
   @Column(columnDefinition = "int default 1")
   private Integer minimumOrdersPerCompanyRequest;

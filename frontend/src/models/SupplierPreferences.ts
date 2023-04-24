@@ -6,8 +6,8 @@ export class SupplierPreferences {
   public id: string | null
   public supplierId: string | null
   public requestOffset: Duration
-  public deliveryPeriodStartTime: Date
-  public deliveryPeriodEndTime: Date
+  public workDayStart: Date
+  public workDayEnd: Date
   public minimumOrdersPerCompanyRequest: number
   public minimumCategoriesForEmployeeOrder: number
   public orderType: OrderType
@@ -18,8 +18,8 @@ export class SupplierPreferences {
   constructor(id: string | null,
               supplierId: string | null,
               requestOffset: Duration,
-              deliveryPeriodStartTime: Date,
-              deliveryPeriodEndTime: Date,
+              workDayStart: Date,
+              workDayEnd: Date,
               minimumOrdersPerCompanyRequest: number,
               minimumCategoriesForEmployeeOrder: number,
               orderType: OrderType,
@@ -29,8 +29,8 @@ export class SupplierPreferences {
     this.id = id
     this.supplierId = supplierId
     this.requestOffset = requestOffset
-    this.deliveryPeriodStartTime = deliveryPeriodStartTime
-    this.deliveryPeriodEndTime = deliveryPeriodEndTime
+    this.workDayStart = workDayStart
+    this.workDayEnd = workDayEnd
     this.minimumOrdersPerCompanyRequest = minimumOrdersPerCompanyRequest
     this.minimumCategoriesForEmployeeOrder = minimumCategoriesForEmployeeOrder
     this.orderType = orderType

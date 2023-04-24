@@ -5,8 +5,8 @@ import {CategoryTag} from "@/models/CategoryTag";
 export class PublicSupplierPreferences {
   public id: string | null
   public requestOffset: Duration
-  public deliveryPeriodStartTime: Date
-  public deliveryPeriodEndTime: Date
+  public workDayStart: Date
+  public workDayEnd: Date
   public minimumOrdersPerCompanyRequest: number
   public minimumCategoriesForEmployeeOrder: number
   public orderType: OrderType
@@ -15,8 +15,8 @@ export class PublicSupplierPreferences {
 
   constructor(id: string | null,
               requestOffset: Duration,
-              deliveryPeriodStartTime: Date,
-              deliveryPeriodEndTime: Date,
+              workDayStart: Date,
+              workDayEnd: Date,
               minimumOrdersPerCompanyRequest: number,
               minimumCategoriesForEmployeeOrder: number,
               orderType: OrderType,
@@ -24,8 +24,8 @@ export class PublicSupplierPreferences {
               categoriesTags: CategoryTag[]) {
     this.id = id
     this.requestOffset = requestOffset
-    this.deliveryPeriodStartTime = deliveryPeriodStartTime
-    this.deliveryPeriodEndTime = deliveryPeriodEndTime
+    this.workDayStart = workDayStart
+    this.workDayEnd = workDayEnd
     this.minimumOrdersPerCompanyRequest = minimumOrdersPerCompanyRequest
     this.minimumCategoriesForEmployeeOrder = minimumCategoriesForEmployeeOrder
     this.orderType = orderType

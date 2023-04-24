@@ -21,11 +21,11 @@ public class SupplierPreferencesCompletedValidator implements Validator {
   public void validate(Object target, Errors errors) {
     ValidationUtils.rejectIfEmptyOrWhitespace(errors, "requestOffset", FIELD_REQUIRED_CODE,
         "Request offset can not be empty");
-    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deliveryPeriodStartTime",
+    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "workDayStart",
         FIELD_REQUIRED_CODE,
-        "Delivery period start time can not be empty");
-    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deliveryPeriodEndTime", FIELD_REQUIRED_CODE,
-        "Delivery period end time can not be empty");
+        "Work start time can not be empty");
+    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "workDayEnd", FIELD_REQUIRED_CODE,
+        "Work end time can not be empty");
     ValidationUtils.rejectIfEmptyOrWhitespace(errors, "orderType", FIELD_REQUIRED_CODE,
         "Order type can not be empty");
   }

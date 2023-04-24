@@ -14,13 +14,13 @@ export class SupplierPreferencesService {
   }
 
   update(preferences: SupplierPreferences): Promise<AxiosResponse<SupplierPreferences>> {
-    const deliveryPeriodStartTimeString: string = Utils.dateToTimeAsString(preferences.deliveryPeriodStartTime)
-    const deliveryPeriodEndTimeString: string = Utils.dateToTimeAsString(preferences.deliveryPeriodEndTime)
+    const workDayStartString: string = Utils.dateToTimeAsString(preferences.workDayStart)
+    const workDayEndString: string = Utils.dateToTimeAsString(preferences.workDayEnd)
 
     const serializedPreferences = {
       ...preferences,
-      deliveryPeriodStartTime: deliveryPeriodStartTimeString,
-      deliveryPeriodEndTime: deliveryPeriodEndTimeString
+      workDayStart: workDayStartString,
+      workDayEnd: workDayEndString
     };
 
     return axios.put(ApiConstants.SUPPLIER_ADM_PREFERENCES, serializedPreferences);

@@ -250,8 +250,8 @@ export interface WorkingSupplier {
 
   // preferences
   requestOffset: Duration
-  deliveryPeriodStartTime: Date
-  deliveryPeriodEndTime: Date
+  workDayStart: Date
+  workDayEnd: Date
   minimumOrdersPerCompanyRequest: number
   minimumCategoriesForEmployeeOrder: number
   orderType: OrderType
@@ -264,7 +264,16 @@ export const userWorkingSuppliersStore = defineStore('publicSuppliers', {
     publicSuppliers: [] as Supplier[],
     publicSuppliersDetails: [] as PublicOrganizationDetails[],
     publicSuppliersPreferences: [] as PublicSupplierPreferences[],
-    suppliersLimit: 12 as number
+    suppliersLimit: 12 as number,
+
+    //filters
+    filterShowClosed: null as boolean | null,
+
+    filterShowByOrderType: false,
+    filterOrderTypes: [] as OrderType[],
+
+    filterShowByMinimumOrders: false,
+    // todo create filters
   }),
   getters: {
     getSuppliers(): Supplier[] {
@@ -281,7 +290,6 @@ export const userWorkingSuppliersStore = defineStore('publicSuppliers', {
         const details = this.publicSuppliersDetails.find(d => d.id === supplier.organizationDetailsId)
         const preferences = this.publicSuppliersPreferences.find(p => p.id === supplier.preferencesId)
         return {
-
           name: details?.name ?? '',
           description: details?.description ?? '',
           email: details?.email ?? '',
@@ -292,8 +300,8 @@ export const userWorkingSuppliersStore = defineStore('publicSuppliers', {
           menuUrl: supplier.menuUrl,
 
           requestOffset: preferences?.requestOffset ?? moment.duration(),
-          deliveryPeriodStartTime: preferences?.deliveryPeriodStartTime ?? new Date(),
-          deliveryPeriodEndTime: preferences?.deliveryPeriodEndTime ?? new Date(),
+          workDayStart: preferences?.workDayStart ?? new Date(),
+          workDayEnd: preferences?.workDayEnd ?? new Date(),
           minimumOrdersPerCompanyRequest: preferences?.minimumOrdersPerCompanyRequest ?? 0,
           minimumCategoriesForEmployeeOrder: preferences?.minimumCategoriesForEmployeeOrder ?? 0,
           orderType: preferences?.orderType ?? OrderType.UnlimitedOptions,
@@ -304,6 +312,9 @@ export const userWorkingSuppliersStore = defineStore('publicSuppliers', {
     },
     getWorkingSuppliersLimited(): WorkingSupplier[] {
       return this.getWorkingSuppliers.slice(0, this.suppliersLimit)
+    },
+    getWorkingsSuppliersLimitedFiltered(): WorkingSupplier[] {
+      return this.getWorkingSuppliersLimited
     }
   },
   actions: {
