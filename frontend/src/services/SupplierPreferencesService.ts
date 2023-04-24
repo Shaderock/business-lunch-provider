@@ -9,6 +9,10 @@ export class SupplierPreferencesService {
     return axios.get(ApiConstants.SUPPLIER_ADM_PREFERENCES + "/my");
   }
 
+  public anonymousRequestForPreferences(): Promise<AxiosResponse<SupplierPreferences[]>> {
+    return axios.get(`${ApiConstants.ANONYM_SUPPLIER_PREFERENCES}/all`);
+  }
+
   update(preferences: SupplierPreferences): Promise<AxiosResponse<SupplierPreferences>> {
     const deliveryPeriodStartTimeString: string = Utils.dateToTimeAsString(preferences.deliveryPeriodStartTime)
     const deliveryPeriodEndTimeString: string = Utils.dateToTimeAsString(preferences.deliveryPeriodEndTime)

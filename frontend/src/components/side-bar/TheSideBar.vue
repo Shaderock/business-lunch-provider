@@ -34,12 +34,6 @@
 
             <v-divider/>
 
-            <v-list-item :hidden="!isHovering" disabled title="Subscriptions"/>
-
-            <SupplierSubscriptionsNavItem/>
-
-            <v-divider/>
-
             <v-list-item :hidden="!isHovering" disabled title="My Orders"/>
 
             <EmployeeOrdersNavItems/>

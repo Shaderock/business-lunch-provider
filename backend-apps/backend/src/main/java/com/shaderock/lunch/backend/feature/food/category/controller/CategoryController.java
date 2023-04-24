@@ -42,18 +42,4 @@ public class CategoryController {
     List<Category> categories = categoryService.read(supplier);
     return ResponseEntity.ok(categories.stream().map(categoryMapper::toDto).toList());
   }
-
-  @GetMapping("/all")
-  public ResponseEntity<List<CategoryDto>> readAllPublic() {
-    List<CategoryDto> categoryDtos = categoryService.read().stream()
-        .map(categoryMapper::toDto).toList();
-
-    return ResponseEntity.ok(categoryDtos);
-  }
-
-  @GetMapping("/default")
-  public ResponseEntity<List<CategoryDto>> readDefault() {
-    List<CategoryDto> categoryDtos = categoryService.readAllDefault();
-    return ResponseEntity.ok(categoryDtos);
-  }
 }

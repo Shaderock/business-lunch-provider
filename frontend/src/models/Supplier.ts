@@ -6,7 +6,6 @@ export class Supplier {
   public isPublic: boolean | null
   public preferencesId: number | null
 
-
   constructor(id: string | null, organizationDetailsId: string | null, websiteUrl: string, menuUrl: string, isPublic: boolean | null, preferencesId: number | null) {
     this.id = id;
     this.organizationDetailsId = organizationDetailsId;

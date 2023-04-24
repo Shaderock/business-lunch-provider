@@ -17,6 +17,7 @@ import com.shaderock.lunch.backend.feature.organization.form.OrganizationRegistr
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import jakarta.transaction.Transactional;
+import java.io.InputStream;
 import java.net.URI;
 import java.time.Duration;
 import java.time.LocalTime;
@@ -32,6 +33,9 @@ import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -46,6 +50,8 @@ public class StartupEntitiesGenerator implements
   private final SupplierService supplierService;
   private final CompanyService companyService;
   private final Faker faker;
+  private final ResourceLoader resourceLoader;
+  private final ResourcePatternResolver resourceResolver;
   @Value(value = "${lunch.backend.system.admin.email}")
   private String sysAdminEmail;
   @Value(value = "${lunch.backend.system.admin.password}")
@@ -110,6 +116,8 @@ public class StartupEntitiesGenerator implements
     organizationDetails.setPhone(faker.phoneNumber().phoneNumberInternational());
     organizationDetails.setDescription(faker.restaurant().description());
 
+    organizationDetails.setLogo(getImageBytes(String.valueOf(faker.number().numberBetween(1, 40))));
+
     SupplierPreferences preferences = supplier.getPreferences();
     preferences.setDeliveryPeriodStartTime(
         LocalTime.of(faker.number().numberBetween(8, 11), faker.number().numberBetween(0, 59)));
@@ -128,7 +136,7 @@ public class StartupEntitiesGenerator implements
     preferences.setOrderType(orderTypes.get(faker.number().numberBetween(0, orderTypes.size())));
 
     List<CategoryTag> categoryTagList = new ArrayList<>(Arrays.asList(CategoryTag.values()));
-    int categoriesNumber = faker.number().numberBetween(0, 7);
+    int categoriesNumber = faker.number().numberBetween(1, 7);
     List<CategoryTag> supplierCategoriesTags = new ArrayList<>();
     for (int i = 0; i < categoriesNumber; i++) {
       int index = faker.number().numberBetween(0, categoryTagList.size());
@@ -137,7 +145,6 @@ public class StartupEntitiesGenerator implements
     }
     preferences.setCategoriesTags(supplierCategoriesTags);
   }
-
 
   private void generateCompany(AppUserDetails userDetails) {
     companyService.register(new OrganizationRegistrationForm(faker.company().name()), userDetails);
@@ -215,6 +222,17 @@ public class StartupEntitiesGenerator implements
     LOGGER.info("Generating default system admin. Check vault for credentials.");
     generateUser(sysAdminEmail, sysAdminPassword, "sysadmin", "sysadmin",
         Set.of(Role.SYSTEM_ADMIN, Role.USER));
+  }
+
+  public byte[] getImageBytes(String fileName) {
+    try {
+      Resource resource = resourceLoader.getResource(
+          "classpath:generation/" + fileName + ".jpg");
+      InputStream inputStream = resource.getInputStream();
+      return inputStream.readAllBytes();
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   @RequiredArgsConstructor

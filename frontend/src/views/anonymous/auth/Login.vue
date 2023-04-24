@@ -50,7 +50,6 @@
       </v-col>
     </v-row>
   </v-container>
-
 </template>
 <script lang="ts" setup>
 import {onMounted, ref} from "vue";

@@ -1,81 +1,102 @@
 <template>
-  <v-row justify="center">
-    <v-col cols="auto" md="5">
-      <v-card elevation="20">
-        <v-toolbar>
-          <v-toolbar-title>My Organization</v-toolbar-title>
+  <v-container>
+    <v-row justify="center">
+      <v-col cols="auto" md="6">
+        <v-card elevation="20">
+          <v-toolbar extended extension-height="1">
+            <v-toolbar-title>My Organization</v-toolbar-title>
 
-          <v-btn v-if="useProfileStore().isCompanyAdmin || useProfileStore().isSupplier"
-                 color="primary"
-                 @click="initDialogue()">Edit Details
-          </v-btn>
-        </v-toolbar>
+            <v-btn v-if="useProfileStore().isCompanyAdmin || useProfileStore().isSupplier"
+                   color="primary"
+                   @click="initDialogue()">
+              Edit Details
+            </v-btn>
 
-        <v-list>
-          <v-list-item :subtitle="useOrganizationStore().getOrganization.name" title="Name"/>
-          <v-divider inset/>
-          <v-list-item :subtitle="useOrganizationStore().getOrganization.email"
-                       prepend-icon="mdi-email"
-                       title="Email"/>
-          <v-divider inset/>
-          <v-list-item :subtitle="useOrganizationStore().getOrganization.phone"
-                       prepend-icon="mdi-phone"
-                       title="Phone"/>
-          <v-divider inset/>
-          <div v-if="useProfileStore().isSupplier">
-            <v-list-item :subtitle="useSupAdmSupStore().getSupplier.websiteUrl"
-                         prepend-icon="mdi-web"
-                         title="Website URL"/>
-            <v-divider inset/>
-            <v-list-item :subtitle="useSupAdmSupStore().getSupplier.menuUrl" prepend-icon="mdi-web"
-                         title="Menu URL"/>
-            <v-divider inset/>
-            <v-list-item>
-              <template v-slot:prepend="{ isPublic }">
-                <v-list-item-action start>
-                  <v-checkbox-btn v-model="persistedSupplier.isPublic" disabled
-                                  v-bind="isPublic"></v-checkbox-btn>
-                </v-list-item-action>
-              </template>
-              <v-list-item-title>Whether supplier is public</v-list-item-title>
-              <v-list-item-subtitle>Supplier can be found on main page</v-list-item-subtitle>
-            </v-list-item>
-            <v-divider inset/>
-          </div>
-          <v-list-subheader title="Description"/>
-          <v-container>
-            {{ useOrganizationStore().getOrganization.description }}
-          </v-container>
-          <v-divider v-if="useProfileStore().isSupplier"/>
-        </v-list>
-
-        <v-card-actions v-if="useProfileStore().isSupplier">
-          <v-btn v-if="!useSupAdmSupStore().getPublic"
-                 :disabled="!useSupAdmSupPrefStore().arePreferencesCompleted ||
-                 !useOrganizationStore().areDetailsCompleted"
-                 color="primary"
-                 variant="outlined"
-                 @click="updatePublic(true)">
-            Become public
-          </v-btn>
-          <v-btn v-if="useSupAdmSupStore().getPublic"
-                 color="secondary"
-                 @click="updatePublic(false)">
-            Become private
-          </v-btn>
-
-          <v-tooltip
-            v-if="!useSupAdmSupPrefStore().arePreferencesCompleted || !useOrganizationStore().areDetailsCompleted">
-            <template v-slot:activator="{ props }">
-              <v-spacer/>
-              <v-icon color="info" icon="mdi-information" v-bind="props"/>
+            <template v-slot:extension>
+              <v-progress-linear v-if="isLoadingLogo" indeterminate/>
             </template>
-            Complete profile and preferences in order to allow users to order from you
-          </v-tooltip>
-        </v-card-actions>
-      </v-card>
-    </v-col>
-  </v-row>
+          </v-toolbar>
+
+          <v-img v-if="useOrganizationStore().hasLogo"
+                 :lazy-src="`data:image/jpeg;base64,${useOrganizationStore().getLogoAsBase64Thumbnail}`"
+                 :max-height="useOrganizationStore().getLogoCardMaxHeight + 200"
+                 :src="`data:image/jpeg;base64,${useOrganizationStore().getLogoAsBase64}`"/>
+
+          <v-btn v-else :size="useOrganizationStore().getLogoCardMaxHeight + 200" block disabled
+                 icon variant="plain">
+            <v-icon :size="useOrganizationStore().getLogoCardMaxHeight + 300"
+                    icon="mdi-image-area"/>
+          </v-btn>
+
+          <v-divider/>
+
+          <v-list>
+            <v-list-item :subtitle="useOrganizationStore().getOrganization.name" title="Name"/>
+            <v-divider inset/>
+            <v-list-item :subtitle="useOrganizationStore().getOrganization.email"
+                         prepend-icon="mdi-email"
+                         title="Email"/>
+            <v-divider inset/>
+            <v-list-item :subtitle="useOrganizationStore().getOrganization.phone"
+                         prepend-icon="mdi-phone"
+                         title="Phone"/>
+            <v-divider inset/>
+            <div v-if="useProfileStore().isSupplier">
+              <v-list-item :subtitle="useSupAdmSupStore().getSupplier.websiteUrl"
+                           prepend-icon="mdi-web"
+                           title="Website URL"/>
+              <v-divider inset/>
+              <v-list-item :subtitle="useSupAdmSupStore().getSupplier.menuUrl"
+                           prepend-icon="mdi-web"
+                           title="Menu URL"/>
+              <v-divider inset/>
+              <v-list-item>
+                <template v-slot:prepend="{ isPublic }">
+                  <v-list-item-action start>
+                    <v-checkbox-btn v-model="persistedSupplier.isPublic" disabled
+                                    v-bind="isPublic"></v-checkbox-btn>
+                  </v-list-item-action>
+                </template>
+                <v-list-item-title>Whether supplier is public</v-list-item-title>
+                <v-list-item-subtitle>Supplier can be found on main page</v-list-item-subtitle>
+              </v-list-item>
+              <v-divider inset/>
+            </div>
+            <v-list-subheader title="Description"/>
+            <v-container>
+              {{ useOrganizationStore().getOrganization.description }}
+            </v-container>
+            <v-divider v-if="useProfileStore().isSupplier"/>
+          </v-list>
+
+          <v-card-actions v-if="useProfileStore().isSupplier">
+            <v-btn v-if="!useSupAdmSupStore().getPublic"
+                   :disabled="!useSupAdmSupPrefStore().arePreferencesCompleted ||
+                 !useOrganizationStore().areDetailsCompleted"
+                   color="primary"
+                   variant="outlined"
+                   @click="updatePublic(true)">
+              Become public
+            </v-btn>
+            <v-btn v-if="useSupAdmSupStore().getPublic"
+                   color="secondary"
+                   @click="updatePublic(false)">
+              Become private
+            </v-btn>
+
+            <v-tooltip
+              v-if="!useSupAdmSupPrefStore().arePreferencesCompleted || !useOrganizationStore().areDetailsCompleted">
+              <template v-slot:activator="{ props }">
+                <v-spacer/>
+                <v-icon color="info" icon="mdi-information" v-bind="props"/>
+              </template>
+              Complete profile/preferences/logo in order to allow users to order from you
+            </v-tooltip>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 
   <v-dialog v-model="show">
     <v-row justify="center">
@@ -85,6 +106,17 @@
 
           <v-form ref="form" v-model="valid" @submit.prevent="submit()">
             <v-card-text>
+              <v-file-input
+                v-model="organizationToUpdate.logo"
+                :multiple="false"
+                :rules="[rules.fileSize, rules.required]"
+                accept="image/*"
+                clearable
+                hint="Max 2MB"
+                label="Upload logo (Max 2MB)"
+                prepend-inner-icon="mdi-camera"
+                show-size/>
+
               <v-text-field
                 v-model="organizationToUpdate.name"
                 :rules="[rules.required]"
@@ -106,6 +138,7 @@
                 color="primary"
                 hint="email@example.com"
                 label="Email"
+                prepend-inner-icon="mdi-email"
               />
 
               <v-text-field
@@ -114,6 +147,7 @@
                 color="primary"
                 hint="+37311222333"
                 label="Phone"
+                prepend-inner-icon="mdi-phone"
               />
 
               <div v-if="useProfileStore().isSupplier">
@@ -122,6 +156,7 @@
                   color="primary"
                   hint="https://my-website.com"
                   label="Website URL"
+                  prepend-inner-icon="mdi-web"
                   type="url"
                 />
 
@@ -130,6 +165,7 @@
                   color="primary"
                   hint="https://my-website.com/menu"
                   label="Menu URL"
+                  prepend-inner-icon="mdi-web"
                   type="url"
                 />
               </div>
@@ -144,10 +180,9 @@
       </v-col>
     </v-row>
   </v-dialog>
-
 </template>
 <script lang="ts" setup>
-import {computed, onMounted, Ref, ref} from "vue";
+import {computed, ComputedRef, onMounted, Ref, ref, UnwrapRef} from "vue";
 import {useProfileStore} from "@/store/user-app";
 import organizationService from "@/services/OrganizationService";
 import {OrganizationDetails} from "@/models/OrganizationDetails";
@@ -155,9 +190,11 @@ import toastManager from "@/services/ToastManager";
 import {useOrganizationStore} from "@/store/employee-or-supplier-app";
 import {VForm} from "vuetify/components";
 import {useSupAdmSupPrefStore, useSupAdmSupStore} from "@/store/supplier-adm-app";
+import {Supplier} from "@/models/Supplier";
 
 onMounted(() => {
   useOrganizationStore().requestFreshOrganizationData()
+  useOrganizationStore().requestLogo().finally(() => isLoadingLogo.value = false)
   if (useProfileStore().isSupplier) {
     useSupAdmSupStore().requestFreshSupplierData()
     useSupAdmSupPrefStore().requestFreshPreferencesData()
@@ -165,10 +202,13 @@ onMounted(() => {
 })
 
 
-const persistedSupplier = computed(() => useSupAdmSupStore().getSupplier)
+const persistedSupplier: ComputedRef<Supplier> = computed(() => useSupAdmSupStore().getSupplier)
 const form = ref(null) as Ref<InstanceType<typeof VForm> | null>;
-const valid = ref(false);
-const show = ref(false)
+const valid: Ref<UnwrapRef<boolean>> = ref(false);
+const show: Ref<UnwrapRef<boolean>> = ref(false)
+const maxFileSize = 1024 * 1024 * 2 // 2MB
+const isLoadingLogo = ref(true)
+
 const rules = {
   required: (value: string) => !!value || 'Required field.',
   email: (value: string) => {
@@ -178,6 +218,12 @@ const rules = {
   phone: (value: string) => {
     const pattern = /^\+(?:\d ?){6,14}\d$/
     return pattern.test(value) || 'Invalid phone number.';
+  },
+  fileSize: (file: File[]) => {
+    if (file[0] && file[0].size > maxFileSize) {
+      return `File size should not exceed ${maxFileSize / 1024 / 1024} MB`
+    }
+    return true
   }
 };
 
@@ -188,6 +234,7 @@ function initDialogue() {
   organizationToUpdate.value.email = organization?.email ?? '';
   organizationToUpdate.value.phone = organization?.phone ?? '';
   organizationToUpdate.value.description = organization?.description ?? '';
+  organizationToUpdate.value.logo = []
 
   const supplier = useSupAdmSupStore().getSupplier
   supplierToUpdate.value.menuUrl = supplier.menuUrl
@@ -211,6 +258,10 @@ async function submit() {
         await useSupAdmSupStore().update(supplierToUpdate.value.websiteUrl, supplierToUpdate.value.menuUrl)
       }
 
+      if (organizationToUpdate.value.logo[0]?.size > 0) {
+        await useOrganizationStore().updateLogo(organizationToUpdate.value.logo[0])
+      }
+
       toastManager.showSuccess("Updated!", "Your organization details were updated successfully")
       show.value = false
       await useOrganizationStore().requestFreshOrganizationData();
@@ -222,7 +273,7 @@ async function submit() {
 }
 
 async function updatePublic(isPublic: boolean) {
-  useSupAdmSupStore().updatePublic(isPublic)
+  await useSupAdmSupStore().updatePublic(isPublic)
 }
 
 const organizationToUpdate = ref({
@@ -230,6 +281,7 @@ const organizationToUpdate = ref({
   description: '',
   email: '',
   phone: '',
+  logo: [new File([], '')],
 });
 
 const supplierToUpdate = ref({

@@ -1,186 +1,187 @@
 <template>
-  <v-row justify="center">
-    <v-col cols="12" md="6" sm="8">
-      <v-card class="mx-auto" elevation="20">
-        <v-toolbar>
-          <v-toolbar-title>Organization Preferences</v-toolbar-title>
-          <v-btn color="primary" @click="initDialogue()">Edit Preferences</v-btn>
-        </v-toolbar>
+  <v-container>
+    <v-row justify="center">
+      <v-col cols="12" md="6" sm="8">
+        <v-card class="mx-auto" elevation="20">
+          <v-toolbar>
+            <v-toolbar-title>Organization Preferences</v-toolbar-title>
+            <v-btn color="primary" @click="initDialogue()">Edit Preferences</v-btn>
+          </v-toolbar>
 
-        <v-list>
-          <v-list-subheader title="Discounts"/>
+          <v-list>
+            <v-list-subheader title="Discounts"/>
 
-          <v-list-item :subtitle="useCompAdmCompPrefStore().getPreferences.companyDiscountType"
-                       prepend-icon="mdi-sale" title="Employees' discount configuration"/>
-          <v-divider inset/>
+            <v-list-item :subtitle="useCompAdmCompPrefStore().getPreferences.companyDiscountType"
+                         prepend-icon="mdi-sale" title="Employees' discount configuration"/>
+            <v-divider inset/>
 
-          <v-list-item>
-            <v-list-item-title>
-              <span>Discount </span>
-              <span class="text-info font-weight-bold">Percentage (%)</span>
-              <span> for the first employee order</span>
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              {{ useCompAdmCompPrefStore().getPreferences.discountPercentageFirstOrder }}
-            </v-list-item-subtitle>
-          </v-list-item>
-          <v-divider inset/>
+            <v-list-item>
+              <v-list-item-title>
+                <span>Discount </span>
+                <span class="text-info font-weight-bold">Percentage (%)</span>
+                <span> for the first employee order</span>
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                {{ useCompAdmCompPrefStore().getPreferences.discountPercentageFirstOrder }}
+              </v-list-item-subtitle>
+            </v-list-item>
+            <v-divider inset/>
 
-          <v-list-item>
-            <v-list-item-title>
-              <span class="text-info font-weight-bold">Fix</span>
-              <span> discount for the first employee order</span>
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              {{ useCompAdmCompPrefStore().getPreferences.discountFixFirstOrder }}
-            </v-list-item-subtitle>
-          </v-list-item>
-          <v-divider inset/>
+            <v-list-item>
+              <v-list-item-title>
+                <span class="text-info font-weight-bold">Fix</span>
+                <span> discount for the first employee order</span>
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                {{ useCompAdmCompPrefStore().getPreferences.discountFixFirstOrder }}
+              </v-list-item-subtitle>
+            </v-list-item>
+            <v-divider inset/>
 
-          <v-list-item>
-            <v-list-item-title>
-              <span>Maximum </span>
-              <span class="text-info font-weight-bold">Fix</span>
-              <span> discount for the first employee order</span>
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              {{ useCompAdmCompPrefStore().getPreferences.maxDiscountFixFirstOrder }}
-            </v-list-item-subtitle>
-          </v-list-item>
-          <v-divider inset/>
+            <v-list-item>
+              <v-list-item-title>
+                <span>Maximum </span>
+                <span class="text-info font-weight-bold">Fix</span>
+                <span> discount for the first employee order</span>
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                {{ useCompAdmCompPrefStore().getPreferences.maxDiscountFixFirstOrder }}
+              </v-list-item-subtitle>
+            </v-list-item>
+            <v-divider inset/>
 
-          <v-list-item>
-            <v-list-item-title>
-              <span class="text-info font-weight-bold">Fix</span>
-              <span> discount for employee daily</span>
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              {{ useCompAdmCompPrefStore().getPreferences.discountPerDay }}
-            </v-list-item-subtitle>
-          </v-list-item>
-          <v-divider inset/>
+            <v-list-item>
+              <v-list-item-title>
+                <span class="text-info font-weight-bold">Fix</span>
+                <span> discount for employee daily</span>
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                {{ useCompAdmCompPrefStore().getPreferences.discountPerDay }}
+              </v-list-item-subtitle>
+            </v-list-item>
+            <v-divider inset/>
 
-          <v-list-subheader title="Delivery"/>
+            <v-list-subheader title="Delivery"/>
 
-          <v-list-item :subtitle="useCompAdmCompPrefStore().getPreferences.deliverAt?.toString()"
-                       prepend-icon="mdi-timer-music" title="Default lunch deliver time"/>
-          <v-divider inset/>
+            <v-list-item :subtitle="useCompAdmCompPrefStore().getPreferences.deliverAt?.toString()"
+                         prepend-icon="mdi-timer-music" title="Default lunch deliver time"/>
+            <v-divider inset/>
 
-          <v-list-item :subtitle="useCompAdmCompPrefStore().getPreferences.deliveryAddress"
-                       prepend-icon="mdi-map-marker title=" title="Delivery address"/>
-          <v-divider inset/>
+            <v-list-item :subtitle="useCompAdmCompPrefStore().getPreferences.deliveryAddress"
+                         prepend-icon="mdi-map-marker title=" title="Delivery address"/>
+            <v-divider inset/>
 
-        </v-list>
-      </v-card>
-    </v-col>
+          </v-list>
+        </v-card>
+      </v-col>
 
-    <v-dialog v-model="show">
-      <v-row justify="center">
-        <v-col md="4" sm="8">
-          <v-card class="mx-auto">
-            <v-card-title>Edit Organization Preferences</v-card-title>
+      <v-dialog v-model="show">
+        <v-row justify="center">
+          <v-col md="4" sm="8">
+            <v-card class="mx-auto">
+              <v-card-title>Edit Organization Preferences</v-card-title>
 
-            <v-form ref="form" v-model="valid" @submit.prevent="submit()">
-              <v-card-text>
-                <v-row>
-                  <v-col>
-                    <v-select v-model="updatePreferences.companyDiscountType"
-                              :items="[CompanyDiscountType.PercentageFirst, CompanyDiscountType.SpecificAmountFirst,
+              <v-form ref="form" v-model="valid" @submit.prevent="submit()">
+                <v-card-text>
+                  <v-row>
+                    <v-col>
+                      <v-select v-model="updatePreferences.companyDiscountType"
+                                :items="[CompanyDiscountType.PercentageFirst, CompanyDiscountType.SpecificAmountFirst,
                             CompanyDiscountType.SpecificOverPercentageFirst, CompanyDiscountType.SpecificPerDay]"
-                              :rules="[companyPreferencesRules.required]"
-                              hint="Select the way discount is applied for employees"
-                              label="Select discount type"/>
-                  </v-col>
-                </v-row>
+                                :rules="[companyPreferencesRules.required]"
+                                hint="Select the way discount is applied for employees"
+                                label="Select discount type"/>
+                    </v-col>
+                  </v-row>
 
-                <v-row>
-                  <v-col
-                    v-if="updatePreferences.companyDiscountType === CompanyDiscountType.PercentageFirst ||
+                  <v-row>
+                    <v-col
+                      v-if="updatePreferences.companyDiscountType === CompanyDiscountType.PercentageFirst ||
                   updatePreferences.companyDiscountType === CompanyDiscountType.SpecificOverPercentageFirst">
-                    <v-text-field
-                      v-model="updatePreferences.discountPercentageFirstOrder"
-                      :rules="[companyPreferencesRules.minimumZero, companyPreferencesRules.isSafeInteger]"
-                      color="primary"
-                      hint="Only first employee's order will get a discount"
-                      label="Discount for the first order"
-                      prepend-inner-icon="mdi-percent"
-                      type="number"/>
-                  </v-col>
-                  <v-col
-                    v-if="updatePreferences.companyDiscountType !== CompanyDiscountType.SpecificPerDay">
-                    <v-text-field
-                      v-model="updatePreferences.discountFixFirstOrder"
-                      :rules="[companyPreferencesRules.minimumZero]"
-                      color="primary"
-                      hint="Only first employee's order will get a discount"
-                      label="Discount (fix) for the first order"
-                      min="0"
-                      step="0.01"
-                      type="number"/>
-                  </v-col>
-                </v-row>
+                      <v-text-field
+                        v-model="updatePreferences.discountPercentageFirstOrder"
+                        :rules="[companyPreferencesRules.minimumZero, companyPreferencesRules.isSafeInteger]"
+                        color="primary"
+                        hint="Only first employee's order will get a discount"
+                        label="Discount for the first order"
+                        prepend-inner-icon="mdi-percent"
+                        type="number"/>
+                    </v-col>
+                    <v-col
+                      v-if="updatePreferences.companyDiscountType !== CompanyDiscountType.SpecificPerDay">
+                      <v-text-field
+                        v-model="updatePreferences.discountFixFirstOrder"
+                        :rules="[companyPreferencesRules.minimumZero]"
+                        color="primary"
+                        hint="Only first employee's order will get a discount"
+                        label="Discount (fix) for the first order"
+                        min="0"
+                        step="0.01"
+                        type="number"/>
+                    </v-col>
+                  </v-row>
 
-                <v-row>
-                  <v-col
-                    v-if="updatePreferences.companyDiscountType !== CompanyDiscountType.SpecificPerDay">
-                    <v-text-field
-                      v-model="updatePreferences.maxDiscountFixFirstOrder"
-                      :rules="[companyPreferencesRules.minimumZero]"
-                      color="primary"
-                      hint="Only first employee's order will get a discount"
-                      label="Max Discount (fix) for the first order"
-                      step="0.01"
-                      type="number"/>
-                  </v-col>
-                  <v-col
-                    v-if="updatePreferences.companyDiscountType === CompanyDiscountType.SpecificPerDay">
-                    <v-text-field
-                      v-model="updatePreferences.discountPerDay"
-                      :rules="[companyPreferencesRules.minimumZero]"
-                      color="primary"
-                      hint="Spend on any order until zero"
-                      label="Employee's cash"
-                      step="0.01"
-                      type="number"/>
-                  </v-col>
-                </v-row>
+                  <v-row>
+                    <v-col
+                      v-if="updatePreferences.companyDiscountType !== CompanyDiscountType.SpecificPerDay">
+                      <v-text-field
+                        v-model="updatePreferences.maxDiscountFixFirstOrder"
+                        :rules="[companyPreferencesRules.minimumZero]"
+                        color="primary"
+                        hint="Only first employee's order will get a discount"
+                        label="Max Discount (fix) for the first order"
+                        step="0.01"
+                        type="number"/>
+                    </v-col>
+                    <v-col
+                      v-if="updatePreferences.companyDiscountType === CompanyDiscountType.SpecificPerDay">
+                      <v-text-field
+                        v-model="updatePreferences.discountPerDay"
+                        :rules="[companyPreferencesRules.minimumZero]"
+                        color="primary"
+                        hint="Spend on any order until zero"
+                        label="Employee's cash"
+                        step="0.01"
+                        type="number"/>
+                    </v-col>
+                  </v-row>
 
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="updatePreferences.deliverAt"
-                      :rules="[companyPreferencesRules.required]"
-                      color="primary"
-                      label="Lunch delivery time"
-                      type="time"/>
-                  </v-col>
-                </v-row>
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="updatePreferences.deliverAt"
+                        :rules="[companyPreferencesRules.required]"
+                        color="primary"
+                        label="Lunch delivery time"
+                        type="time"/>
+                    </v-col>
+                  </v-row>
 
-                <v-row>
-                  <v-col>
-                    <v-text-field
-                      v-model="updatePreferences.deliveryAddress"
-                      :rules="[companyPreferencesRules.required]"
-                      color="primary"
-                      hint="Where should supplier deliver lunch?"
-                      label="Delivery Address"
-                      prepend-inner-icon="mdi-map-marker"/>
-                  </v-col>
-                </v-row>
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="updatePreferences.deliveryAddress"
+                        :rules="[companyPreferencesRules.required]"
+                        color="primary"
+                        hint="Where should supplier deliver lunch?"
+                        label="Delivery Address"
+                        prepend-inner-icon="mdi-map-marker"/>
+                    </v-col>
+                  </v-row>
 
-              </v-card-text>
+                </v-card-text>
 
-              <v-card-actions>
-                <v-btn color="primary" type="submit" variant="outlined">Save</v-btn>
-                <v-btn color="secondary" variant="plain" @click="show = false">Cancel</v-btn>
-              </v-card-actions>
-            </v-form>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-dialog>
-  </v-row>
-
+                <v-card-actions>
+                  <v-btn color="primary" type="submit" variant="outlined">Save</v-btn>
+                  <v-btn color="secondary" variant="plain" @click="show = false">Cancel</v-btn>
+                </v-card-actions>
+              </v-form>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-dialog>
+    </v-row>
+  </v-container>
 </template>
 <script lang="ts" setup>
 import {onMounted, Ref, ref} from "vue";

@@ -5,8 +5,7 @@
         <v-col cols="12" lg="4" md="6" sm="8">
           <v-form
             ref="companyRegistrationForm"
-            @submit.prevent="registerSubmit()"
-          >
+            @submit.prevent="registerSubmit()">
             <v-card>
               <v-card-title class="text-center">Register Organization</v-card-title>
 
@@ -20,7 +19,7 @@
                   type="text"
                   @blur="validateName"
                   @keypress="validateName"
-                ></v-text-field>
+                />
               </v-card-item>
 
               <v-card-item>
@@ -29,7 +28,7 @@
                   color="secondary"
                   inset
                   label="Register as Supplier"
-                ></v-switch>
+                />
               </v-card-item>
 
               <v-card-actions class="justify-center">

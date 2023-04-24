@@ -18,6 +18,10 @@ export class SupplierService {
     return axios.get(ApiConstants.SUPPLIER_ADM_SUPPLIER + '/my')
   }
 
+  public anonymousRequestForSuppliers(): Promise<any> {
+    return axios.get(`${ApiConstants.ANONYM_SUPPLIER}/all`)
+  }
+
   public getAllSuppliers(): Promise<any> {
     return axios.get(ApiConstants.SYS_ADM_SUPPLIER)
   }

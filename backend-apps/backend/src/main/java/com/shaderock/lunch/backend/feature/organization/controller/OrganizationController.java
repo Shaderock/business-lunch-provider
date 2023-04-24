@@ -13,12 +13,15 @@ import com.shaderock.lunch.backend.feature.organization.service.OrganizationDeta
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.util.ApiConstants;
+import com.shaderock.lunch.backend.util.ImageService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +39,7 @@ public class OrganizationController {
   private final AppUserDetailsService userDetailsService;
   private final SupplierService supplierService;
   private final InvitationService invitationService;
+  private final ImageService imageService;
 
   @GetMapping("/verify-name")
   public ResponseEntity<Boolean> isOrganizationNameValid(@RequestParam @NotNull final String name) {
@@ -73,5 +77,16 @@ public class OrganizationController {
     OrganizationDetails organizationDetails = supplier.getOrganizationDetails();
 
     return ResponseEntity.ok(organizationDetailsMapper.toPublicDto(organizationDetails));
+  }
+
+  @SneakyThrows
+  @GetMapping(value = "/my/logo", produces = MediaType.IMAGE_JPEG_VALUE)
+  public byte[] readMenuImage(Principal principal, @RequestParam @NotNull boolean isThumbnail) {
+    OrganizationDetails organizationDetails = organizationDetailsService.read(principal.getName());
+    byte[] logo = organizationDetails.getLogo();
+    if (logo != null && isThumbnail) {
+      logo = imageService.resizeToThumbnail(logo);
+    }
+    return logo;
   }
 }

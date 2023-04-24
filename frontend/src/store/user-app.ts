@@ -13,6 +13,14 @@ import {AxiosResponse} from "axios";
 import {PublicOrganizationDetails} from "@/models/PublicOrganizationDetails";
 import {Utils} from "@/models/Utils";
 import organizationService from "@/services/OrganizationService";
+import {Supplier} from "@/models/Supplier";
+import {PublicSupplierPreferences} from "@/models/PublicSupplierPreferences";
+import {Duration} from "moment/moment";
+import {OrderType} from "@/models/OrderType";
+import {CategoryTag} from "@/models/CategoryTag";
+import supplierService from "@/services/SupplierService";
+import supplierPreferencesService from "@/services/SupplierPreferencesService";
+import moment from "moment";
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -189,6 +197,103 @@ export const useInvitationStore = defineStore('userInvitations', {
           formattedCreatedAt: Utils.dateToDateString(invitation.createdAt)
         };
       });
+    }
+  }
+})
+
+export interface WorkingSupplier {
+  // details
+  name: string
+  description: string
+  email: string
+  phone: string
+
+  // supplier
+  supplierId: string
+  websiteUrl: string
+  menuUrl: string
+
+  // preferences
+  requestOffset: Duration
+  deliveryPeriodStartTime: Date
+  deliveryPeriodEndTime: Date
+  minimumOrdersPerCompanyRequest: number
+  minimumCategoriesForEmployeeOrder: number
+  orderType: OrderType
+  pricesForCategoriesIds: string[] | null
+  categoriesTags: CategoryTag[]
+}
+
+export const userWorkingSuppliersStore = defineStore('publicSuppliers', {
+  state: () => ({
+    publicSuppliers: [] as Supplier[],
+    publicSuppliersDetails: [] as PublicOrganizationDetails[],
+    publicSuppliersPreferences: [] as PublicSupplierPreferences[],
+    suppliersLimit: 10 as number
+  }),
+  getters: {
+    getSuppliers(): Supplier[] {
+      return this.publicSuppliers
+    },
+    getPreferences(): PublicSupplierPreferences[] {
+      return this.publicSuppliersPreferences
+    },
+    getDetails(): PublicOrganizationDetails[] {
+      return this.publicSuppliersDetails
+    },
+    getWorkingSuppliers(): WorkingSupplier[] {
+      return this.publicSuppliers.map(supplier => {
+        const details = this.publicSuppliersDetails.find(d => d.id === supplier.organizationDetailsId)
+        const preferences = this.publicSuppliersPreferences.find(p => p.id === supplier.preferencesId)
+        return {
+
+          name: details?.name ?? '',
+          description: details?.description ?? '',
+          email: details?.email ?? '',
+          phone: details?.phone ?? '',
+
+          supplierId: supplier.id ?? '',
+          websiteUrl: supplier.websiteUrl,
+          menuUrl: supplier.menuUrl,
+
+          requestOffset: preferences?.requestOffset ?? moment.duration(),
+          deliveryPeriodStartTime: preferences?.deliveryPeriodStartTime ?? new Date(),
+          deliveryPeriodEndTime: preferences?.deliveryPeriodEndTime ?? new Date(),
+          minimumOrdersPerCompanyRequest: preferences?.minimumOrdersPerCompanyRequest ?? 0,
+          minimumCategoriesForEmployeeOrder: preferences?.minimumCategoriesForEmployeeOrder ?? 0,
+          orderType: preferences?.orderType ?? OrderType.UnlimitedOptions,
+          pricesForCategoriesIds: preferences?.pricesForCategoriesIds ?? [],
+          categoriesTags: preferences?.categoriesTags ?? []
+        }
+      })
+    },
+    getWorkingSuppliersLimited(): WorkingSupplier[] {
+      return this.getWorkingSuppliers.slice(0, this.suppliersLimit)
+    }
+  },
+  actions: {
+    async requestFreshData() {
+      this.publicSuppliers = []
+      this.publicSuppliersDetails = []
+      this.publicSuppliersPreferences = []
+
+      const suppliersResponse: AxiosResponse<Supplier[]> = await supplierService.anonymousRequestForSuppliers()
+      this.publicSuppliers = suppliersResponse.data
+
+      const detailsResponse: AxiosResponse<PublicOrganizationDetails[]> =
+        await organizationService.anonymousRequestForDetails()
+      this.publicSuppliersDetails = detailsResponse.data
+
+      const preferencesResponse: AxiosResponse<PublicSupplierPreferences[]> =
+        await supplierPreferencesService.anonymousRequestForPreferences()
+      this.publicSuppliersPreferences = preferencesResponse.data
+    },
+    async requestFreshDataIfNothingCached() {
+      if (this.publicSuppliers.length === 0)
+        await this.requestFreshData()
+    },
+    incrementLimit() {
+      this.suppliersLimit += 10
     }
   }
 })

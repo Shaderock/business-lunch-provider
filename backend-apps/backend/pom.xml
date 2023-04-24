@@ -75,6 +75,11 @@
       <groupId>net.datafaker</groupId>
       <version>1.9.0</version>
     </dependency>
+    <dependency>
+      <artifactId>imgscalr-lib</artifactId>
+      <groupId>org.imgscalr</groupId>
+      <version>4.2</version>
+    </dependency>
 
 
     <dependency>

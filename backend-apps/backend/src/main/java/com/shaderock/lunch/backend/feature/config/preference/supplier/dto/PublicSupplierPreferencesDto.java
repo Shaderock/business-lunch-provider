@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -18,6 +19,8 @@ public record PublicSupplierPreferencesDto(
     LocalTime deliveryPeriodStartTime,
     LocalTime deliveryPeriodEndTime,
     Integer minimumOrdersPerRequest,
+    Integer minimumCategoriesForEmployeeOrder,
+    Set<UUID> pricesForCategoriesIds,
     OrderType orderType,
     List<CategoryTag> categoriesTags) implements Serializable {
 
