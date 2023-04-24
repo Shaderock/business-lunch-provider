@@ -16,6 +16,10 @@ export class CompanyService {
   async getAllCompanies(): Promise<any> {
     return axios.get(ApiConstants.SYS_ADM_COMPANY)
   }
+
+  async requestSupplierSubscribers(): Promise<any> {
+    return axios.get(`${ApiConstants.SUPPLIER_ADM_COMPANY}/subscriber/all`)
+  }
 }
 
 const companyService: CompanyService = new CompanyService()

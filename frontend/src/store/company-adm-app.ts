@@ -13,6 +13,18 @@ import invitationService from "@/services/InvitationService";
 import toastManager from "@/services/ToastManager";
 import {Utils} from "@/models/Utils";
 import {CompanyDiscountType} from "@/models/CompanyDiscountType";
+import {OrderType} from "@/models/OrderType";
+import {SubscriptionStatus} from "@/models/SubscriptionStatus";
+import {Supplier} from "@/models/Supplier";
+import {PublicSupplierPreferences} from "@/models/PublicSupplierPreferences";
+import {OrganizationDetails} from "@/models/OrganizationDetails";
+import {Subscription} from "@/models/Subscription";
+import subscriptionService from "@/services/SubscriptionService";
+import supplierService from "@/services/SupplierService";
+import organizationService from "@/services/OrganizationService";
+import supplierPreferencesService from "@/services/SupplierPreferencesService";
+import {useWorkingSuppliersStore, WorkingSupplier} from "@/store/user-app";
+
 
 export const useCompanyAdmCompanyStore = defineStore('company', {
   state: () => ({
@@ -194,4 +206,120 @@ export const useCompAdmUserStore = defineStore('companyAdminEmployees', {
   }
 })
 
+export interface SubscriptionSupplier {
+  // supplier
+  supplierId: string
+  menuUrl: string
+
+  // details
+  name: string
+  phone: string
+  email: string
+
+  // preferences
+  orderType: OrderType
+  minimumOrdersPerCompanyRequest: number
+  minimumCategoriesForEmployeeOrder: number
+
+  // subscription
+  subscriptionId: string
+  subscriptionStatus: SubscriptionStatus
+  subscriptionDate: string
+}
+
+export const useSubscriptionSupplierStore = defineStore('companyAdminSubscriptionSuppliers', {
+  state: () => ({
+    suppliers: [] as Supplier[],
+    suppliersPreferences: [] as PublicSupplierPreferences[],
+    suppliersDetails: [] as OrganizationDetails[],
+    subscriptions: [] as Subscription[]
+  }),
+  getters: {
+    getSuppliers(): Supplier[] {
+      return this.suppliers
+    },
+    getSuppliersPreferences(): PublicSupplierPreferences[] {
+      return this.suppliersPreferences
+    },
+    getSuppliersDetails(): OrganizationDetails[] {
+      return this.suppliersDetails
+    },
+    getSubscriptionSuppliers(): SubscriptionSupplier[] {
+      return this.suppliers.map(supplier => {
+        const preferences = this.suppliersPreferences.find(p => p.id === supplier.preferencesId)
+        const details = this.suppliersDetails.find(d => d.id === supplier.organizationDetailsId)
+        const subscription = this.subscriptions.find(s => s.supplierId === supplier.id)
+
+        return {
+          name: details?.name ?? '',
+          email: details?.email ?? '',
+          phone: details?.phone ?? '',
+
+          supplierId: supplier.id ?? '',
+          menuUrl: supplier.menuUrl,
+
+          minimumOrdersPerCompanyRequest: preferences?.minimumOrdersPerCompanyRequest ?? 0,
+          minimumCategoriesForEmployeeOrder: preferences?.minimumCategoriesForEmployeeOrder ?? 0,
+          orderType: preferences?.orderType ?? OrderType.UnlimitedOptions,
+
+          subscriptionId: subscription?.id ?? '',
+          subscriptionStatus: subscription?.subscriptionStatus ?? SubscriptionStatus.Pending,
+          subscriptionDate: subscription?.createdAt ? Utils.dateToDateString(subscription.createdAt) : ''
+        }
+      })
+    },
+    getValidSuppliersDetailsListForSubscription(): WorkingSupplier[] {
+      return useWorkingSuppliersStore().getWorkingSuppliers.filter(
+        (publicSupplier: WorkingSupplier) =>
+          !this.suppliers.some(supplier => supplier.id === publicSupplier.supplierId)
+      )
+    },
+    getValidSuppliersDetailsListNameForSubscription(): string[] {
+      return this.getValidSuppliersDetailsListForSubscription.map(supplier => supplier.name)
+    },
+  },
+  actions: {
+    async subscribe(supplierNames: string[]) {
+      try {
+        for (const supplierName of supplierNames) {
+          const chosenSupplier: WorkingSupplier | undefined = this.getValidSuppliersDetailsListForSubscription.find(s => s.name === supplierName);
+
+          if (chosenSupplier) {
+            await subscriptionService.subscribe(chosenSupplier.supplierId)
+          }
+        }
+        // await this.requestFreshData()
+      } catch (error) {
+        console.log("Couldn't subscribe to a supplier")
+      }
+    },
+    async unsubscribe(supplierId: string) {
+      try {
+        await subscriptionService.unsubscribe(supplierId)
+        this.suppliers = this.suppliers.filter(s => s.id !== supplierId)
+      } catch (error) {
+        console.log("Couldn't unsubscribe from a supplier")
+      }
+    },
+    async requestFreshData() {
+      const suppliersResponse: AxiosResponse<Supplier[]> =
+        await supplierService.requestSubscriptionSuppliers()
+      this.suppliers = suppliersResponse.data
+
+      const preferencesResponse: AxiosResponse<PublicSupplierPreferences[]> =
+        await supplierPreferencesService.requestSubscriptionSuppliersPreferences()
+      this.suppliersPreferences = preferencesResponse.data
+
+      const detailsResponse: AxiosResponse<OrganizationDetails[]> =
+        await organizationService.requestSubscriptionSuppliersDetails()
+      this.suppliersDetails = detailsResponse.data
+
+      const subscriptionsResponse: AxiosResponse<Subscription[]> =
+        await subscriptionService.requestCompanySubscriptions()
+      this.subscriptions = subscriptionsResponse.data
+
+      await useWorkingSuppliersStore().requestFreshDataIfNothingCached()
+    }
+  }
+})
 

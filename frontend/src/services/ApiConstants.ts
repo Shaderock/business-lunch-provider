@@ -17,6 +17,7 @@ export class ApiConstants {
   static readonly EMPLOYEE_ORDER: string = ApiConstants.EMPLOYEE + "/order"
   static readonly OPTION: string = ApiConstants.BACKEND_URL + "/option"
   static readonly ORGANIZATION_PART = "/organization"
+  static readonly COMPANY_ADM_ORGANIZATION: string = ApiConstants.COMPANY_ADM + ApiConstants.ORGANIZATION_PART;
   static readonly ORGANIZATION: string = ApiConstants.BACKEND_URL + ApiConstants.ORGANIZATION_PART
   static readonly SUPPLIER_ADM: string = ApiConstants.BACKEND_URL + "/supplier-adm"
   static readonly SUPPLIER_ADM_CATEGORY: string = ApiConstants.SUPPLIER_ADM + "/category"
@@ -45,6 +46,8 @@ export class ApiConstants {
   static readonly SUPPLIER_ADM_COMPANY: string = ApiConstants.SUPPLIER_ADM + ApiConstants.COMPANY_URL_PART
   static readonly SUPPLIER_ADM_COMPANY_PREFERENCES: string = ApiConstants.SUPPLIER_ADM_COMPANY + ApiConstants.PREFERENCES_URL_PART
   static readonly SUPPLIER_URL_PART: string = "/supplier"
+  static readonly COMPANY_ADM_SUPPLIER: string = ApiConstants.COMPANY_ADM + ApiConstants.SUPPLIER_URL_PART
+  static readonly COMPANY_ADM_SUPPLIER_PREFERENCES: string = ApiConstants.COMPANY_ADM_SUPPLIER + ApiConstants.PREFERENCES_URL_PART
   static readonly ANONYM_SUPPLIER: string = ApiConstants.ANONYM + ApiConstants.SUPPLIER_URL_PART
   static readonly ANONYM_SUPPLIER_PREFERENCES: string = ApiConstants.ANONYM_SUPPLIER + ApiConstants.PREFERENCES_URL_PART
   static readonly SYS_ADM_SUPPLIER: string = ApiConstants.SYS_ADM + ApiConstants.SUPPLIER_URL_PART

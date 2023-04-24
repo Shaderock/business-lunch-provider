@@ -138,7 +138,7 @@ export interface InvitingCompany {
   email: string
   phone: string
   formattedCreatedAt: string | null
-  logo: string
+  logo: string | null
   logoThumbnail: string
 }
 
@@ -259,7 +259,7 @@ export interface WorkingSupplier {
   categoriesTags: CategoryTag[]
 }
 
-export const userWorkingSuppliersStore = defineStore('publicSuppliers', {
+export const useWorkingSuppliersStore = defineStore('publicSuppliers', {
   state: () => ({
     publicSuppliers: [] as Supplier[],
     publicSuppliersDetails: [] as PublicOrganizationDetails[],

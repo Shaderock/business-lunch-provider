@@ -1,12 +1,12 @@
-package com.shaderock.lunch.backend.feature.company.controller;
+package com.shaderock.lunch.backend.feature.supplier.controller;
 
-import com.shaderock.lunch.backend.feature.company.dto.PublicCompanyDto;
 import com.shaderock.lunch.backend.feature.company.entity.Company;
-import com.shaderock.lunch.backend.feature.company.mapper.CompanyMapper;
+import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
 import com.shaderock.lunch.backend.feature.subscription.service.SubscriptionService;
+import com.shaderock.lunch.backend.feature.supplier.dto.PublicSupplierDto;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
-import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
+import com.shaderock.lunch.backend.feature.supplier.mapper.SupplierMapper;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
@@ -21,19 +21,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(ApiConstants.SUPPLIER_ADM_COMPANY)
-public class SupplierAdmCompanyController {
+@RequestMapping(ApiConstants.COMPANY_ADM_SUPPLIER)
+public class CompanyAdmSupplierController {
 
-  private final CompanyMapper companyMapper;
+  private final CompanyService companyService;
+  private final SupplierMapper supplierMapper;
   private final SubscriptionService subscriptionService;
-  private final SupplierService supplierService;
 
-  @GetMapping("/subscriber/all")
+  @GetMapping("/subscription/all")
   @Transactional
-  public ResponseEntity<List<PublicCompanyDto>> read(Principal principal) {
-    Supplier supplier = supplierService.read(principal);
-    List<Subscription> subscriptions = subscriptionService.read(supplier);
-    List<Company> companies = subscriptions.stream().map(Subscription::getCompany).toList();
-    return ResponseEntity.ok(companies.stream().map(companyMapper::toPublicDto).toList());
+  public ResponseEntity<List<PublicSupplierDto>> read(Principal principal) {
+    Company company = companyService.read(principal);
+    List<Subscription> subscriptions = subscriptionService.read(company);
+
+    List<Supplier> suppliers = subscriptions.stream().map(Subscription::getSupplier).toList();
+    return ResponseEntity.ok(suppliers.stream().map(supplierMapper::toPublicDto).toList());
   }
 }

@@ -61,6 +61,14 @@ export class OrganizationService {
     console.log(formData.get('logo'))
     return axios.put(`${ApiConstants.ORGANIZATION_ADM_ORGANIZATION}/logo`, formData);
   }
+
+  async requestSubscriptionSuppliersDetails(): Promise<AxiosResponse<OrganizationDetails[]>> {
+    return axios.get(`${ApiConstants.COMPANY_ADM_ORGANIZATION}/subscription/all`)
+  }
+
+  async requestSubscribersCompaniesDetails() {
+    return axios.get(`${ApiConstants.SUPPLIER_ADM_ORGANIZATION}/subscriber/all`)
+  }
 }
 
 const organizationService: OrganizationService = new OrganizationService()

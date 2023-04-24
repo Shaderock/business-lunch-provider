@@ -10,6 +10,7 @@ import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.List;
@@ -35,6 +36,7 @@ public class CompanyAdmSubscriptionController {
   private final SubscriptionMapper subscriptionMapper;
 
   @GetMapping("/all")
+  @Transactional
   public ResponseEntity<List<SubscriptionDto>> read(Principal principal) {
     Company company = companyService.read(principal);
     List<Subscription> subscriptions = subscriptionService.read(company);
@@ -42,6 +44,7 @@ public class CompanyAdmSubscriptionController {
   }
 
   @PostMapping("/subscribe")
+  @Transactional
   public ResponseEntity<SubscriptionDto> requestSubscription(@RequestParam @NotNull UUID supplierId,
       Principal principal) {
     Company company = companyService.read(principal);
@@ -51,6 +54,7 @@ public class CompanyAdmSubscriptionController {
   }
 
   @DeleteMapping("/unsubscribe")
+  @Transactional
   public ResponseEntity<Void> unsubscribe(@RequestParam @NotNull UUID supplierId,
       Principal principal) {
     Company company = companyService.read(principal);

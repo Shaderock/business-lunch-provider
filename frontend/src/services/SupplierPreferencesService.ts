@@ -2,6 +2,7 @@ import axios, {AxiosResponse} from "axios";
 import {ApiConstants} from "@/services/ApiConstants";
 import {SupplierPreferences} from "@/models/SupplierPreferences";
 import {Utils} from "@/models/Utils";
+import {PublicSupplierPreferences} from "@/models/PublicSupplierPreferences";
 
 export class SupplierPreferencesService {
 
@@ -24,6 +25,10 @@ export class SupplierPreferencesService {
     };
 
     return axios.put(ApiConstants.SUPPLIER_ADM_PREFERENCES, serializedPreferences);
+  }
+
+  async requestSubscriptionSuppliersPreferences(): Promise<AxiosResponse<PublicSupplierPreferences[]>> {
+    return axios.get(`${ApiConstants.COMPANY_ADM_SUPPLIER_PREFERENCES}/subscription/all`)
   }
 }
 

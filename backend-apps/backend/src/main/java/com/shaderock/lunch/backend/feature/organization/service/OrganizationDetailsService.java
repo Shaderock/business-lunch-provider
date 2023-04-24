@@ -7,7 +7,6 @@ import com.shaderock.lunch.backend.feature.organization.dto.OrganizationDetailsD
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.feature.organization.mapper.OrganizationDetailsMapper;
 import com.shaderock.lunch.backend.feature.organization.repository.OrganizationDetailsRepository;
-import com.shaderock.lunch.backend.feature.supplier.repository.SupplierRepository;
 import com.shaderock.lunch.backend.feature.user.entity.AppUser;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -16,8 +15,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,8 +28,6 @@ public class OrganizationDetailsService {
   private final OrganizationDetailsValidationService organizationDetailsValidationService;
   private final AppUserDetailsService appUserDetailsService;
   private final OrganizationDetailsMapper organizationDetailsMapper;
-  private final CacheManager cacheManager;
-  private final SupplierRepository supplierRepository;
 
   @Transactional
   public OrganizationDetails create(@NonNull OrganizationDetails details) {
@@ -79,17 +75,9 @@ public class OrganizationDetailsService {
 
   @SneakyThrows
   @Transactional
+  @CacheEvict(cacheNames = "logo", allEntries = true)
   public void updateLogo(MultipartFile logo, OrganizationDetails organizationDetails) {
     organizationDetails.setLogo(logo.getBytes());
-
-    supplierRepository.findByOrganizationDetails(organizationDetails).ifPresent(supplier -> {
-      Cache cache = cacheManager.getCache("logo");
-      if (cache != null) {
-        cacheManager.getCacheNames().stream()
-            .filter(cacheKey -> cacheKey.startsWith(supplier.getId().toString()))
-            .forEach(cache::evict);
-      }
-    });
   }
 
   public OrganizationDetails update(@NonNull OrganizationDetailsDto organizationDetailsDto,
