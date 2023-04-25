@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="fill-height">
     <v-row align="center" justify="center">
       <v-col cols="12" md="5" sm="8">
         <v-card elevation="20" shaped>
@@ -15,8 +15,7 @@
                 type="text"
                 @blur="validateFirstName"
                 @keypress="validateFirstName"
-              >
-              </v-text-field>
+              />
               <v-text-field
                 v-model="lastName"
                 :error-messages="lastNameErrors"
@@ -35,7 +34,7 @@
                 type="email"
                 @blur="validateEmail"
                 @keypress="validateEmail"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="password"
                 :error-messages="passwordErrors"
@@ -45,7 +44,7 @@
                 type="password"
                 @blur="validatePassword"
                 @keypress="validatePassword"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="passwordRepeat"
                 :error-messages="passwordRepeatErrors"
@@ -54,7 +53,7 @@
                 type="password"
                 @blur="validatePasswordRepeat"
                 @keypress="validatePasswordRepeat"
-              ></v-text-field>
+              />
             </v-form>
           </v-card-text>
           <v-card-actions>

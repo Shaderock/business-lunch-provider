@@ -127,7 +127,7 @@ class CategoryControllerIntegrationTests {
 
     categoryDto = new CategoryDto(category.getId(), category.getName(),
         category.getOptions().stream().map(Option::getId).collect(Collectors.toSet()),
-        category.isPublic());
+        null, null, category.isPublic());
   }
 
   @Test

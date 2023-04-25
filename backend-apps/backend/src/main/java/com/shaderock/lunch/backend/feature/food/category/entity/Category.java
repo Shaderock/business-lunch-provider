@@ -9,6 +9,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -32,9 +33,17 @@ public class Category extends VisibleEntity {
 
   @Column
   private String name;
+
   @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
   @Exclude
   private Set<Option> options = new HashSet<>();
+
+  @Column
+  private LocalDate createdAt;
+
+  @Column
+  private LocalDate publishedAt;
+
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "menu_id", nullable = false)
   @Exclude

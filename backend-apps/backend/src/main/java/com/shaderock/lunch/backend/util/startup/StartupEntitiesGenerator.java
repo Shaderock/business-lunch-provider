@@ -78,7 +78,6 @@ public class StartupEntitiesGenerator implements
     } catch (Exception e) {
       LOGGER.error("Couldn't generate default supplier. Reason: {}", e.getMessage());
     }
-
     try {
       generateCompany(appUserDetailsService.loadUserByUsername(Organization.COMPANY.adminEmail));
       generateDummyEmployees();

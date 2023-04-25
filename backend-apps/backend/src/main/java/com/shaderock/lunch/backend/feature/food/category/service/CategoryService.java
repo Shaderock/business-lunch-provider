@@ -9,6 +9,7 @@ import com.shaderock.lunch.backend.feature.food.category.repository.CategoryRepo
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierValidationService;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.NonNull;
@@ -43,6 +44,8 @@ public class CategoryService {
     categoryValidationService.validateCreate(newCategory, supplier);
 
     newCategory.setMenu(supplier.getMenu());
+    newCategory.setCreatedAt(LocalDate.now());
+    newCategory.setId(null);
 
     Category persistedCategory = categoryRepository.save(newCategory);
     supplier.getMenu().getCategories().add(persistedCategory);
@@ -74,6 +77,7 @@ public class CategoryService {
   public List<Category> read(@NonNull Supplier supplier) {
     return categoryRepository.findByMenu_Supplier_Id(supplier.getId());
   }
+
   @Transactional
   public Category update(@NonNull CategoryDto categoryDto, @NonNull Supplier supplier) {
     LOGGER.info("Converting [{}] to Category", categoryDto);
@@ -90,15 +94,22 @@ public class CategoryService {
     LOGGER.info("Attempting to update [{}]", categoryToUpdate);
 
     Category persistedCategory = read(categoryToUpdate.getId(), supplier);
+
     if (categoryToUpdate.isPublic()) {
       supplierValidationService.validateCanCreatePublicCategories(supplier);
       categoryValidationService.validateCategoryCanBeMadePublic(persistedCategory,
           persistedCategory.getMenu().getSupplier());
+
+      persistedCategory.setPublic(categoryToUpdate.isPublic());
+      persistedCategory.setPublishedAt(LocalDate.now());
+    } else {
+      // todo validate category can be made private
+      persistedCategory.setPublic(false);
     }
 
-    persistedCategory.setName(categoryToUpdate.getName());
-    persistedCategory.setPublic(categoryToUpdate.isPublic());
-    persistedCategory.setOptions(categoryToUpdate.getOptions());
+    if (persistedCategory.getPublishedAt() != null) {
+      persistedCategory.setName(categoryToUpdate.getName());
+    }
 
     persistedCategory = categoryRepository.save(persistedCategory);
 

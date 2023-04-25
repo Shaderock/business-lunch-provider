@@ -8,6 +8,7 @@ import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
@@ -37,6 +38,7 @@ public class SupplierAdmPreferencesController {
   }
 
   @PutMapping
+  @Transactional
   public ResponseEntity<SupplierPreferencesDto> update(Principal principal,
       @NotNull @Valid @RequestBody SupplierPreferencesDto supplierPreferencesDto) {
     Supplier supplier = supplierService.read(principal);

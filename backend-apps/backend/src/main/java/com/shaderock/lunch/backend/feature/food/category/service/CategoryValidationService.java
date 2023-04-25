@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+// todo disallow published to be updated
 public class CategoryValidationService {
 
   private final SupplierValidationService supplierValidationService;

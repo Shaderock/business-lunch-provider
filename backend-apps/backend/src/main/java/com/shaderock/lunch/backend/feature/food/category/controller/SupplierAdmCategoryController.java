@@ -45,10 +45,10 @@ public class SupplierAdmCategoryController {
   }
 
   @GetMapping
-  public ResponseEntity<CategoryDto> read(@RequestParam @NotBlank final UUID id,
+  public ResponseEntity<CategoryDto> read(@RequestParam @NotBlank final UUID categoryId,
       Principal principal) {
     Supplier supplier = supplierService.read(principal);
-    Category category = categoryService.read(id, supplier);
+    Category category = categoryService.read(categoryId, supplier);
     CategoryDto categoryDto = categoryMapper.toDto(category);
     return ResponseEntity.ok(categoryDto);
   }
@@ -70,9 +70,9 @@ public class SupplierAdmCategoryController {
   }
 
   @DeleteMapping
-  public ResponseEntity<Void> delete(@RequestParam @NotNull UUID id, Principal principal) {
+  public ResponseEntity<Void> delete(@RequestParam @NotNull UUID categoryId, Principal principal) {
     Supplier supplier = supplierService.read(principal);
-    categoryService.delete(id, supplier);
+    categoryService.delete(categoryId, supplier);
     return ResponseEntity.noContent().build();
   }
 }

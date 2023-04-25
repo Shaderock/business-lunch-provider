@@ -16,6 +16,8 @@ import {PublicCompanyPreferences} from "@/models/PublicCompanyPreferences";
 import {Company} from "@/models/Company";
 import companyService from "@/services/CompanyService";
 import companyPreferencesService from "@/services/CompanyPreferencesService";
+import {Category} from "@/models/Category";
+import categoryService from "@/services/CategoryService";
 
 export const useSupAdmSupPrefStore = defineStore('supplierAdminSupplierPreferences', {
   state: () => ({
@@ -130,7 +132,7 @@ export interface SubscriberCompany {
   subscriptionDate: string
 }
 
-export const useSubscribersCompaniesStore = defineStore('supplierAdminSubcribersCompanies', {
+export const useSubscribersCompaniesStore = defineStore('supplierAdminSubscribersCompanies', {
   state: () => ({
     companies: [] as Company[],
     companiesPreferences: [] as PublicCompanyPreferences[],
@@ -208,3 +210,100 @@ export const useSubscribersCompaniesStore = defineStore('supplierAdminSubcribers
     }
   }
 })
+
+export interface FormattedCategory {
+  id: string
+  name: string
+  categoriesAmount: number
+  createdAt: string
+  publishedAt: string
+  isPublished: boolean
+  isPublic: boolean
+}
+
+export const useSupplierCategoriesStore = defineStore('supplierAdminCategories', {
+  state: () => ({
+    categories: [] as Category[],
+  }),
+  getters: {
+    getCategories(): Category[] {
+      return this.categories
+    },
+    getFormattedCategories(): FormattedCategory[] {
+      return this.categories.map(category => {
+        return {
+          id: category.id,
+          name: category.name,
+          categoriesAmount: category.optionIds.length,
+          createdAt: category.createdAt ? Utils.dateToDateString(category.createdAt) : '',
+          publishedAt: category.publishedAt ? Utils.dateToDateString(category.publishedAt) : '',
+          isPublished: !!category.publishedAt,
+          isPublic: category.isPublic
+        }
+      })
+    }
+  },
+  actions: {
+    async createCategory(formattedCategory: FormattedCategory) {
+      const response =
+        await categoryService.createCategory(this.convertFormattedCategoryToNewCategory(formattedCategory))
+      this.categories.push(response.data)
+    },
+    async editCategory(formattedCategory: FormattedCategory) {
+      const categoryIndex: number = this.categories.findIndex(c => c.id === formattedCategory.id);
+      const oldName: string = this.categories[categoryIndex].name
+      if (categoryIndex !== -1) {
+        try {
+          this.categories[categoryIndex].name = formattedCategory.name;
+          const response: AxiosResponse<Category> = await categoryService.updateCategory(this.categories[categoryIndex]);
+          this.categories[categoryIndex] = response.data;
+        } catch (err) {
+          this.categories[categoryIndex].name = oldName;
+        }
+      }
+    },
+    async deleteCategory(formattedCategory: FormattedCategory) {
+      await categoryService.deleteCategory(formattedCategory.id)
+      this.categories = this.categories.filter(c => c.id !== formattedCategory.id)
+    },
+    async updateCategoryVisibility(formattedCategory: FormattedCategory, isPublic: boolean) {
+      const categoryIndex: number = this.categories.findIndex(c => c.id === formattedCategory.id);
+      if (categoryIndex !== -1) {
+        try {
+          this.categories[categoryIndex].isPublic = isPublic;
+          const response: AxiosResponse<Category> = await categoryService.updateCategory(this.categories[categoryIndex]);
+          this.categories[categoryIndex] = response.data;
+        } catch (err) {
+          this.categories[categoryIndex].isPublic = !isPublic;
+        }
+      }
+    },
+    async publishCategory(formattedCategory: FormattedCategory) {
+      await this.updateCategoryVisibility(formattedCategory, true)
+    },
+    async hideCategory(formattedCategory: FormattedCategory) {
+      await this.updateCategoryVisibility(formattedCategory, false)
+    },
+    convertFormattedCategoryToNewCategory(formattedCategory: FormattedCategory): Category {
+      return new Category(formattedCategory.id, formattedCategory.name, [], new Date(), new Date(), false)
+    },
+    generateEmptyFormattedCategory(): FormattedCategory {
+      return {
+        id: '',
+        name: '',
+        categoriesAmount: 0,
+        createdAt: '',
+        publishedAt: '',
+        isPublished: false,
+        isPublic: false,
+      }
+    },
+    async requestFreshData() {
+      const categoriesResponse: AxiosResponse<Category[]> = await categoryService.requestSupplierCategories()
+      this.categories = categoriesResponse.data
+    }
+  }
+})
+
+
+
