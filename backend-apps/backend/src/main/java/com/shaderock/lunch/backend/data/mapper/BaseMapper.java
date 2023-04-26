@@ -41,7 +41,7 @@ public interface BaseMapper {
   default Set<Option> idsToOptions(Set<UUID> optionsIds) {
     return Stream.ofNullable(optionsIds)
         .flatMap(Collection::stream)
-        .map(id -> Option.builder().id(id).build())
+        .map(id -> Option.baseEntityBuilder().id(id).build())
         .collect(Collectors.toSet());
   }
 
@@ -122,5 +122,13 @@ public interface BaseMapper {
         .flatMap(Collection::stream)
         .map(id -> PriceForCategories.builder().id(id).build())
         .collect(Collectors.toSet());
+  }
+
+  default boolean hasImage(byte[] imageBytes) {
+    return imageBytes != null;
+  }
+
+  default byte[] dummyImageToBytes(boolean hasImage) {
+    return null;
   }
 }

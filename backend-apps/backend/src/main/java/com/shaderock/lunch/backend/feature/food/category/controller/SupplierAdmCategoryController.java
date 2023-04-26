@@ -8,6 +8,7 @@ import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -45,15 +46,17 @@ public class SupplierAdmCategoryController {
   }
 
   @GetMapping
-  public ResponseEntity<CategoryDto> read(@RequestParam @NotBlank final UUID id,
+  @Transactional
+  public ResponseEntity<CategoryDto> read(@RequestParam @NotBlank final UUID categoryId,
       Principal principal) {
     Supplier supplier = supplierService.read(principal);
-    Category category = categoryService.read(id, supplier);
+    Category category = categoryService.read(categoryId, supplier);
     CategoryDto categoryDto = categoryMapper.toDto(category);
     return ResponseEntity.ok(categoryDto);
   }
 
   @GetMapping("/all")
+  @Transactional
   public ResponseEntity<List<CategoryDto>> readAll(Principal principal) {
     Supplier supplier = supplierService.read(principal);
     List<Category> categories = categoryService.read(supplier);
@@ -61,6 +64,7 @@ public class SupplierAdmCategoryController {
   }
 
   @PutMapping
+  @Transactional
   public ResponseEntity<CategoryDto> update(
       @RequestBody @NotNull @Valid final CategoryDto categoryDto, Principal principal) {
     Supplier supplier = supplierService.read(principal);
@@ -70,9 +74,9 @@ public class SupplierAdmCategoryController {
   }
 
   @DeleteMapping
-  public ResponseEntity<Void> delete(@RequestParam @NotNull UUID id, Principal principal) {
+  public ResponseEntity<Void> delete(@RequestParam @NotNull UUID categoryId, Principal principal) {
     Supplier supplier = supplierService.read(principal);
-    categoryService.delete(id, supplier);
+    categoryService.delete(categoryId, supplier);
     return ResponseEntity.noContent().build();
   }
 }

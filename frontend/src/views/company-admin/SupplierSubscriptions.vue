@@ -27,9 +27,7 @@
               <v-icon color="error" icon="mdi-delete"/>
               <v-menu activator="parent">
                 <v-card>
-                  <v-card-title>Are you sure you want to unsubscribe from {{
-                      item.raw.name
-                    }}?
+                  <v-card-title>Are you sure you want to unsubscribe from {{ item.raw.name }}?
                   </v-card-title>
                   <v-card-actions>
                     <v-btn block

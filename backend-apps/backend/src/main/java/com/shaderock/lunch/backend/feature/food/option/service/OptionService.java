@@ -9,11 +9,15 @@ import com.shaderock.lunch.backend.feature.food.option.repository.OptionReposito
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierValidationService;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -33,12 +37,14 @@ public class OptionService {
 
   @Transactional
   public Option create(Option option, Category category) {
-    if (option.isPublic()) {
-      supplierValidationService.validateCanCreatePublicOptions(category.getMenu().getSupplier());
-    }
-    optionValidationService.validateOptionCanBeMadePublic(option, category);
 
+    option.setId(null);
+    option.setPublic(false);
     option.setCategory(category);
+    option.setCreatedAt(LocalDate.now());
+    option.setPublishedAt(null);
+    option.setPhoto(null);
+
     Option persistedOption = optionRepository.save(option);
     category.getOptions().add(persistedOption);
     return persistedOption;
@@ -69,29 +75,58 @@ public class OptionService {
         supplier);
   }
 
-  public Option update(OptionDto optionDto, Supplier supplier) {
+  public Option update(OptionDto optionDto, Supplier supplier, Category category) {
     Option option = optionMapper.toEntity(optionDto);
-    return update(option, supplier);
+    return update(option, supplier, category);
   }
 
   // todo don't allow setting back to non public from public
   @Transactional
-  public Option update(Option option, Supplier supplier) {
+  public Option update(Option option, Supplier supplier, Category category) {
     Option persistedOption = read(option.getId(), supplier);
     if (option.isPublic()) {
       supplierValidationService.validateCanCreatePublicOptions(supplier);
+      optionValidationService.validateOptionCanBeMadePublic(persistedOption,
+          persistedOption.getCategory());
+      persistedOption.setPublic(true);
+      persistedOption.setPublishedAt(LocalDate.now());
+    } else {
+      // todo validate option can be made private
+      persistedOption.setPublic(false);
     }
-    optionValidationService.validateOptionCanBeMadePublic(persistedOption,
-        persistedOption.getCategory());
-    persistedOption.setName(option.getName());
-    persistedOption.setPublic(option.isPublic());
-    persistedOption.setPrice(option.getPrice());
+
+    if (persistedOption.getPublishedAt() != null) {
+      persistedOption.getCategory().getOptions().remove(persistedOption);
+      persistedOption.setCategory(category);
+      category.getOptions().add(persistedOption);
+
+      persistedOption.setName(option.getName());
+      persistedOption.setPublic(option.isPublic());
+      persistedOption.setDescription(option.getDescription());
+      persistedOption.setPrice(option.getPrice());
+      persistedOption.setGram(option.getGram());
+    }
     return persistedOption;
+  }
+
+  @Transactional
+  @SneakyThrows
+  @CacheEvict(cacheNames = {"supplierOptionThumbnail", "supplierOptionPhoto"}, key = "#option.id")
+  public void updatePhoto(MultipartFile photo, Option option) {
+    option.setPhoto(photo.getBytes());
+    optionRepository.save(option);
   }
 
   @Transactional
   public void delete(UUID id, Supplier supplier) {
     Option persistedOption = read(id, supplier);
     optionRepository.delete(persistedOption);
+  }
+
+  @Transactional
+  @CacheEvict(cacheNames = {"supplierOptionThumbnail", "supplierOptionPhoto"}, key = "#option.id")
+  public void deletePhoto(Option option) {
+    option.setPhoto(null);
+    optionRepository.save(option);
   }
 }

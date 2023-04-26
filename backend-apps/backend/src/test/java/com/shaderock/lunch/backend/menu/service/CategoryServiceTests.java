@@ -72,6 +72,8 @@ class CategoryServiceTests {
             category.getOptions().stream()
                 .map(Option::getId)
                 .collect(Collectors.toSet()),
+            null,
+            null,
             category.isPublic());
   }
 
