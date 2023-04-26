@@ -69,7 +69,8 @@
               </v-menu>
             </v-btn>
 
-            <v-btn v-else :disabled="isLoading" icon variant="plain">
+            <v-btn v-else-if="useSupAdmSupStore().getPublic" :disabled="isLoading" icon
+                   variant="plain">
               <v-icon color="secondary" icon="mdi-folder-eye"/>
               <v-menu activator="parent">
                 <v-card>
@@ -93,27 +94,29 @@
   <v-dialog v-model="isEditDialogShown" :persistent="isDialogLoading">
     <v-row justify="center">
       <v-col lg="3" md="5" sm="8">
-        <v-card title="Edit Category">
-          <v-card-text>
-            <v-text-field
-              v-model="categoryToEdit.name"
-              :rules="[rules.required]"
-              counter="75"
-              label="Category name"
-              type="text"
-            />
-          </v-card-text>
+        <v-form ref="editForm" v-model="isEditFormValid" @submit.prevent="onCategoryEdit()">
+          <v-card title="Edit Category">
+            <v-card-text>
+              <v-text-field
+                v-model="categoryToEdit.name"
+                :rules="[rules.required]"
+                counter="75"
+                label="Category name"
+                type="text"
+              />
+            </v-card-text>
 
-          <v-card-actions>
-            <v-btn
-              :loading="isDialogLoading" block
-              color="primary"
-              variant="outlined"
-              @click="onCategoryEdit">
-              Edit Category
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+            <v-card-actions>
+              <v-btn
+                :loading="isDialogLoading" block
+                color="primary"
+                type="submit"
+                variant="outlined">
+                Edit Category
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-form>
       </v-col>
     </v-row>
   </v-dialog>
@@ -121,7 +124,7 @@
   <v-dialog v-model="isAddDialogShown" :persistent="isDialogLoading">
     <v-row justify="center">
       <v-col lg="3" md="5" sm="8">
-        <v-form ref="addForm" @submit.prevent="onCategoryAdd()">
+        <v-form ref="addForm" v-model="isAddFormValid" @submit.prevent="onCategoryAdd()">
           <v-card title="Add Category">
             <v-card-text>
               <v-text-field
@@ -137,9 +140,10 @@
               <v-btn
                 :loading="isDialogLoading"
                 block
+                :disabled="!isAddFormValid"
                 color="primary"
-                variant="outlined"
-                @click="onCategoryAdd">
+                type="submit"
+                variant="outlined">
                 Add Category
               </v-btn>
             </v-card-actions>
@@ -152,17 +156,30 @@
 
 <script lang="ts" setup>
 
-import {onBeforeMount, ref} from "vue";
-import {FormattedCategory, useSupplierCategoriesStore} from "@/store/supplier-adm-app";
+import {onBeforeMount, Ref, ref} from "vue";
+import {
+  FormattedCategory,
+  useSupAdmSupStore,
+  useSupplierCategoriesStore
+} from "@/store/supplier-adm-app";
+import {VForm} from "vuetify/components";
 
 onBeforeMount(() => {
   useSupplierCategoriesStore().requestFreshData().finally(() => isLoading.value = false)
+  useSupAdmSupStore().requestFreshDataIfEmpty()
 })
 
 const isLoading = ref(true)
 const isDialogLoading = ref(false)
+
 const isAddDialogShown = ref(false)
+const addForm = ref(null) as Ref<InstanceType<typeof VForm> | null>;
+const isAddFormValid = ref(false);
+
 const isEditDialogShown = ref(false)
+const editForm = ref(null) as Ref<InstanceType<typeof VForm> | null>;
+const isEditFormValid = ref(false);
+
 const categoryToAdd = ref(useSupplierCategoriesStore().generateEmptyFormattedCategory())
 const categoryToEdit = ref(useSupplierCategoriesStore().generateEmptyFormattedCategory())
 
@@ -186,12 +203,15 @@ function onCategoryEditDialog(formattedCategory: FormattedCategory) {
 }
 
 async function onCategoryEdit() {
-  try {
-    isDialogLoading.value = true
-    await useSupplierCategoriesStore().editCategory(categoryToEdit.value)
-    isEditDialogShown.value = false
-  } finally {
-    isDialogLoading.value = false
+  await editForm.value?.validate()
+  if (isEditFormValid.value) {
+    try {
+      isDialogLoading.value = true
+      await useSupplierCategoriesStore().editCategory(categoryToEdit.value)
+      isEditDialogShown.value = false
+    } finally {
+      isDialogLoading.value = false
+    }
   }
 }
 
@@ -201,12 +221,15 @@ function onCategoryAddDialog() {
 }
 
 async function onCategoryAdd() {
-  try {
-    isDialogLoading.value = true
-    await useSupplierCategoriesStore().createCategory(categoryToAdd.value)
-    isAddDialogShown.value = false
-  } finally {
-    isDialogLoading.value = false
+  await addForm.value?.validate()
+  if (isAddFormValid.value) {
+    try {
+      isDialogLoading.value = true
+      await useSupplierCategoriesStore().createCategory(categoryToAdd.value)
+      isAddDialogShown.value = false
+    } finally {
+      isDialogLoading.value = false
+    }
   }
 }
 

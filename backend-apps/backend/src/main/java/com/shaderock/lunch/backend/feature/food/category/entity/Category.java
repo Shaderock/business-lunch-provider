@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.feature.food.category.entity;
 
-import com.shaderock.lunch.backend.data.entity.VisibleEntity;
+import com.shaderock.lunch.backend.data.entity.PublishEntity;
 import com.shaderock.lunch.backend.feature.food.menu.entity.Menu;
 import com.shaderock.lunch.backend.feature.food.option.entity.Option;
 import jakarta.persistence.Column;
@@ -29,7 +29,7 @@ import org.hibernate.annotations.SQLDelete;
 @Entity
 @ToString
 @SQLDelete(sql = "UPDATE category SET is_deleted = true WHERE id=?")
-public class Category extends VisibleEntity {
+public class Category extends PublishEntity {
 
   @Column
   private String name;
@@ -38,21 +38,15 @@ public class Category extends VisibleEntity {
   @Exclude
   private Set<Option> options = new HashSet<>();
 
-  @Column
-  private LocalDate createdAt;
-
-  @Column
-  private LocalDate publishedAt;
-
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "menu_id", nullable = false)
   @Exclude
   private Menu menu;
 
   @Builder
-  public Category(UUID id, boolean isDeleted, boolean isPublic, String name,
-      Set<Option> options, Menu menu) {
-    super(id, isDeleted, isPublic);
+  public Category(UUID id, boolean isDeleted, boolean isPublic, LocalDate createdAt,
+      LocalDate publishedAt, String name, Set<Option> options, Menu menu) {
+    super(id, isDeleted, isPublic, createdAt, publishedAt);
     this.name = name;
     this.options = options;
     this.menu = menu;

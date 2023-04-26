@@ -100,7 +100,7 @@ public class CategoryService {
       categoryValidationService.validateCategoryCanBeMadePublic(persistedCategory,
           persistedCategory.getMenu().getSupplier());
 
-      persistedCategory.setPublic(categoryToUpdate.isPublic());
+      persistedCategory.setPublic(true);
       persistedCategory.setPublishedAt(LocalDate.now());
     } else {
       // todo validate category can be made private

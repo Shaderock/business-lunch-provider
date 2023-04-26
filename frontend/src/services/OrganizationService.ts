@@ -41,7 +41,6 @@ export class OrganizationService {
       params,
       responseType: 'arraybuffer'
     });
-    console.log(response.data)
     return Utils.byteArrayToBase64String(response.data)
   }
 
@@ -57,8 +56,6 @@ export class OrganizationService {
   async updateOrganizationLogo(file: File): Promise<void> {
     const formData: FormData = new FormData();
     formData.append('logo', file)
-    console.log(formData)
-    console.log(formData.get('logo'))
     return axios.put(`${ApiConstants.ORGANIZATION_ADM_ORGANIZATION}/logo`, formData);
   }
 

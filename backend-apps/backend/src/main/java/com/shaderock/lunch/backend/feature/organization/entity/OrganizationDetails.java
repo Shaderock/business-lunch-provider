@@ -36,6 +36,7 @@ public class OrganizationDetails extends DeletableEntity {
   private String email;
   @Column
   private String phone;
+
   @Lob
   @Basic(fetch = FetchType.LAZY)
   @Column(length = 2048)

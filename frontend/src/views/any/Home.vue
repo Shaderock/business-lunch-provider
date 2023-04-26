@@ -44,6 +44,8 @@
                               '&width=' + 25 +
                               '&maxHeight='+ useOrganizationStore().getLogoCardMaxHeight"
                   :max-height="useOrganizationStore().getLogoCardMaxHeight"
+                  aspect-ratio="16/9"
+                  cover
                   :src="ApiConstants.ANONYM_ORGANIZATION + '/logo' +
                               '?supplierId='+workingSupplier.supplierId +
                               '&width=' + useOrganizationStore().getLogoCardWidth +
@@ -52,11 +54,9 @@
                   @error="supplierLogoLoaded()"
                   @load="supplierLogoLoaded()">
                   <template v-slot:placeholder>
-                    <v-row justify="center">
-                      <v-icon :size="useOrganizationStore().getLogoCardMaxHeight"
-                              class="text-center"
-                              icon="mdi-image-area"/>
-                    </v-row>
+                    <div class="d-flex align-center justify-center fill-height">
+                      <v-progress-circular indeterminate/>
+                    </div>
                   </template>
                 </v-img>
                 <v-card-subtitle class="pt-4">Offers</v-card-subtitle>

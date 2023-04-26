@@ -18,6 +18,8 @@ import companyService from "@/services/CompanyService";
 import companyPreferencesService from "@/services/CompanyPreferencesService";
 import {Category} from "@/models/Category";
 import categoryService from "@/services/CategoryService";
+import {Option} from "@/models/Option";
+import optionService from "@/services/OptionService";
 
 export const useSupAdmSupPrefStore = defineStore('supplierAdminSupplierPreferences', {
   state: () => ({
@@ -109,6 +111,11 @@ export const useSupAdmSupStore = defineStore('supplierAdminSupplier', {
     async requestFreshSupplierData() {
       const response: AxiosResponse<Supplier> = await supplierService.getUserSupplier()
       this.supplier = response.data
+    },
+    async requestFreshDataIfEmpty() {
+      if (this.supplier.id == '') {
+        this.requestFreshSupplierData()
+      }
     }
   }
 })
@@ -174,7 +181,6 @@ export const useSubscribersCompaniesStore = defineStore('supplierAdminSubscriber
   actions: {
     async acceptSubscription(companyId: string) {
       try {
-        console.log("store:" + companyId)
         await subscriptionService.acceptSubscription(companyId);
         const subscription = this.subscriptions.find(subscription => subscription.companyId === companyId);
         if (subscription)
@@ -241,6 +247,9 @@ export const useSupplierCategoriesStore = defineStore('supplierAdminCategories',
           isPublic: category.isPublic
         }
       })
+    },
+    getCategoriesNames(): string[] {
+      return this.categories.map(c => c.name)
     }
   },
   actions: {
@@ -287,6 +296,12 @@ export const useSupplierCategoriesStore = defineStore('supplierAdminCategories',
     convertFormattedCategoryToNewCategory(formattedCategory: FormattedCategory): Category {
       return new Category(formattedCategory.id, formattedCategory.name, [], new Date(), new Date(), false)
     },
+    getCategoryById(categoryId: string): Category | null {
+      return this.categories.find(c => c.id === categoryId) || null;
+    },
+    getCategoryByName(name: string): Category | null {
+      return this.categories.find(c => c.name === name) || null;
+    },
     generateEmptyFormattedCategory(): FormattedCategory {
       return {
         id: '',
@@ -301,6 +316,208 @@ export const useSupplierCategoriesStore = defineStore('supplierAdminCategories',
     async requestFreshData() {
       const categoriesResponse: AxiosResponse<Category[]> = await categoryService.requestSupplierCategories()
       this.categories = categoriesResponse.data
+    },
+    async requestFreshDataIfEmpty() {
+      if (this.categories.length === 0) await this.requestFreshData()
+    }
+  }
+})
+
+
+export interface FormattedOption {
+  id: string
+  name: string
+  categoryName: string
+  description: string
+  gram: string
+  price: number
+  hasPhoto: boolean
+  photoToUpload: File[],
+  createdAt: string
+  publishedAt: string
+  isPublished: boolean
+  isPublic: boolean
+}
+
+export interface FormattedOptionPhoto {
+  optionId: string,
+  isLoadingThumbnail: boolean
+  hasPhoto: boolean
+  photo: string,
+  thumbnail: string
+}
+
+export const useSupplierOptionsStore = defineStore('supplierAdminOptions', {
+  state: () => ({
+    options: [] as Option[],
+    formattedOptionsPhotos: [] as FormattedOptionPhoto[],
+    currentOptionId: '' as string
+  }),
+  getters: {
+    getOptions(): Option[] {
+      return this.options
+    },
+    getFormattedOptions(): FormattedOption[] {
+      return this.options.map(option => {
+        return {
+          id: option.id,
+          name: option.name,
+          description: option.description,
+          gram: option.gram,
+          price: option.price,
+          hasPhoto: option.hasPhoto,
+          photoToUpload: [],
+          categoryName: useSupplierCategoriesStore().getCategoryById(option.categoryId)?.name || '',
+          createdAt: option.createdAt ? Utils.dateToDateString(option.createdAt) : '',
+          publishedAt: option.publishedAt ? Utils.dateToDateString(option.publishedAt) : '',
+          isPublished: !!option.publishedAt,
+          isPublic: option.isPublic
+        }
+      })
+    },
+    getCurrentFormattedOptionPhoto(): FormattedOptionPhoto | null {
+      const photoIndex: number =
+        this.formattedOptionsPhotos.findIndex(p => p.optionId === this.currentOptionId)
+
+      if (photoIndex != -1) {
+        return this.formattedOptionsPhotos[photoIndex];
+      } else {
+        return null
+      }
+    }
+  },
+  actions: {
+    async createOption(formattedOption: FormattedOption) {
+      const category: Category | null = useSupplierCategoriesStore().getCategoryByName(formattedOption.categoryName)
+      const response =
+        await optionService.createOption(this.convertFormattedOptionToNewOption(formattedOption), category?.id || '')
+      this.options.push(response.data)
+    },
+    async editOption(formattedOption: FormattedOption) {
+      const category: Category | null = useSupplierCategoriesStore().getCategoryByName(formattedOption.categoryName)
+      const optionIndex: number = this.options.findIndex(c => c.id === formattedOption.id);
+
+      const oldName: string = this.options[optionIndex].name
+      const oldDescription: string = this.options[optionIndex].description
+      const oldPrice: number = this.options[optionIndex].price
+      const oldGram: string = this.options[optionIndex].gram
+
+      if (optionIndex !== -1) {
+        try {
+          this.options[optionIndex].name = formattedOption.name;
+          const response: AxiosResponse<Option> =
+            await optionService.updateOption(this.options[optionIndex], category?.id || '');
+          this.options[optionIndex] = response.data;
+        } catch (err) {
+          this.options[optionIndex].name = oldName
+          this.options[optionIndex].description = oldDescription
+          this.options[optionIndex].price = oldPrice
+          this.options[optionIndex].gram = oldGram
+        }
+      }
+    },
+    async deleteOption(formattedOption: FormattedOption) {
+      await optionService.deleteOption(formattedOption.id)
+      this.options = this.options.filter(c => c.id !== formattedOption.id)
+    },
+    async deletePhoto(formattedOption: FormattedOption) {
+      await optionService.deletePhoto(formattedOption.id);
+      this.updateHasPhoto(formattedOption.id, false);
+    },
+    async uploadPhoto(formattedOption: FormattedOption) {
+      await optionService.updatePhoto(formattedOption.photoToUpload[0], formattedOption.id);
+      this.updateHasPhoto(formattedOption.id, true);
+    },
+    updateHasPhoto(id: string, hasPhoto: boolean) {
+      const option = this.options.find(c => c.id === id);
+      if (option) {
+        option.hasPhoto = hasPhoto;
+      }
+      const photo = this.formattedOptionsPhotos.find(c => c.optionId === id);
+      if (photo) {
+        photo.hasPhoto = hasPhoto;
+      }
+    },
+    async updateOptionVisibility(formattedOption: FormattedOption, isPublic: boolean) {
+      const optionIndex: number = this.options.findIndex(c => c.id === formattedOption.id);
+      const category: Category | null = useSupplierCategoriesStore().getCategoryByName(formattedOption.categoryName)
+      if (optionIndex !== -1) {
+        try {
+          this.options[optionIndex].isPublic = isPublic;
+          const response: AxiosResponse<Option> = await optionService.updateOption(this.options[optionIndex], category?.id || '');
+          this.options[optionIndex] = response.data;
+        } catch (err) {
+          this.options[optionIndex].isPublic = !isPublic;
+        }
+      }
+    },
+    async publishOption(formattedOption: FormattedOption) {
+      await this.updateOptionVisibility(formattedOption, true)
+    },
+    async hideOption(formattedOption: FormattedOption) {
+      await this.updateOptionVisibility(formattedOption, false)
+    },
+    async downloadCurrentOptionPhoto(optionId: string) {
+      this.currentOptionId = optionId
+      const photo: FormattedOptionPhoto | null = this.getCurrentFormattedOptionPhoto
+
+      if (photo && photo.hasPhoto && photo.thumbnail === '' && photo.photo === '') {
+        photo.isLoadingThumbnail = true
+        photo.thumbnail = await optionService.requestOptionPhotoAsSupplier(optionId, true)
+        photo.isLoadingThumbnail = false
+
+        photo.photo = await optionService.requestOptionPhotoAsSupplier(optionId, false)
+      }
+    },
+    convertFormattedOptionToNewOption(formattedOption: FormattedOption): Option {
+      return new Option(
+        formattedOption.id,
+        formattedOption.name,
+        useSupplierCategoriesStore().getCategoryByName(formattedOption.categoryName)?.id || '',
+        formattedOption.description,
+        formattedOption.price,
+        formattedOption.hasPhoto,
+        formattedOption.gram,
+        formattedOption.isPublic,
+        new Date(),
+        new Date())
+    },
+    generateEmptyFormattedOption(): FormattedOption {
+      return {
+        id: '',
+        name: '',
+        description: '',
+        gram: '',
+        price: 0,
+        hasPhoto: false,
+        photoToUpload: [],
+        categoryName: '',
+        createdAt: '',
+        publishedAt: '',
+        isPublished: false,
+        isPublic: false,
+      }
+    },
+    async requestFreshData() {
+      this.options = []
+      this.formattedOptionsPhotos = []
+
+      await useSupplierCategoriesStore().requestFreshDataIfEmpty()
+      const categoriesResponse: AxiosResponse<Option[]> = await optionService.requestSupplierOptions()
+      this.options = categoriesResponse.data
+
+      for (const option of this.options) {
+        this.formattedOptionsPhotos.push({
+          optionId: option.id,
+          hasPhoto: option.hasPhoto,
+          isLoadingThumbnail: false,
+          photo: '',
+          thumbnail: ''
+        })
+      }
+    },
+    async requestFreshDataIfEmpty() {
+      if (this.options.length === 0) await this.requestFreshData()
     }
   }
 })

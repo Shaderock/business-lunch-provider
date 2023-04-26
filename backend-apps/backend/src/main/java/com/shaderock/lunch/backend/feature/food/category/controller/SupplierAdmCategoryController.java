@@ -8,6 +8,7 @@ import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -45,6 +46,7 @@ public class SupplierAdmCategoryController {
   }
 
   @GetMapping
+  @Transactional
   public ResponseEntity<CategoryDto> read(@RequestParam @NotBlank final UUID categoryId,
       Principal principal) {
     Supplier supplier = supplierService.read(principal);
@@ -54,6 +56,7 @@ public class SupplierAdmCategoryController {
   }
 
   @GetMapping("/all")
+  @Transactional
   public ResponseEntity<List<CategoryDto>> readAll(Principal principal) {
     Supplier supplier = supplierService.read(principal);
     List<Category> categories = categoryService.read(supplier);
@@ -61,6 +64,7 @@ public class SupplierAdmCategoryController {
   }
 
   @PutMapping
+  @Transactional
   public ResponseEntity<CategoryDto> update(
       @RequestBody @NotNull @Valid final CategoryDto categoryDto, Principal principal) {
     Supplier supplier = supplierService.read(principal);

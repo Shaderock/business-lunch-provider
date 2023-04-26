@@ -35,7 +35,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -51,7 +50,6 @@ public class StartupEntitiesGenerator implements
   private final CompanyService companyService;
   private final Faker faker;
   private final ResourceLoader resourceLoader;
-  private final ResourcePatternResolver resourceResolver;
   @Value(value = "${lunch.backend.system.admin.email}")
   private String sysAdminEmail;
   @Value(value = "${lunch.backend.system.admin.password}")

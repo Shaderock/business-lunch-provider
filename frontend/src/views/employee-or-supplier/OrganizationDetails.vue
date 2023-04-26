@@ -18,7 +18,9 @@
           </v-toolbar>
 
           <v-img v-if="useOrganizationStore().hasLogo"
+                 aspect-ratio="16/9"
                  :lazy-src="`data:image/jpeg;base64,${useOrganizationStore().getLogoAsBase64Thumbnail}`"
+                 cover
                  :max-height="useOrganizationStore().getLogoCardMaxHeight + 200"
                  :src="`data:image/jpeg;base64,${useOrganizationStore().getLogoAsBase64}`"/>
 
