@@ -4,12 +4,13 @@ import {createRouter, createWebHistory, Router} from 'vue-router'
 import {RouterPaths} from "@/services/RouterPaths";
 import {useAuthStore, useProfileStore} from "@/store/user-app";
 import {useOrganizationStore} from "@/store/employee-or-supplier-app";
+import {Role} from "@/models/Role";
 
 const routes = [
   // anonymous
 
   {
-    path: '/', name: 'Home',
+    path: RouterPaths.ANONYMOUS_HOME, name: 'Home',
     component: () => import('@/views/any/Home.vue')
   },
   {
@@ -19,6 +20,10 @@ const routes = [
   {
     path: RouterPaths.ANONYMOUS_REGISTER, name: 'Anonymous Register',
     component: () => import('@/views/anonymous/auth/Register.vue')
+  },
+  {
+    path: `${RouterPaths.ANONYMOUS_SUPPLIER}/:supplierName`, name: 'Anonymous Supplier',
+    component: () => import('@/views/anonymous/Supplier.vue')
   },
 
   // user
@@ -152,8 +157,41 @@ const router: Router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   await initializeStores()
-  next()
-})
+  if (to.path === RouterPaths.ANONYMOUS_HOME || to.path.includes(RouterPaths.ANONYMOUS_SUPPLIER))
+    next()
+  else {
+    const userRoles: Role[] | undefined = useProfileStore().getUserDetails?.roles;
+
+    if (to.path === RouterPaths.EMPLOYEE_OR_SUPPLIER_ORGANIZATION_DETAILS) {
+      if (useProfileStore().isEmployee || useProfileStore().isSupplier) {
+        next()
+      } else {
+        next(RouterPaths.ANONYMOUS_HOME)
+      }
+    } else {
+      // Define a mapping of roles to authorized route prefixes
+      const roleRoutePrefixes = {
+        [Role.User]: [RouterPaths.USER],
+        [Role.Employee]: [RouterPaths.EMPLOYEE],
+        [Role.CompanyAdmin]: [RouterPaths.COMPANY_ADM],
+        [Role.Supplier]: [RouterPaths.SUPPLIER_ADM],
+        [Role.SystemAdmin]: [RouterPaths.SYSTEM_ADM],
+        anonymous: [RouterPaths.ANONYMOUS]
+      };
+
+      // Check if any of the user's roles are authorized to access the target route
+      if ((userRoles || ['anonymous'])
+      .some(role => roleRoutePrefixes[role]
+      .some(prefix => to.path.startsWith(prefix)))) {
+        // If any of the user's roles are authorized, continue navigation
+        next();
+      } else {
+        // If none of the user's roles are authorized, redirect to RouterPaths.ANONYMOUS_HOME
+        next(RouterPaths.ANONYMOUS_HOME);
+      }
+    }
+  }
+});
 
 async function initializeStores() {
   if (!useAuthStore().hasToken)

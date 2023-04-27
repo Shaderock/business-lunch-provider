@@ -27,7 +27,6 @@ export class SubscriptionService {
   }
 
   async acceptSubscription(companyId: string) {
-    console.log("service: " + companyId)
     const params: URLSearchParams = new URLSearchParams([['companyId', companyId]])
     return axios.post(`${ApiConstants.SUPPLIER_ADM_SUBSCRIPTION}/accept`, null, {params})
   }

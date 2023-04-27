@@ -73,7 +73,7 @@ public class OrganizationController {
 
   @GetMapping("/invitation/all")
   @Transactional
-  public ResponseEntity<List<PublicOrganizationDetailsDto>> readByInvitations(Principal principal) {
+  public ResponseEntity<List<PublicOrganizationDetailsDto>> readLogoOfInvited(Principal principal) {
     AppUserDetails userDetails = userDetailsService.read(principal);
     List<Invitation> invitations = invitationService.read(userDetails.getAppUser());
     List<OrganizationDetails> organizationDetailsList = invitations.stream()
@@ -87,7 +87,7 @@ public class OrganizationController {
 
   @GetMapping(value = "/invitation/logo", produces = MediaType.IMAGE_JPEG_VALUE)
   @Transactional
-  public byte[] readByInvitations(
+  public byte[] readLogoOfInvited(
       @RequestParam @NotNull UUID companyId, @RequestParam @NotNull boolean isThumbnail,
       Principal principal) {
     AppUserDetails userDetails = userDetailsService.read(principal);

@@ -10,7 +10,7 @@ export class SupplierPreferencesService {
     return axios.get(ApiConstants.SUPPLIER_ADM_PREFERENCES + "/my");
   }
 
-  public anonymousRequestForPreferences(): Promise<AxiosResponse<SupplierPreferences[]>> {
+  public anonymousRequestForAllPreferences(): Promise<AxiosResponse<SupplierPreferences[]>> {
     return axios.get(`${ApiConstants.ANONYM_SUPPLIER_PREFERENCES}/all`);
   }
 
@@ -29,6 +29,11 @@ export class SupplierPreferencesService {
 
   async requestSubscriptionSuppliersPreferences(): Promise<AxiosResponse<PublicSupplierPreferences[]>> {
     return axios.get(`${ApiConstants.COMPANY_ADM_SUPPLIER_PREFERENCES}/subscription/all`)
+  }
+
+  async requestPreferencesForSupplier(supplierName: string): Promise<AxiosResponse<PublicSupplierPreferences>> {
+    const params: URLSearchParams = new URLSearchParams([['supplierName', supplierName]])
+    return axios.get(`${ApiConstants.ANONYM_SUPPLIER_PREFERENCES}`, {params});
   }
 }
 

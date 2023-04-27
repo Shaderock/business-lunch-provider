@@ -76,7 +76,7 @@ async function login() {
 
   if (useAuthStore().isAuthenticated) {
     toastManager.showSuccess("Login complete", "You are in the system. Enjoy!")
-    await router.push('/')
+    await router.push(RouterPaths.ANONYMOUS_HOME)
   } else {
     toastManager.showError("Sign in problem", "Couldn't login. Try again later.")
   }

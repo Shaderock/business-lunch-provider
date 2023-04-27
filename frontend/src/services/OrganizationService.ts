@@ -31,7 +31,7 @@ export class OrganizationService {
     return axios.get(`${ApiConstants.ORGANIZATION}/invitation/all`);
   }
 
-  async anonymousRequestForDetails(): Promise<AxiosResponse<PublicOrganizationDetails[]>> {
+  async anonymousRequestForAllDetails(): Promise<AxiosResponse<PublicOrganizationDetails[]>> {
     return axios.get(`${ApiConstants.ANONYM_ORGANIZATION}/supplier/all`);
   }
 
@@ -65,6 +65,11 @@ export class OrganizationService {
 
   async requestSubscribersCompaniesDetails() {
     return axios.get(`${ApiConstants.SUPPLIER_ADM_ORGANIZATION}/subscriber/all`)
+  }
+
+  async requestDetailsForSupplier(supplierName: string): Promise<AxiosResponse<PublicOrganizationDetails>> {
+    const params: URLSearchParams = new URLSearchParams([['supplierName', supplierName]])
+    return axios.get(`${ApiConstants.ANONYM_ORGANIZATION}/supplier`, {params});
   }
 }
 

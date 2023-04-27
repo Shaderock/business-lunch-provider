@@ -19,6 +19,11 @@ export class CategoryService {
   async updateCategory(category: Category): Promise<AxiosResponse<Category>> {
     return axios.put(ApiConstants.SUPPLIER_ADM_CATEGORY, category);
   }
+
+  async requestCategoriesForSupplier(supplierName: string): Promise<AxiosResponse<Category[]>> {
+    const params: URLSearchParams = new URLSearchParams([['supplierName', supplierName]])
+    return axios.get(`${ApiConstants.ANONYM_CATEGORIES}`, {params});
+  }
 }
 
 const categoryService: CategoryService = new CategoryService()

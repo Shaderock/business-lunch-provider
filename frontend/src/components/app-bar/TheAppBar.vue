@@ -1,7 +1,7 @@
 <template>
-  <v-app-bar :elevation="5">
+  <v-app-bar>
     <v-app-bar-title>
-      <v-btn v-bind:to="'/'" variant="plain">
+      <v-btn v-bind:to="RouterPaths.ANONYMOUS_HOME" variant="plain">
         <v-icon color="primary" size="x-large" start>
           mdi-food-croissant
         </v-icon>
@@ -113,7 +113,7 @@ function switchTheme() {
 
 function logout() {
   useAuthStore().logout();
-  router.push('/');
+  router.push(RouterPaths.ANONYMOUS_HOME);
   toastManager.showSuccess("Good Bye!", "You were signed out")
 }
 </script>

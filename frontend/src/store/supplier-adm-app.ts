@@ -80,7 +80,7 @@ export const useSupAdmSupPrefStore = defineStore('supplierAdminSupplierPreferenc
 
 export const useSupAdmSupStore = defineStore('supplierAdminSupplier', {
   state: () => ({
-    supplier: new Supplier("", "", "", "", false, 0)
+    supplier: new Supplier("", "", "", "", false, '')
   }),
   getters: {
     getSupplier(): Supplier {
@@ -392,6 +392,13 @@ export const useSupplierOptionsStore = defineStore('supplierAdminOptions', {
       const response =
         await optionService.createOption(this.convertFormattedOptionToNewOption(formattedOption), category?.id || '')
       this.options.push(response.data)
+      this.formattedOptionsPhotos.push({
+        optionId: response.data.id || '',
+        hasPhoto: false,
+        isLoadingThumbnail: false,
+        photo: '',
+        thumbnail: ''
+      })
     },
     async editOption(formattedOption: FormattedOption) {
       const category: Category | null = useSupplierCategoriesStore().getCategoryByName(formattedOption.categoryName)

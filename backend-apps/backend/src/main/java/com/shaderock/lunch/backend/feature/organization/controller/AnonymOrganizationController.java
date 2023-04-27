@@ -43,6 +43,16 @@ public class AnonymOrganizationController {
         detailsList.stream().map(organizationDetailsMapper::toPublicDto).toList());
   }
 
+  @GetMapping("/supplier")
+  @Transactional
+  public ResponseEntity<PublicOrganizationDetailsDto> readPublicSuppliers(
+      @RequestParam @NotNull String supplierName) {
+    Supplier supplier = supplierService.readByName(supplierName);
+
+    return ResponseEntity.ok(
+        (organizationDetailsMapper.toPublicDto(supplier.getOrganizationDetails())));
+  }
+
   @SneakyThrows
   @Transactional
   @GetMapping(value = "/logo", produces = MediaType.IMAGE_JPEG_VALUE)

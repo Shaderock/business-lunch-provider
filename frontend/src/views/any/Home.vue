@@ -1,32 +1,34 @@
 <template>
-  <v-banner>
-    <v-tabs v-model="tab" align-tabs="center" stacked>
-      <v-tab color="primary" value="suppliers">
-        <v-icon icon="mdi-food"/>
-        Suppliers
-      </v-tab>
-      <v-tab color="primary" value="subscribed">
-        <v-icon icon="mdi-star"/>
-        Subscribed
-      </v-tab>
-      <v-tab color="primary" value="favorites">
-        <v-icon icon="mdi-heart"/>
-        Favorites
-      </v-tab>
-      <v-tab color="primary" value="filters">
-        <v-icon icon="mdi-filter"/>
-        Filters
-      </v-tab>
-    </v-tabs>
-    <v-progress-linear v-if="isLoading" indeterminate striped/>
-  </v-banner>
 
-  <v-row v-if="isLoading" justify="space-evenly" justify-sm="center">
-    <v-col v-for="n in 20" :key="n">
-      <v-card :width="cardWidth" elevation="20" height="400">
-      </v-card>
-    </v-col>
-  </v-row>
+  <v-progress-linear v-if="isLoading" indeterminate striped/>
+
+  <v-tabs v-model="tab" :disabled="isLoading" align-tabs="center" stacked>
+    <v-tab color="primary" value="suppliers">
+      <v-icon icon="mdi-food"/>
+      Suppliers
+    </v-tab>
+    <v-tab color="primary" value="subscribed">
+      <v-icon icon="mdi-star"/>
+      Subscribed
+    </v-tab>
+    <v-tab color="primary" value="favorites">
+      <v-icon icon="mdi-heart"/>
+      Favorites
+    </v-tab>
+    <v-tab color="primary" value="filters">
+      <v-icon icon="mdi-filter"/>
+      Filters
+    </v-tab>
+  </v-tabs>
+
+  <v-container v-if="isLoading">
+    <v-row justify="space-evenly" justify-sm="center">
+      <v-col v-for="n in 20" :key="n">
+        <v-card :width="cardWidth" elevation="10" height="400" variant="outlined">
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 
   <div v-else>
     <v-window v-model="tab">
@@ -36,21 +38,22 @@
             <v-col v-for="workingSupplier in useWorkingSuppliersStore().getWorkingSuppliersLimited"
                    :key="workingSupplier.name"
                    cols="auto">
-              <v-card :title="workingSupplier.name" :width="cardWidth" elevation="20"
+              <v-card :title="workingSupplier.name" :width="cardWidth" elevation="5"
+                      variant="outlined"
                       @click="openSupplierProfile(workingSupplier)">
                 <v-img
+                  :height="useOrganizationStore().getLogoCardMaxHeight"
                   :lazy-src="ApiConstants.ANONYM_ORGANIZATION + '/logo' +
                               '?supplierId='+workingSupplier.supplierId +
                               '&width=' + 25 +
                               '&maxHeight='+ useOrganizationStore().getLogoCardMaxHeight"
-                  :max-height="useOrganizationStore().getLogoCardMaxHeight"
-                  aspect-ratio="16/9"
-                  cover
                   :src="ApiConstants.ANONYM_ORGANIZATION + '/logo' +
                               '?supplierId='+workingSupplier.supplierId +
                               '&width=' + useOrganizationStore().getLogoCardWidth +
                               '&maxHeight='+ useOrganizationStore().getLogoCardMaxHeight"
                   :width="useOrganizationStore().getLogoCardWidth"
+                  aspect-ratio="16/9"
+                  cover
                   @error="supplierLogoLoaded()"
                   @load="supplierLogoLoaded()">
                   <template v-slot:placeholder>
@@ -60,13 +63,15 @@
                   </template>
                 </v-img>
                 <v-card-subtitle class="pt-4">Offers</v-card-subtitle>
-                <v-card-text>
-                  <v-chip-group class="disable-events">
-                    <v-chip v-for="(tag) in workingSupplier.categoriesTags" :key="tag" label>
-                      {{ tag }}
-                    </v-chip>
-                  </v-chip-group>
-                </v-card-text>
+                <v-sheet class="overflow-auto" color="background" height="150">
+                  <v-card-text>
+                    <v-chip-group class="disable-events">
+                      <v-chip v-for="(tag) in workingSupplier.categoriesTags" :key="tag" label>
+                        {{ tag }}
+                      </v-chip>
+                    </v-chip-group>
+                  </v-card-text>
+                </v-sheet>
 
                 <v-card-subtitle>Working hours</v-card-subtitle>
                 <v-card-text>
@@ -98,11 +103,12 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {useWorkingSuppliersStore, WorkingSupplier} from "@/store/user-app";
 import {Utils} from "@/models/Utils";
 import {ApiConstants} from "@/services/ApiConstants";
 import {useOrganizationStore} from "@/store/employee-or-supplier-app";
+import router from "@/router";
 
 onMounted(() => {
   useWorkingSuppliersStore().requestFreshDataIfNothingCached().finally(() => {
@@ -113,9 +119,10 @@ onMounted(() => {
 const isLoading = ref(true)
 const tab = ref(1)
 const cardWidth: number = 352
+const searchFilterAppliedSuppliers = computed(() => useSysAdmOrganizationStore().getOrganizationsDetails)
 
-async function openSupplierProfile(workingSupplier: WorkingSupplier) {
-  // todo
+function openSupplierProfile(workingSupplier: WorkingSupplier) {
+  router.push({name: 'Anonymous Supplier', params: {supplierName: workingSupplier.name}})
 }
 
 async function supplierLogoLoaded() {

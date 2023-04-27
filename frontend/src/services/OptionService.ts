@@ -48,6 +48,10 @@ export class OptionService {
     return Utils.byteArrayToBase64String(response.data)
   }
 
+  async requestOptionsForCategory(categoryId: string): Promise<AxiosResponse<Option[]>> {
+    const params: URLSearchParams = new URLSearchParams([['categoryId', categoryId]])
+    return axios.get(`${ApiConstants.ANONYM_OPTION}/by-category-id`, {params});
+  }
 }
 
 const optionService: OptionService = new OptionService()

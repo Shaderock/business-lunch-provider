@@ -27,6 +27,7 @@ export class ApiConstants {
   static readonly USER_DETAILS: string = ApiConstants.USER + "/details"
   static readonly USER_EMPLOYEE_PREFERENCES: string = ApiConstants.USER + "/employee-preferences"
   static readonly ANONYM: string = ApiConstants.BACKEND_URL + "/anonym"
+  static readonly ANONYM_OPTION: string = ApiConstants.ANONYM + "/option";
   static readonly ANONYM_ORGANIZATION: string = ApiConstants.ANONYM + ApiConstants.ORGANIZATION_PART
   static readonly INVITATION: string = ApiConstants.BACKEND_URL + "/invitation"
   static readonly NOTIFICATIONS: string = ApiConstants.BACKEND_URL + "/notifications"
@@ -54,4 +55,5 @@ export class ApiConstants {
   static readonly SUPPLIER: string = ApiConstants.BACKEND_URL + ApiConstants.SUPPLIER_URL_PART
   static readonly SUPPLIER_ADM_SUPPLIER: string = ApiConstants.SUPPLIER_ADM + ApiConstants.SUPPLIER_URL_PART
   static readonly PUBLIC_SUPPLIER_PREFERENCES: string = ApiConstants.SUPPLIER_URL_PART + ApiConstants.PREFERENCES_URL_PART
+  static readonly ANONYM_CATEGORIES: string = ApiConstants.ANONYM + "/category";
 }

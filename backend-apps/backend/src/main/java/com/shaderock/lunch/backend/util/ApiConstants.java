@@ -33,6 +33,7 @@ public class ApiConstants {
   public static final String ANONYM = API + "/anonym";
   public static final String ANONYM_ORGANIZATION = ANONYM + ORGANIZATION_PART;
   public static final String ANONYM_CATEGORY = ANONYM + "/category";
+  public static final String ANONYM_OPTION = ANONYM + "/option";
   public static final String INVITATION = API + "/invitation";
   public static final String NOTIFICATIONS = API + "/notifications";
   private static final String ORGANIZATION_ADM = API + "/organization-adm";

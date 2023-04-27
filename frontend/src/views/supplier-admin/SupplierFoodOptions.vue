@@ -12,7 +12,7 @@
             <v-toolbar extended extension-height="1">
               <v-toolbar-title>Menu Options</v-toolbar-title>
 
-              <v-btn append-icon="mdi-plus-box" color="primary" variant="outlined"
+              <v-btn append-icon="mdi-plus" color="primary" variant="outlined"
                      @click="onOptionAddDialog">
                 Add Option
               </v-btn>
@@ -104,7 +104,6 @@
               v-else-if="useSupplierCategoriesStore().getCategoryByName(item.raw.categoryName)?.isPublic"
               :disabled="isLoading" icon variant="plain">
               <v-icon color="secondary" icon="mdi-eye"/>
-              <!--              todo check category is public-->
               <v-menu activator="parent">
                 <v-card>
                   <v-card-title>Are you sure to publish option {{ item.raw.name }}?</v-card-title>
@@ -257,7 +256,7 @@
             <v-progress-circular indeterminate/>
           </div>
         </v-card>
-        <v-card v-else>
+        <v-card v-else max-width="1000">
           <v-img
             :lazy-src="`data:image/jpeg;base64,${useSupplierOptionsStore().getCurrentFormattedOptionPhoto?.thumbnail}`"
             :src="`data:image/jpeg;base64,${useSupplierOptionsStore().getCurrentFormattedOptionPhoto?.photo}`"

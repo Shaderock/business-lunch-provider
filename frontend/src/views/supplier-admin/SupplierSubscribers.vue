@@ -79,7 +79,6 @@ async function declineSubscription(subscriberCompany: SubscriberCompany) {
 
 async function acceptSubscription(subscriberCompany: SubscriberCompany) {
   isLoading.value = true
-  console.log(subscriberCompany)
   await useSubscribersCompaniesStore().acceptSubscription(subscriberCompany.companyId)
   isLoading.value = false
 }
