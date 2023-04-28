@@ -1,7 +1,5 @@
 <template>
-
   <v-container v-if="useCartStore().getCartOptions.length > 0">
-
     <v-row>
       <v-col>
         <v-row>
@@ -26,6 +24,7 @@
                   class="w-50"
                   hide-details="auto"
                   label="Select order date"
+                  prepend-inner-icon="mdi-calendar"
                   type="date"
                   @update:modelValue="updateSelectedDate()"/>
               </v-form>
@@ -45,11 +44,6 @@
                     </v-form>
                   </v-card>
                 </v-menu>
-              </v-btn>
-              <v-btn :disabled="isLoading || !useCartStore().getCurrentOrderValidation?.valid"
-                     append-icon="mdi-send-clock"
-                     color="primary"
-                     variant="outlined">Send order
               </v-btn>
             </v-toolbar>
             <v-progress-linear v-if="isLoading" indeterminate/>
@@ -82,7 +76,8 @@
                 <v-sheet class="overflow-auto" color="background" max-height="300">
                   <v-list-item v-for="cartOption in useCartStore().getCartSupplierCartOptions"
                                :key="cartOption.id"
-                               :value="cartOption" prepend-icon="mdi-food">
+                               :value="cartOption" class="disable-events"
+                               prepend-icon="mdi-food">
                     <v-list-item-title>
                       {{ cartOption.category.name }}
                     </v-list-item-title>
@@ -98,43 +93,50 @@
 
                 <v-list-subheader>Price</v-list-subheader>
 
-                <v-list-item title="Supplier default price sum (MDL)">
+                <v-list-item title="Supplier default price sum">
                   <template v-slot:append>
                     <v-chip class="font-weight-bold" color="info" label>
-                      +{{ useCartStore().getCurrentOrderWithPrices.supplierDefaultPrice }}
+                      +{{ useCartStore().getCurrentOrderWithPrices.supplierDefaultPrice }} MDL
                     </v-chip>
                   </template>
                 </v-list-item>
                 <v-divider inset/>
 
-                <v-list-item prepend-icon="mdi-sale" title="Supplier discount (MDL)">
+                <v-list-item prepend-icon="mdi-sale" title="Supplier discount">
                   <template v-slot:append>
                     <v-chip class="font-weight-bold" color="secondary" label>
-                      -{{ useCartStore().getCurrentOrderWithPrices.supplierDiscount }}
+                      -{{ useCartStore().getCurrentOrderWithPrices.supplierDiscount }} MDL
                     </v-chip>
                   </template>
                 </v-list-item>
                 <v-divider inset/>
 
-                <v-list-item prepend-icon="mdi-sale" title="Company discount (MDL)">
+                <v-list-item prepend-icon="mdi-sale" title="Company discount">
                   <template v-slot:append>
                     <v-chip class="font-weight-bold" color="secondary" label>
-                      -{{ useCartStore().getCurrentOrderWithPrices.companyDiscount }}
+                      -{{ useCartStore().getCurrentOrderWithPrices.companyDiscount }} MDL
                     </v-chip>
                   </template>
                 </v-list-item>
                 <v-divider inset/>
 
-                <v-list-item title="Final price (MDL)">
+                <v-list-item title="Final price">
                   <template v-slot:append>
                     <v-chip class="font-weight-bold" color="success" label>
-                      {{ useCartStore().getCurrentOrderWithPrices.finalPrice }}
+                      {{ useCartStore().getCurrentOrderWithPrices.finalPrice }} MDL
                     </v-chip>
                   </template>
                 </v-list-item>
-                <v-divider inset/>
               </v-list>
-
+              <v-card-actions>
+                <v-btn :disabled="isLoading || !useCartStore().getCurrentOrderValidation?.valid"
+                       append-icon="mdi-send-clock"
+                       block
+                       color="primary"
+                       variant="outlined"
+                       @click="onOrderSend">Send order
+                </v-btn>
+              </v-card-actions>
             </v-card>
             <v-card
               v-else
@@ -242,7 +244,12 @@
   </v-container>
 
   <v-container v-else class="fill-height">
-    <v-card title="Cart is empty"/>
+    <v-row justify="center">
+      <v-col>
+        <v-card class="text-h6" title="Cart is empty"/>
+      </v-col>
+    </v-row>
+
   </v-container>
 
   <v-snackbar v-model="snackbar">
@@ -305,14 +312,18 @@ async function onOptionDelete(cartOption: CartOption) {
   try {
     isLoading.value = true
     await useCartStore().removeCartOption(cartOption)
-
-
   } finally {
     isLoading.value = false
   }
 }
 
-function onOrderSend() {
+async function onOrderSend() {
+  isLoading.value = true
+  try {
+    await useCartStore().sendCurrentOptions()
+  } finally {
+    isLoading.value = false
+  }
 }
 
 async function updateSelectedDate() {
@@ -326,3 +337,8 @@ async function updateSelectedDate() {
 }
 </script>
 
+<style scoped>
+.disable-events {
+  pointer-events: none
+}
+</style>

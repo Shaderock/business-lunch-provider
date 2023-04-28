@@ -12,6 +12,20 @@ export class EmployeeOrderService {
   async requestOrderCalculation(employeeOrder: EmployeeOrder): Promise<AxiosResponse<EmployeeOrder>> {
     return axios.post(`${ApiConstants.EMPLOYEE_ORDER}/calculate`, employeeOrder);
   }
+
+  async createOrder(employeeOrder: EmployeeOrder): Promise<AxiosResponse<EmployeeOrder>> {
+    return axios.post(`${ApiConstants.EMPLOYEE_ORDER}`, employeeOrder);
+  }
+
+  async requestForDate(date: string) {
+    const params: URLSearchParams = new URLSearchParams([['date', date]])
+    return axios.get(`${ApiConstants.EMPLOYEE_ORDER}`, {params});
+  }
+
+  async deleteOrder(orderId: string) {
+    const params: URLSearchParams = new URLSearchParams([['orderId', orderId]])
+    return axios.delete(`${ApiConstants.EMPLOYEE_ORDER}`, {params});
+  }
 }
 
 const employeeOrderService: EmployeeOrderService = new EmployeeOrderService()

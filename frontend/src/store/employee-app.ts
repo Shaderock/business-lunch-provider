@@ -10,6 +10,8 @@ import {EmployeeOrderStatus} from "@/models/EmployeeOrderStatus";
 import employeeOrderService from "@/services/EmployeeOrderService";
 import {AxiosResponse} from "axios";
 import {Utils} from "@/models/Utils";
+import toastManager from "@/services/ToastManager";
+import optionService from "@/services/OptionService";
 
 export interface CartOption {
   id: string,
@@ -33,7 +35,7 @@ export const useCartStore = defineStore('employeeCartStore', {
     currentCartSupplier: null as CartSupplierInfo | null,
     currentEmployeeOrderValidation: null as EmployeeOrderValidation | null,
     currentEmployeeOrderPrices: null as EmployeeOrder | null,
-    selectedDate: Utils.formatDateWithoutTimeWithDashes(new Date) as string,
+    selectedDate: Utils.formatDateWithoutTimeWithDashes(new Date),
     cartOptions: [] as CartOption[],
   }),
   getters: {
@@ -84,51 +86,55 @@ export const useCartStore = defineStore('employeeCartStore', {
       await this.reValidateCurrentSupplier()
     },
     async setCurrentSupplier(cartSupplierInfo: CartSupplierInfo): Promise<void> {
-      this.currentCartSupplier = cartSupplierInfo
-      const optionsIds: string[] = this.getCartSupplierCartOptions.map(o => o.option.id)
+      this.currentCartSupplier = cartSupplierInfo;
+      const optionsIds: string[] = this.getCartSupplierCartOptions.map(o => o.option.id);
       if (optionsIds.length > 0) {
         const employeeOrder = new EmployeeOrder('', '', 0, 0, 0, 0,
           EmployeeOrderStatus.PendingAdminConfirmation, optionsIds, this.selectedDate);
         const validationResponse: AxiosResponse<EmployeeOrderValidation> =
-          await employeeOrderService.requestOrderValidation(employeeOrder)
-        this.currentEmployeeOrderValidation = validationResponse.data
+          await employeeOrderService.requestOrderValidation(employeeOrder);
+        this.currentEmployeeOrderValidation = validationResponse.data;
 
         if (this.currentEmployeeOrderValidation.valid) {
           const validationResponse: AxiosResponse<EmployeeOrder> =
-            await employeeOrderService.requestOrderCalculation(employeeOrder)
-          this.currentEmployeeOrderPrices = validationResponse.data
+            await employeeOrderService.requestOrderCalculation(employeeOrder);
+          this.currentEmployeeOrderPrices = validationResponse.data;
         }
-
       } else {
-        this.currentCartSupplier = null
+        this.currentCartSupplier = null;
       }
     },
     async reValidateCurrentSupplier(): Promise<void> {
-      if (this.getCartSupplierCartOptions.length == 0)
-        await this.setCurrentSupplier(this.getCartSuppliersInfo[0])
-      else if (this.getCurrentSupplierInfo) {
-        await this.setCurrentSupplier(this.getCurrentSupplierInfo)
+      if (this.getCartSupplierCartOptions.length == 0) {
+        await this.setCurrentSupplier(this.getCartSuppliersInfo[0]);
+      } else if (this.getCurrentSupplierInfo) {
+        await this.setCurrentSupplier(this.getCurrentSupplierInfo);
       }
     },
+    async sendCurrentOptions(): Promise<void> {
+      const optionsIds: string[] = this.getCartSupplierCartOptions.map(o => o.option.id);
+      await employeeOrderService.createOrder(new EmployeeOrder(
+        '', '', 0, 0, 0, 0,
+        EmployeeOrderStatus.PendingAdminConfirmation, optionsIds, this.selectedDate));
+      toastManager.showSuccess("Order sent", "New order has just been sent. Waiting confirmation")
+      await this.removeCartOptionsForCurrentSupplier()
+    },
     addCartOption(cartOption: CartOption): void {
-      this.getCartOptions.push(cartOption)
-      const cartOptionsString: string = JSON.stringify(this.getCartOptions);
-      localStorage.setItem('cartOptions', cartOptionsString);
-      this.triggerCartBlink()
+      this.getCartOptions.push(cartOption);
+      localStorage.setItem('cartOptions', JSON.stringify(this.getCartOptions));
+      this.triggerCartBlink();
     },
     async removeCartOption(cartOption: CartOption): Promise<void> {
-      this.cartOptions = this.cartOptions.filter(o => o.id !== cartOption.id)
-      const cartOptionsString: string = JSON.stringify(this.cartOptions);
-      localStorage.setItem('cartOptions', cartOptionsString);
-      await this.reValidateCurrentSupplier()
+      this.cartOptions = this.cartOptions.filter(o => o.id !== cartOption.id);
+      localStorage.setItem('cartOptions', JSON.stringify(this.cartOptions));
+      await this.reValidateCurrentSupplier();
     },
     async removeCartOptionsForCurrentSupplier(): Promise<void> {
       this.cartOptions = this.cartOptions
-      .filter(o => o.supplier.id !== this.getCurrentSupplierInfo?.supplier.id)
-      const cartOptionsString: string = JSON.stringify(this.cartOptions);
-      localStorage.setItem('cartOptions', cartOptionsString);
+      .filter(o => o.supplier.id !== this.getCurrentSupplierInfo?.supplier.id);
+      localStorage.setItem('cartOptions', JSON.stringify(this.cartOptions));
 
-      await this.reValidateCurrentSupplier()
+      await this.reValidateCurrentSupplier();
     },
     triggerCartBlink(): void {
       if (this.blinkInterval) {
@@ -149,5 +155,46 @@ export const useCartStore = defineStore('employeeCartStore', {
       const storedCartOptionsString: string | null = localStorage.getItem('cartOptions');
       this.cartOptions = storedCartOptionsString ? JSON.parse(storedCartOptionsString) as CartOption[] : []
     }
+  }
+})
+
+export const useEmployeeOrderStore = defineStore('employeeOrderStore', {
+  state: () => ({
+    employeeOrders: [] as EmployeeOrder[],
+    selectedDate: Utils.formatDateWithoutTimeWithDashes(new Date),
+    options: [] as Option[],
+    // todo fetch validations
+  }),
+  getters: {
+    getEmployeeOrders(): EmployeeOrder[] {
+      return this.employeeOrders
+    },
+    getOptions(): Option[] {
+      return this.options
+    },
+    employeeHasOrders(): boolean {
+      return this.employeeOrders.length > 0
+    },
+    getSelectedDate(): string {
+      return this.selectedDate
+    }
+  },
+  actions: {
+    async deleteOrder(employeeOrder: EmployeeOrder) {
+      await employeeOrderService.deleteOrder(employeeOrder.id)
+      this.employeeOrders = this.employeeOrders.filter(o => o.id !== employeeOrder.id)
+      this.options = this.options.filter(o => !employeeOrder.optionIds.includes(o.id));
+    },
+    async requestUpdateOrdersForSelectedDate() {
+      const ordersResponse: AxiosResponse<EmployeeOrder[]> = await employeeOrderService.requestForDate(this.selectedDate)
+      this.employeeOrders = ordersResponse.data
+
+      const optionsResponse: AxiosResponse<Option[]> = await optionService.requestByOrderForDate(this.selectedDate)
+      this.options = optionsResponse.data
+    },
+    async setSelectedDate(date: string) {
+      this.selectedDate = date
+      await this.requestUpdateOrdersForSelectedDate()
+    },
   }
 })

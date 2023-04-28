@@ -173,7 +173,7 @@ export const useSubscribersCompaniesStore = defineStore('supplierAdminSubscriber
 
           subscriptionId: subscription?.id ?? '',
           subscriptionStatus: subscription?.subscriptionStatus ?? SubscriptionStatus.Pending,
-          subscriptionDate: subscription?.createdAt ? Utils.dateToDateString(subscription.createdAt) : ''
+          subscriptionDate: subscription?.createdAt ? Utils.formatDateWithoutTimeWithSlashes(subscription.createdAt) : ''
         }
       })
     }
@@ -241,8 +241,8 @@ export const useSupplierCategoriesStore = defineStore('supplierAdminCategories',
           id: category.id,
           name: category.name,
           categoriesAmount: category.optionIds.length,
-          createdAt: category.createdAt ? Utils.dateToDateString(category.createdAt) : '',
-          publishedAt: category.publishedAt ? Utils.dateToDateString(category.publishedAt) : '',
+          createdAt: category.createdAt ? Utils.formatDateWithoutTimeWithSlashes(category.createdAt) : '',
+          publishedAt: category.publishedAt ? Utils.formatDateWithoutTimeWithSlashes(category.publishedAt) : '',
           isPublished: !!category.publishedAt,
           isPublic: category.isPublic
         }
@@ -368,8 +368,8 @@ export const useSupplierOptionsStore = defineStore('supplierAdminOptions', {
           hasPhoto: option.hasPhoto,
           photoToUpload: [],
           categoryName: useSupplierCategoriesStore().getCategoryById(option.categoryId)?.name || '',
-          createdAt: option.createdAt ? Utils.dateToDateString(option.createdAt) : '',
-          publishedAt: option.publishedAt ? Utils.dateToDateString(option.publishedAt) : '',
+          createdAt: option.createdAt ? Utils.formatDateWithoutTimeWithSlashes(option.createdAt) : '',
+          publishedAt: option.publishedAt ? Utils.formatDateWithoutTimeWithSlashes(option.publishedAt) : '',
           isPublished: !!option.publishedAt,
           isPublic: option.isPublic
         }

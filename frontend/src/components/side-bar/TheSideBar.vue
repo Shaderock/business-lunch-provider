@@ -28,6 +28,8 @@
           </div>
 
           <div v-if="useProfileStore().isUserAndEmployee">
+            <v-list-item :hidden="!isHovering" disabled title="Organization"/>
+
             <OrganizationDetailsNavItem/>
 
             <v-divider/>

@@ -15,8 +15,8 @@ export class SupplierPreferencesService {
   }
 
   update(preferences: SupplierPreferences): Promise<AxiosResponse<SupplierPreferences>> {
-    const workDayStartString: string = Utils.dateToTimeAsString(preferences.workDayStart)
-    const workDayEndString: string = Utils.dateToTimeAsString(preferences.workDayEnd)
+    const workDayStartString: string = Utils.formatDateToTimeAsString(preferences.workDayStart)
+    const workDayEndString: string = Utils.formatDateToTimeAsString(preferences.workDayEnd)
 
     const serializedPreferences = {
       ...preferences,

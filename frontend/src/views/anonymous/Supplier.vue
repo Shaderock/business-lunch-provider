@@ -86,8 +86,8 @@
             Details
             <v-dialog activator="parent">
               <v-row justify="center">
-                <v-col cols="6">
-                  <v-card>
+                <v-col cols="auto">
+                  <v-card max-width="450">
                     <v-card-title>{{ usePublicSupplierStore().getDetails.name }}</v-card-title>
                     <v-card-text>
                       <v-list>
@@ -114,7 +114,17 @@
                                      title="Menu URL"/>
                         <v-divider inset/>
 
-                        <v-list-item-subtitle>Description</v-list-item-subtitle>
+                        <v-list-item
+                          :subtitle="usePublicSupplierStore().getPreferences?.minimumCategoriesForEmployeeOrder || 0"
+                          title="Minimum categories in an order"/>
+                        <v-divider inset/>
+
+                        <v-list-item
+                          :subtitle="usePublicSupplierStore().getPreferences?.orderType || ''"
+                          title="Order type"/>
+                        <v-divider inset/>
+
+                        <v-list-item-subtitle class="pt-2">Description</v-list-item-subtitle>
                       </v-list>
 
                       <v-sheet class="overflow-auto" color="surface" height="150">

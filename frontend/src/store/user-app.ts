@@ -218,7 +218,7 @@ export const useInvitationStore = defineStore('userInvitations', {
       this.invitations = this.invitations.map(invitation => {
         return {
           ...invitation,
-          formattedCreatedAt: Utils.dateToDateString(invitation.createdAt)
+          formattedCreatedAt: Utils.formatDateWithoutTimeWithSlashes(invitation.createdAt)
         };
       });
 

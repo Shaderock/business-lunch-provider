@@ -8,6 +8,7 @@ import com.shaderock.lunch.backend.feature.supplier.dto.PublicSupplierDto;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.mapper.SupplierMapper;
 import com.shaderock.lunch.backend.util.ApiConstants;
+import com.shaderock.lunch.backend.util.FilterManager;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import java.security.Principal;
@@ -27,10 +28,12 @@ public class CompanyAdmSupplierController {
   private final CompanyService companyService;
   private final SupplierMapper supplierMapper;
   private final SubscriptionService subscriptionService;
+  private final FilterManager filterManager;
 
   @GetMapping("/subscription/all")
   @Transactional
   public ResponseEntity<List<PublicSupplierDto>> read(Principal principal) {
+    filterManager.ignoreVisibility();
     Company company = companyService.read(principal);
     List<Subscription> subscriptions = subscriptionService.read(company);
 

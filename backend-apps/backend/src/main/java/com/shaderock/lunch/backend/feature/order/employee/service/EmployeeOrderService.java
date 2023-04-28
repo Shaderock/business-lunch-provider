@@ -18,7 +18,6 @@ import com.shaderock.lunch.backend.feature.order.employee.service.validation.Emp
 import com.shaderock.lunch.backend.feature.order.employee.type.EmployeeOrderStatus;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,31 +42,13 @@ public class EmployeeOrderService {
   public EmployeeOrder create(@NonNull EmployeeOrderDto orderDto,
       @NonNull AppUserDetails userDetails) {
     orderValidationService.validateCreate(orderDto, userDetails);
-    EmployeeOrder order = orderMapper.toEntity(orderDto);
-    order.setAppUser(userDetails.getAppUser());
-    order.setOptions(order.getOptions().stream()
-        .map(option -> optionService.read(option.getId()))
-        .toList());
+    EmployeeOrder order = calculateValidOrder(orderDto, userDetails);
+    order.setCompanyOrder(null);
     order.setStatus(EmployeeOrderStatus.PENDING_ADMIN_CONFIRMATION);
-    order.setSupplierDefaultPrice(calculateDefaultPrice(order.getOptions()));
-    order.setSupplierDiscount(5); // todo
-
-    // todo calculate final price correctly, consider to correctly calculate discounts
-    double finalPrice =
-        order.getSupplierDefaultPrice() - order.getSupplierDiscount() - order.getCompanyDiscount();
-    if (finalPrice < 0) {
-      finalPrice = 0;
-    }
-    order.setFinalPrice(finalPrice);
+    order.getOptions().forEach(option -> option.getEmployeesOrders().add(order));
+    userDetails.getAppUser().getEmployeeOrders().add(order);
 
     return orderRepository.save(order);
-  }
-
-  // todo
-  private double calculateDefaultPrice(Collection<Option> options) {
-    return options.stream()
-        .mapToDouble(Option::getPrice)
-        .sum();
   }
 
   public List<EmployeeOrder> read(@NonNull AppUserDetails userDetails,
@@ -107,7 +88,6 @@ public class EmployeeOrderService {
     order.setOptions(order.getOptions().stream()
         .map(option -> optionService.read(option.getId()))
         .toList());
-
     Option option = order.getOptions().stream().findFirst()
         .orElseThrow(() -> new IllegalStateException("Order not validated"));
     Supplier supplier = option.getCategory().getMenu().getSupplier();

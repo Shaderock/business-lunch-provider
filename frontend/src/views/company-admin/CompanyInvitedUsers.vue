@@ -76,7 +76,7 @@ import {computed, ComputedRef, onMounted, ref} from "vue";
 import {useCompAdmInvitationStore} from "@/store/company-adm-app";
 import {Invitation} from "@/models/Invitation";
 
-// todo add loader
+//todo add loader
 onMounted(() => {
   useCompAdmInvitationStore().requestFreshInvitationData()
 })

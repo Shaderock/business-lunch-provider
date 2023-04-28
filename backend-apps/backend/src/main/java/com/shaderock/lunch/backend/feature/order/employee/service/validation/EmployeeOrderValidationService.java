@@ -156,6 +156,4 @@ public class EmployeeOrderValidationService {
       throw new CrudValidationException("Can not delete a confirmed order");
     }
   }
-
-
 }

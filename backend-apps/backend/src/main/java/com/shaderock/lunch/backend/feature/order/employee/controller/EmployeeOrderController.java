@@ -11,7 +11,6 @@ import com.shaderock.lunch.backend.feature.order.employee.service.EmployeeOrderS
 import com.shaderock.lunch.backend.feature.order.employee.service.validation.EmployeeOrderValidationService;
 import com.shaderock.lunch.backend.feature.order.employee.type.EmployeeOrderStatus;
 import com.shaderock.lunch.backend.util.ApiConstants;
-import com.shaderock.lunch.backend.util.FilterManager;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
@@ -40,13 +39,14 @@ public class EmployeeOrderController {
   private final EmployeeOrderService employeeOrderService;
   private final EmployeeOrderValidationService employeeOrderValidationService;
   private final AppUserDetailsService userDetailsService;
-  private final FilterManager filterManager;
 
   @PostMapping
   @Transactional
   public ResponseEntity<EmployeeOrderDto> create(@RequestBody @NotNull EmployeeOrderDto orderDto,
       Principal principal) {
     AppUserDetails userDetails = userDetailsService.read(principal);
+    preValidateOrder(orderDto, userDetails);
+
     EmployeeOrder order = employeeOrderService.create(orderDto, userDetails);
     return ResponseEntity.ok(employeeOrderMapper.toDto(order));
   }
@@ -57,7 +57,13 @@ public class EmployeeOrderController {
       @RequestBody @NotNull EmployeeOrderDto orderDto,
       Principal principal) {
     AppUserDetails userDetails = userDetailsService.read(principal);
+    preValidateOrder(orderDto, userDetails);
+    EmployeeOrder order = employeeOrderService.calculateValidOrder(orderDto, userDetails);
 
+    return ResponseEntity.ok(employeeOrderMapper.toDto(order));
+  }
+
+  private void preValidateOrder(EmployeeOrderDto orderDto, AppUserDetails userDetails) {
     List<String> errors;
 
     try {
@@ -69,10 +75,6 @@ public class EmployeeOrderController {
     if (!errors.isEmpty()) {
       throw new CrudValidationException("Order is invalid", errors);
     }
-
-    EmployeeOrder order = employeeOrderService.calculateValidOrder(orderDto, userDetails);
-
-    return ResponseEntity.ok(employeeOrderMapper.toDto(order));
   }
 
   @PostMapping("/validate")
@@ -110,7 +112,7 @@ public class EmployeeOrderController {
 
   @DeleteMapping
   @Transactional
-  public ResponseEntity<Void> delete(@RequestBody @NotNull UUID orderId,
+  public ResponseEntity<Void> delete(@RequestParam @NotNull UUID orderId,
       Principal principal) {
     AppUserDetails userDetails = userDetailsService.read(principal);
     EmployeeOrder order = employeeOrderService.read(orderId, userDetails);

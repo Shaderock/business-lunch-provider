@@ -5,11 +5,11 @@ export class Utils {
     return moment(date).format("YYYY-MM-DD")
   }
 
-  static dateToDateString(date: Date): string {
+  static formatDateWithoutTimeWithSlashes(date: Date): string {
     return moment(date).format("YYYY/MM/DD")
   }
 
-  static dateToTimeAsString(date: Date): string {
+  static formatDateToTimeAsString(date: Date): string {
     return moment(date).format("HH:mm:ss")
   }
 
@@ -19,6 +19,10 @@ export class Utils {
 
   static stringToTime(timeAsString: string): Date {
     return moment(timeAsString, 'HH:mm:ss').toDate()
+  }
+
+  static stringDateToDateWithSlashesAsString(dateAsString: string) {
+    return moment(dateAsString, 'YYYY/MM/DD').format('YYYY/MM/DD')
   }
 
   static stringToTimeAsStringWithoutSeconds(timeAsString: string): string {

@@ -7,6 +7,7 @@ import com.shaderock.lunch.backend.feature.config.preference.supplier.mapper.Pub
 import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.util.ApiConstants;
+import com.shaderock.lunch.backend.util.FilterManager;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import java.security.Principal;
@@ -25,10 +26,12 @@ public class CompanyAdmSupplierPreferencesController {
 
   private final PublicSupplierPreferencesMapper preferencesMapper;
   private final CompanyService companyService;
+  private final FilterManager filterManager;
 
   @GetMapping("/subscription/all")
   @Transactional
   public ResponseEntity<List<PublicSupplierPreferencesDto>> read(Principal principal) {
+    filterManager.ignoreVisibility();
     Company company = companyService.read(principal);
 
     List<PublicSupplierPreferencesDto> supplierPreferencesDtos = company.getSubscriptions().stream()

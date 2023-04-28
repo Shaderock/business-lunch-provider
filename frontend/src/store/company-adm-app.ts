@@ -133,7 +133,7 @@ export const useCompAdmInvitationStore = defineStore('companyAdminInvitations', 
       this.invitations = this.invitations.map(invitation => {
         return {
           ...invitation,
-          formattedCreatedAt: Utils.dateToDateString(invitation.createdAt)
+          formattedCreatedAt: Utils.formatDateWithoutTimeWithSlashes(invitation.createdAt)
         };
       });
     }
@@ -246,13 +246,9 @@ export const useSubscriptionSupplierStore = defineStore('companyAdminSubscriptio
     },
     getSubscriptionSuppliers(): SubscriptionSupplier[] {
       return this.suppliers.map(supplier => {
-        console.log(supplier)
         const preferences = this.suppliersPreferences.find(p => p.id === supplier.preferencesId)
-        console.log(preferences)
         const details = this.suppliersDetails.find(d => d.id === supplier.organizationDetailsId)
-        console.log(details)
         const subscription = this.subscriptions.find(s => s.supplierId === supplier.id)
-        console.log(subscription)
         return {
           name: details?.name ?? '',
           email: details?.email ?? '',
@@ -267,7 +263,7 @@ export const useSubscriptionSupplierStore = defineStore('companyAdminSubscriptio
 
           subscriptionId: subscription?.id ?? '',
           subscriptionStatus: subscription?.subscriptionStatus ?? SubscriptionStatus.Pending,
-          subscriptionDate: subscription?.createdAt ? Utils.dateToDateString(subscription.createdAt) : ''
+          subscriptionDate: subscription?.createdAt ? Utils.formatDateWithoutTimeWithSlashes(subscription.createdAt) : ''
         }
       })
     },
