@@ -1,12 +1,12 @@
-package com.shaderock.lunch.backend.feature.order.employee.service;
+package com.shaderock.lunch.backend.feature.order.employee.service.validation;
 
-import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.entity.SupplierPreferences;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.type.OrderType;
 import com.shaderock.lunch.backend.feature.food.category.entity.Category;
 import com.shaderock.lunch.backend.feature.food.option.entity.Option;
 import com.shaderock.lunch.backend.feature.food.option.service.OptionService;
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.NonNull;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CategoriesOrderValidator implements OrderTypeOrderValidator {
+public class OneOptionPerCategoryValidator implements OrderTypeOrderValidator {
 
   private final OptionService optionService;
 
@@ -25,7 +25,7 @@ public class CategoriesOrderValidator implements OrderTypeOrderValidator {
   }
 
   @Override
-  public void validate(@NonNull EmployeeOrder employeeOrder,
+  public List<String> validate(@NonNull EmployeeOrder employeeOrder,
       @NonNull SupplierPreferences supplierPreferences) {
     Set<Category> uniqueCategoriesSet = employeeOrder.getOptions().stream()
         .map(option -> optionService.read(option.getId()))
@@ -33,7 +33,11 @@ public class CategoriesOrderValidator implements OrderTypeOrderValidator {
         .collect(Collectors.toSet());
 
     if (uniqueCategoriesSet.size() != employeeOrder.getOptions().size()) {
-      throw new CrudValidationException("Only one option per category is supported");
+      return List.of(String.format(
+          "Only one option per category is supported but [%s] options ordered for [%s] categories",
+          employeeOrder.getOptions().size(), uniqueCategoriesSet.size()));
+    } else {
+      return List.of();
     }
   }
 }

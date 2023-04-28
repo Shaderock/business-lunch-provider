@@ -7,11 +7,11 @@ import {PublicCompanyPreferences} from "@/models/PublicCompanyPreferences";
 export class CompanyPreferencesService {
 
   public getCompanyPreferences(): Promise<AxiosResponse<CompanyPreferences>> {
-    return axios.get(ApiConstants.COMPANY_ADM_COMPANY_PREFERENCES);
+    return axios.get(ApiConstants.EMPLOYEE_COMPANY_PREFERENCES);
   }
 
   update(preferences: CompanyPreferences): Promise<AxiosResponse<CompanyPreferences>> {
-    const deliveryAtString: string = Utils.dateToTimeAsString(preferences.deliverAt)
+    const deliveryAtString: string = Utils.formatDateToTimeAsString(preferences.deliverAt)
 
     const serializedPreferences = {
       ...preferences,

@@ -2,7 +2,7 @@
   <v-list-item
     prepend-icon="mdi-briefcase-arrow-left-right"
     title="Supplier Subscriptions"
-    v-bind:to="RouterPaths.EMPLOYEE_COMPANY_SUPPLIERS_SUBSCRIPTIONS"
+    v-bind:to="RouterPaths.COMPANY_ADM_COMPANY_SUPPLIERS_SUBSCRIPTIONS"
   />
 </template>
 

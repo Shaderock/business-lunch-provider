@@ -1,8 +1,9 @@
 import axios from 'axios';
-import {useRouter} from "vue-router";
 import {useAuthStore} from "@/store/user-app";
 import {ToastManager} from "@/services/ToastManager";
 import {ApiConstants} from "@/services/ApiConstants";
+import router from "@/router";
+import {RouterPaths} from "@/services/RouterPaths";
 
 export default function configureAxios() {
   axios.defaults.baseURL = ApiConstants.BACKEND_URL
@@ -25,14 +26,14 @@ export default function configureAxios() {
       return response;
     },
     async (error) => {
-      const router = useRouter()
+      // const router = useRouter()
       const toastManager: ToastManager = new ToastManager()
       if (error.response.config.url !== ApiConstants.BACKEND_URL + '/login')
         if (error.response.status === 403 || error.response.status === 401) {
           toastManager.showInfo('Unauthorized access',
             'Your session could have expired. Sign in, please.')
           useAuthStore().logout()
-          await router.push('/')
+          await router.push(RouterPaths.ANONYMOUS_LOGIN)
         }
       if (error.response.status === 500) {
         toastManager.showError('Server error', 'It looks like there was a server-side problem. ' +

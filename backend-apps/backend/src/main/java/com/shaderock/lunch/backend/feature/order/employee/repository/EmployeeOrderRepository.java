@@ -4,12 +4,15 @@ import com.shaderock.lunch.backend.data.repository.DeletableEntityRepository;
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
 import com.shaderock.lunch.backend.feature.order.employee.type.EmployeeOrderStatus;
+import com.shaderock.lunch.backend.feature.user.entity.AppUser;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface EmployeeOrderRepository extends DeletableEntityRepository<EmployeeOrder> {
+
+  List<EmployeeOrder> findByAppUserAndOrderDate(AppUser appUser, LocalDate orderDate);
 
   List<EmployeeOrder> findByAppUser_UserDetailsAndStatusAndOrderDate(AppUserDetails userDetails,
       EmployeeOrderStatus status, LocalDate orderDate);

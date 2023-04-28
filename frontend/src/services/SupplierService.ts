@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 import {ApiConstants} from "@/services/ApiConstants";
 import {Supplier} from "@/models/Supplier";
 
@@ -28,6 +28,11 @@ export class SupplierService {
 
   async requestSubscriptionSuppliers(): Promise<any> {
     return axios.get(`${ApiConstants.COMPANY_ADM_SUPPLIER}/subscription/all`);
+  }
+
+  async requestSupplier(supplierName: string): Promise<AxiosResponse<Supplier>> {
+    const params: URLSearchParams = new URLSearchParams([['supplierName', supplierName]])
+    return axios.get(ApiConstants.ANONYM_SUPPLIER, {params});
   }
 }
 

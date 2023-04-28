@@ -1,7 +1,7 @@
 <template>
-  <v-app-bar :elevation="5">
+  <v-app-bar>
     <v-app-bar-title>
-      <v-btn v-bind:to="'/'" variant="plain">
+      <v-btn v-bind:to="RouterPaths.ANONYMOUS_HOME" variant="plain">
         <v-icon color="primary" size="x-large" start>
           mdi-food-croissant
         </v-icon>
@@ -17,9 +17,22 @@
         <v-icon>mdi-bell</v-icon>
       </v-btn>
 
-      <v-btn v-if="useProfileStore().isEmployee" icon
+      <v-btn v-if="useProfileStore().isEmployee"
+             :color="useCartStore().isBlinking ? 'success' : ''"
+             icon
+             variant="plain"
              v-bind:to="RouterPaths.EMPLOYEE_CART">
-        <v-icon>mdi-cart</v-icon>
+        <v-fade-transition>
+
+          <v-badge v-if="useCartStore().getCartOptions.length > 0 &&!useCartStore().isBlinking"
+                   :content="useCartStore().getCartOptions.length"
+                   color="red"
+                   inline>
+            <v-icon icon="mdi-cart"/>
+          </v-badge>
+
+          <v-icon v-else-if="!useCartStore().isBlinking" icon="mdi-cart"/>
+        </v-fade-transition>
       </v-btn>
 
       <v-btn id="profile-actions"
@@ -102,6 +115,7 @@ import {useTheme} from "vuetify";
 import {RouterPaths} from "@/services/RouterPaths";
 import {provide, Ref, ref, UnwrapRef} from "vue";
 import OrganizationRegistrationDialog from "@/views/anonymous/OrganizationRegistrationDialog.vue";
+import {useCartStore} from "@/store/employee-app";
 
 const theme = useTheme();
 const showOrganizationRegistrationDialog: Ref<UnwrapRef<boolean>> = ref(false)
@@ -113,7 +127,7 @@ function switchTheme() {
 
 function logout() {
   useAuthStore().logout();
-  router.push('/');
+  router.push(RouterPaths.ANONYMOUS_HOME);
   toastManager.showSuccess("Good Bye!", "You were signed out")
 }
 </script>

@@ -18,7 +18,7 @@
           </template>
 
           <template v-slot:item.actions="{ item }">
-            <v-btn v-if="item.subscriptionStatus == SubscriptionStatus.Pending"
+            <v-btn v-if="item.raw.subscriptionStatus == SubscriptionStatus.Pending"
                    :disabled="isLoading" icon
                    variant="plain" @click="acceptSubscription(item.raw)">
               <v-icon color="success" icon="mdi-check"/>
@@ -79,7 +79,6 @@ async function declineSubscription(subscriberCompany: SubscriberCompany) {
 
 async function acceptSubscription(subscriberCompany: SubscriberCompany) {
   isLoading.value = true
-  console.log(subscriberCompany)
   await useSubscribersCompaniesStore().acceptSubscription(subscriberCompany.companyId)
   isLoading.value = false
 }

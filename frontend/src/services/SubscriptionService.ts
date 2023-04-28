@@ -4,7 +4,7 @@ import {Subscription} from "@/models/Subscription";
 
 export class SubscriptionService {
   async requestCompanySubscriptions(): Promise<AxiosResponse<Subscription[]>> {
-    return axios.get(`${ApiConstants.COMPANY_ADM_SUBSCRIPTION}/all`)
+    return axios.get(`${ApiConstants.EMPLOYEE_COMPANY_SUBSCRIPTION}/all`)
   }
 
   async subscribe(supplierId: string): Promise<void> {
@@ -27,7 +27,6 @@ export class SubscriptionService {
   }
 
   async acceptSubscription(companyId: string) {
-    console.log("service: " + companyId)
     const params: URLSearchParams = new URLSearchParams([['companyId', companyId]])
     return axios.post(`${ApiConstants.SUPPLIER_ADM_SUBSCRIPTION}/accept`, null, {params})
   }

@@ -21,6 +21,12 @@ import {CategoryTag} from "@/models/CategoryTag";
 import supplierService from "@/services/SupplierService";
 import supplierPreferencesService from "@/services/SupplierPreferencesService";
 import moment from "moment";
+import {Category} from "@/models/Category";
+import {Option} from "@/models/Option";
+import categoryService from "@/services/CategoryService";
+import optionService from "@/services/OptionService";
+import {Subscription} from "@/models/Subscription";
+import subscriptionService from "@/services/SubscriptionService";
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -117,6 +123,9 @@ export const useProfileStore = defineStore('user', {
       this.userDetails = null;
       this.user = null;
     },
+    hasRole(role: Role): boolean {
+      return roleService.hasRole(this.userDetails, role)
+    },
     async requestUserData() {
       try {
         const detailsResponse = await userService.getProfileDetails();
@@ -209,10 +218,10 @@ export const useInvitationStore = defineStore('userInvitations', {
       this.invitations = this.invitations.map(invitation => {
         return {
           ...invitation,
-          formattedCreatedAt: Utils.dateToDateString(invitation.createdAt)
+          formattedCreatedAt: Utils.formatDateWithoutTimeWithSlashes(invitation.createdAt)
         };
       });
-      console.log(this.invitingCompaniesLogos)
+
       this.invitingCompaniesLogos = await Promise.all(this.companiesDetails.map(async company => {
         const logoThumbnail = await organizationService.requestInvitingCompanyLogo(company.id, true);
         return {
@@ -221,7 +230,6 @@ export const useInvitationStore = defineStore('userInvitations', {
           logoThumbnail
         }
       }))
-      console.log(this.invitingCompaniesLogos)
     },
     async requestCompaniesLogos() {
       this.invitingCompaniesLogos = await Promise.all(this.invitingCompaniesLogos.map(async company => {
@@ -327,11 +335,11 @@ export const useWorkingSuppliersStore = defineStore('publicSuppliers', {
       this.publicSuppliers = suppliersResponse.data
 
       const detailsResponse: AxiosResponse<PublicOrganizationDetails[]> =
-        await organizationService.anonymousRequestForDetails()
+        await organizationService.anonymousRequestForAllDetails()
       this.publicSuppliersDetails = detailsResponse.data
 
       const preferencesResponse: AxiosResponse<PublicSupplierPreferences[]> =
-        await supplierPreferencesService.anonymousRequestForPreferences()
+        await supplierPreferencesService.anonymousRequestForAllPreferences()
       this.publicSuppliersPreferences = preferencesResponse.data
     },
     async requestFreshDataIfNothingCached() {
@@ -340,6 +348,128 @@ export const useWorkingSuppliersStore = defineStore('publicSuppliers', {
     },
     incrementLimit() {
       this.suppliersLimit++
+    }
+  }
+})
+
+export interface CategoryOptions {
+  category: Category
+  options: Option[]
+}
+
+export const usePublicSupplierStore = defineStore('publicSupplierProfile', {
+  state: () => ({
+    currentSupplierName: '' as string,
+    supplier: null as Supplier | null,
+    publicSuppliersDetails: null as PublicOrganizationDetails | null,
+    publicSuppliersPreferences: null as PublicSupplierPreferences | null,
+    subscriptions: [] as Subscription [],
+
+    categoriesOptions: [] as CategoryOptions[],
+    currentCategoryOptions: null as CategoryOptions | null,
+
+    optionsLimit: 12 as number,
+    defaultOptionsLimit: 12 as number
+  }),
+  getters: {
+    getCurrentSupplierName(): string {
+      return this.currentSupplierName
+    },
+    isSupplierFound(): boolean {
+      if (!this.supplier) return false
+      return this.supplier.id !== '';
+    },
+    getSupplier(): Supplier | null {
+      return this.supplier
+    },
+    getDetails(): PublicOrganizationDetails | null {
+      return this.publicSuppliersDetails
+    },
+    getPreferences(): PublicSupplierPreferences | null {
+      return this.publicSuppliersPreferences
+    },
+    getCurrentCategory(): CategoryOptions | null {
+      return this.currentCategoryOptions
+    },
+    getCategoriesOptions(): CategoryOptions[] {
+      return this.categoriesOptions
+    },
+    getOptionsLimited(): Option[] {
+      return this.categoriesOptions
+      .filter(c => c.category.id === this.getCurrentCategory?.category?.id)
+      .flatMap(c => {
+        return c.options
+      })
+      .slice(0, this.optionsLimit)
+    },
+    isCompanySubscribed(): boolean {
+      if (useProfileStore().isEmployee) {
+        return this.subscriptions.filter(s => s.supplierId === this.getSupplier?.id).length > 0
+      } else {
+        return false
+      }
+    }
+  },
+  actions: {
+    clearData(): void {
+      this.supplier = null
+      this.publicSuppliersDetails = null
+      this.publicSuppliersPreferences = null
+      this.categoriesOptions = []
+      this.currentCategoryOptions = null
+    },
+    setCurrentSupplierName(name: string): void {
+      this.currentSupplierName = name
+    },
+    async setCurrentCategoryAndFetch(categoryOption: CategoryOptions): Promise<void> {
+      const categoryOptions =
+        this.categoriesOptions.find(c => c.category.id === categoryOption.category.id)
+      this.currentCategoryOptions = categoryOptions || {
+        category: categoryOption.category,
+        options: []
+      }
+      this.optionsLimit = this.defaultOptionsLimit
+      if (this.currentCategoryOptions.options.length === 0) {
+        const optionsResponse = await optionService.requestOptionsForCategory(this.currentCategoryOptions.category.id)
+        this.currentCategoryOptions.options = optionsResponse.data
+
+        const optionsWithoutPhotoAmount: number =
+          this.currentCategoryOptions.options.filter(o => !o.hasPhoto).length
+        this.optionsLimit += optionsWithoutPhotoAmount
+      }
+    },
+    incrementLimit(): void {
+      this.optionsLimit++
+    },
+    async requestFreshData(): Promise<void> {
+      this.categoriesOptions = []
+
+      const supplierResponse = await supplierService.requestSupplier(this.currentSupplierName)
+      this.supplier = supplierResponse.data
+      const organizationResponse = await organizationService.requestDetailsForSupplier(this.currentSupplierName)
+      this.publicSuppliersDetails = organizationResponse.data
+      const preferencesResponse = await supplierPreferencesService.requestPreferencesForSupplier(this.currentSupplierName)
+      this.publicSuppliersPreferences = preferencesResponse.data
+      const categoriesResponse = await categoryService.requestCategoriesForSupplier(this.currentSupplierName)
+
+      for (const category of categoriesResponse.data) {
+        this.categoriesOptions.push({category: category, options: []})
+      }
+
+      if (this.categoriesOptions.length > 0) {
+        await this.setCurrentCategoryAndFetch(this.categoriesOptions[0])
+      }
+
+      if (useProfileStore().isEmployee) {
+        const subscriptionsResponse: AxiosResponse<Subscription[]> =
+          await subscriptionService.requestCompanySubscriptions()
+        this.subscriptions = subscriptionsResponse.data
+      }
+    },
+    async requestFreshDataIfEmpty() {
+      if (this.currentSupplierName !== '' && this.isSupplierFound) {
+        await this.requestFreshData()
+      }
     }
   }
 })

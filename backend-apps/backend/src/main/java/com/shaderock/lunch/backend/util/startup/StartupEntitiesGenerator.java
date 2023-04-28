@@ -3,6 +3,7 @@ package com.shaderock.lunch.backend.util.startup;
 import com.shaderock.lunch.backend.feature.auth.AuthService;
 import com.shaderock.lunch.backend.feature.auth.registration.model.UserRegistrationForm;
 import com.shaderock.lunch.backend.feature.company.entity.Company;
+import com.shaderock.lunch.backend.feature.company.repository.CompanyRepository;
 import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.config.preference.company.entity.CompanyPreferences;
 import com.shaderock.lunch.backend.feature.config.preference.company.type.CompanyDiscountType;
@@ -12,19 +13,32 @@ import com.shaderock.lunch.backend.feature.config.preference.supplier.type.Order
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
 import com.shaderock.lunch.backend.feature.details.type.Role;
+import com.shaderock.lunch.backend.feature.food.category.entity.Category;
+import com.shaderock.lunch.backend.feature.food.category.service.CategoryService;
+import com.shaderock.lunch.backend.feature.food.option.entity.Option;
+import com.shaderock.lunch.backend.feature.food.option.service.OptionService;
+import com.shaderock.lunch.backend.feature.food.price.entity.PriceForCategories;
+import com.shaderock.lunch.backend.feature.food.price.repository.PriceForCategoriesRepository;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.feature.organization.form.OrganizationRegistrationForm;
+import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
+import com.shaderock.lunch.backend.feature.subscription.repository.SubscriptionRepository;
+import com.shaderock.lunch.backend.feature.subscription.service.SubscriptionService;
+import com.shaderock.lunch.backend.feature.subscription.type.SubscriptionStatus;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
+import com.shaderock.lunch.backend.feature.supplier.repository.SupplierRepository;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import jakarta.transaction.Transactional;
 import java.io.InputStream;
 import java.net.URI;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -44,9 +58,16 @@ public class StartupEntitiesGenerator implements
     ApplicationListener<ContextRefreshedEvent> {
 
   public static final String DEFAULT_USER_PASSWORD = "test";
+  private final PriceForCategoriesRepository priceForCategoriesRepository;
+  private final CompanyRepository companyRepository;
+  private final SupplierRepository supplierRepository;
+  private final SubscriptionRepository subscriptionRepository;
   private final AuthService authService;
+  private final SubscriptionService subscriptionService;
   private final AppUserDetailsService appUserDetailsService;
   private final SupplierService supplierService;
+  private final CategoryService categoryService;
+  private final OptionService optionService;
   private final CompanyService companyService;
   private final Faker faker;
   private final ResourceLoader resourceLoader;
@@ -72,19 +93,39 @@ public class StartupEntitiesGenerator implements
   private void generateDefaultOrganizations() {
     try {
       generateSupplier(appUserDetailsService.loadUserByUsername(Organization.SUPPLIER.adminEmail));
-      generateDummySuppliers();
+      List<Supplier> suppliers = generateDummySuppliers();
+      suppliers.forEach(this::generateDefaultCategories);
     } catch (Exception e) {
       LOGGER.error("Couldn't generate default supplier. Reason: {}", e.getMessage());
     }
     try {
       generateCompany(appUserDetailsService.loadUserByUsername(Organization.COMPANY.adminEmail));
       generateDummyEmployees();
+      generateSubscriptions();
     } catch (Exception e) {
       LOGGER.error("Couldn't generate default company. Reason: {}", e.getMessage());
     }
   }
 
-  private void generateDummySuppliers() {
+  private void generateSubscriptions() {
+    List<Supplier> suppliers = supplierService.read();
+    Company company = companyService.read(Organization.COMPANY.adminEmail);
+    for (Supplier supplier : suppliers) {
+      Subscription subscription = Subscription.builder()
+          .company(company)
+          .supplier(supplier)
+          .subscriptionStatus(SubscriptionStatus.ACCEPTED)
+          .createdAt(LocalDateTime.now())
+          .build();
+
+      Subscription persistedSubscription = subscriptionRepository.save(subscription);
+      supplier.getSubscribers().add(persistedSubscription);
+      company.getSubscriptions().add(persistedSubscription);
+    }
+  }
+
+  private List<Supplier> generateDummySuppliers() {
+    List<Supplier> suppliers = new ArrayList<>();
     for (int i = 0; i < 50; i++) {
       Optional<AppUserDetails> generatedUser = generateUser(
           faker.internet().safeEmailAddress(),
@@ -93,18 +134,23 @@ public class StartupEntitiesGenerator implements
           faker.name().lastName(),
           Set.of(Role.USER));
 
-      generatedUser.ifPresent(this::generateSupplier);
+      if (generatedUser.isPresent()) {
+        Supplier supplier = generateSupplier(generatedUser.get());
+        suppliers.add(supplier);
+      }
     }
+    return suppliers;
   }
 
   @SneakyThrows
-  private void generateSupplier(AppUserDetails userDetails) {
+  private Supplier generateSupplier(AppUserDetails userDetails) {
     supplierService.register(
         new OrganizationRegistrationForm(
             faker.restaurant().name() + faker.number().numberBetween(1, 100)),
         userDetails);
     Supplier supplier = supplierService.read(userDetails.getEmail());
     supplier.setPublic(true);
+
     String websiteUrl = faker.internet().url();
     supplier.setWebsiteUrl(new URI(websiteUrl));
     supplier.setMenuUrl(new URI(websiteUrl + "/menu"));
@@ -142,6 +188,84 @@ public class StartupEntitiesGenerator implements
       supplierCategoriesTags.add(tag);
     }
     preferences.setCategoriesTags(supplierCategoriesTags);
+    return supplier;
+  }
+
+  private void generateDefaultCategories(Supplier supplier) {
+
+    int publicCategoriesAmount = faker.number().numberBetween(1, 5);
+    int privateCategoriesAmount = faker.number().numberBetween(0, 2);
+
+    generateCategories(supplier, publicCategoriesAmount, true);
+    generateCategories(supplier, privateCategoriesAmount, false);
+  }
+
+  private List<Category> generateCategories(Supplier supplier, int amount, boolean isPublic) {
+    List<Category> categories = new ArrayList<>();
+    for (int i = 0; i < amount; i++) {
+      if (supplier.getPreferences().getOrderType() == OrderType.ONLY_ONE_OPTION_PER_CATEGORY) {
+        OptionalInt max = supplier.getPreferences().getPricesForCategories().stream()
+            .mapToInt(PriceForCategories::getAmount).max();
+        int amountOfCategoriesCreated = max.isPresent() ? max.getAsInt() + 1 : 1;
+        PriceForCategories priceForCategories = priceForCategoriesRepository.save(
+            PriceForCategories.builder()
+                .amount(amountOfCategoriesCreated)
+                .supplierPreferences(supplier.getPreferences())
+                .price(faker.number().randomDouble(2, i * 10 + 1, i * 20 + 2))
+                .build());
+        LOGGER.info("Created Price for [{}] categories", priceForCategories.getAmount());
+        supplier.getPreferences().getPricesForCategories().add(priceForCategories);
+      }
+
+      Category category = new Category();
+      category.setName(generateCategoryName());
+      Category persistedCategory = categoryService.create(category, supplier);
+      persistedCategory.setPublic(isPublic);
+      persistedCategory = categoryService.update(persistedCategory, supplier);
+
+      int publicOptionsPerCategory = isPublic ? 3 : 0;
+      int privateOptionsPerCategory = isPublic ? 1 : 3;
+      generateOptions(supplier, persistedCategory, publicOptionsPerCategory, true);
+      generateOptions(supplier, persistedCategory, privateOptionsPerCategory, false);
+    }
+    return categories;
+  }
+
+  private String generateCategoryName() {
+    List<String> categoryNames = Arrays.asList(faker.food().dish(), faker.food().fruit(),
+        faker.food().sushi(), faker.food().vegetable(), faker.dessert().variety());
+    return categoryNames.get(faker.number().numberBetween(0, categoryNames.size()));
+  }
+
+  private void generateOptions(Supplier supplier, Category category, int amount, boolean isPublic) {
+    for (int i = 0; i < amount; i++) {
+      Option option = new Option();
+      option.setName(faker.food().ingredient());
+      option.setDescription(faker.lorem().paragraph());
+      option.setPrice(faker.number().randomDouble(2, 1, 100));
+      option.setGram(generateGram());
+
+      Option persistedOption = optionService.create(option, category);
+      persistedOption.setPublic(isPublic);
+      optionService.update(persistedOption, supplier, category);
+
+      int randomNumber = faker.number().numberBetween(0, 100);
+      if (randomNumber < 70) {
+        persistedOption.setPhoto(
+            getImageBytes(String.valueOf(faker.number().numberBetween(1, 40))));
+        optionService.update(persistedOption, supplier, category);
+      }
+    }
+  }
+
+  private String generateGram() {
+    int numOptions = faker.number().numberBetween(1, 4);
+    List<String> options = new ArrayList<>();
+    for (int i = 0; i < numOptions; i++) {
+      int weight = faker.number().numberBetween(15, 100);
+      options.add(weight + "g");
+    }
+    return String.join("/", options);
   }
 
   private void generateCompany(AppUserDetails userDetails) {
@@ -167,6 +291,12 @@ public class StartupEntitiesGenerator implements
 
     preferences.setCompanyDiscountType(
         companyDiscountTypes.get(faker.number().numberBetween(0, companyDiscountTypes.size())));
+
+    AppUserDetails employeeDetails = appUserDetailsService.loadUserByUsername(
+        User.DEFAULT_EMPLOYEE_EMAIL.email);
+    employeeDetails.getAppUser().setOrganizationDetails(organizationDetails);
+    employeeDetails.getRoles().add(Role.EMPLOYEE);
+    organizationDetails.getUsers().add(employeeDetails.getAppUser());
   }
 
   private void generateDummyEmployees() {

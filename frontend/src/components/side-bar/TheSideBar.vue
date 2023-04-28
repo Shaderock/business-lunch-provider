@@ -1,9 +1,7 @@
 <template>
-  <!--todo configure router guards-->
   <v-hover>
     <template v-slot:default="{ isHovering, props}">
       <v-navigation-drawer
-        elevation="10"
         expand-on-hover
         permanent
         rail
@@ -13,7 +11,7 @@
           <v-list-item
             prepend-icon="mdi-home"
             title="Home"
-            v-bind:to="'/'"
+            v-bind:to="RouterPaths.ANONYMOUS_HOME"
           />
 
           <v-divider/>
@@ -30,6 +28,8 @@
           </div>
 
           <div v-if="useProfileStore().isUserAndEmployee">
+            <v-list-item :hidden="!isHovering" disabled title="Organization"/>
+
             <OrganizationDetailsNavItem/>
 
             <v-divider/>

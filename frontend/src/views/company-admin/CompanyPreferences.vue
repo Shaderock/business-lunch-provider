@@ -234,7 +234,7 @@ function initDialogue() {
 
   const deliveryDate: Date | null = useCompAdmCompPrefStore().getDeliveryTime
 
-  updatePreferences.value.deliverAt = deliveryDate != null ? Utils.dateToTimeAsString(deliveryDate) : '13:00:00'
+  updatePreferences.value.deliverAt = deliveryDate != null ? Utils.formatDateToTimeAsString(deliveryDate) : '13:00:00'
   updatePreferences.value.deliveryAddress = persistedPreferences?.deliveryAddress ?? ''
 }
 

@@ -170,7 +170,7 @@
                   <v-row>
                     <v-col>
                       <v-select v-model="updatePreferences.orderType"
-                                :items="[OrderType.UnlimitedOptions, OrderType.OnlyOneOptionPerCategory]"
+                                :items="[OrderType.UnlimitedOptions, OrderType.OnlyOneOptionPerCategory, OrderType.OnlyOneOption]"
                                 :rules="[supplierPreferencesRules.required]"
                                 hint="Select the way employees orders will be created"
                                 label="Select order type"/>
@@ -275,8 +275,8 @@ function initDialogue() {
   const startDate: Date | null = useSupAdmSupPrefStore().getStartTime
   const endDate: Date | null = useSupAdmSupPrefStore().getEndTime
 
-  updatePreferences.value.deliveryStart = startDate != null ? Utils.dateToTimeAsString(startDate) : '10:00:00'
-  updatePreferences.value.deliveryEnd = endDate != null ? Utils.dateToTimeAsString(endDate) : '19:00:00'
+  updatePreferences.value.deliveryStart = startDate != null ? Utils.formatDateToTimeAsString(startDate) : '10:00:00'
+  updatePreferences.value.deliveryEnd = endDate != null ? Utils.formatDateToTimeAsString(endDate) : '19:00:00'
   updatePreferences.value.minimumOrders = persistedPreferences?.minimumOrdersPerCompanyRequest ?? 1
   updatePreferences.value.minimumCategories = persistedPreferences?.minimumCategoriesForEmployeeOrder ?? 1
   updatePreferences.value.orderType = persistedPreferences?.orderType ?? OrderType.UnlimitedOptions

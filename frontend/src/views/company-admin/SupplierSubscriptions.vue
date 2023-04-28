@@ -6,6 +6,7 @@
                       :headers="subscriptionHeaders"
                       :items="useSubscriptionSupplierStore().getSubscriptionSuppliers"
                       density="compact">
+
           <template v-slot:top>
             <v-toolbar extended extension-height="1">
               <v-toolbar-title>Subscriptions</v-toolbar-title>

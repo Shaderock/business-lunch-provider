@@ -56,7 +56,9 @@
                 <template v-slot:prepend="{ isPublic }">
                   <v-list-item-action start>
                     <v-checkbox-btn v-model="persistedSupplier.isPublic" disabled
-                                    v-bind="isPublic"></v-checkbox-btn>
+                                    false-icon="mdi-eye-off"
+                                    true-icon="mdi-eye"
+                                    v-bind="isPublic"/>
                   </v-list-item-action>
                 </template>
                 <v-list-item-title>Whether supplier is public</v-list-item-title>
@@ -66,7 +68,9 @@
             </div>
             <v-list-subheader title="Description"/>
             <v-container>
-              {{ useOrganizationStore().getOrganization.description }}
+              <v-sheet class="overflow-auto" color="surface" height="100">
+                {{ useOrganizationStore().getOrganization.description }}
+              </v-sheet>
             </v-container>
             <v-divider v-if="useProfileStore().isSupplier"/>
           </v-list>
@@ -77,11 +81,13 @@
                  !useOrganizationStore().areDetailsCompleted"
                    color="primary"
                    variant="outlined"
+                   prepend-icon="mdi-eye"
                    @click="updatePublic(true)">
               Become public
             </v-btn>
             <v-btn v-if="useSupAdmSupStore().getPublic"
                    color="secondary"
+                   prepend-icon="mdi-eye-off"
                    @click="updatePublic(false)">
               Become private
             </v-btn>

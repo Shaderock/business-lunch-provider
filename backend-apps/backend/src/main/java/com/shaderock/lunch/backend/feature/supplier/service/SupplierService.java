@@ -88,7 +88,12 @@ public class SupplierService {
     return supplierRepository.findAll();
   }
 
-  @Transactional
+  public Supplier readByName(String supplierName) {
+    return supplierRepository.findByOrganizationDetails_Name(supplierName)
+        .orElseThrow(() -> new CrudValidationException(
+            String.format("Supplier(name=[%s] not found", supplierName)));
+  }
+
   public Supplier read(@NonNull UUID supplierId) {
     return supplierRepository.findById(supplierId).orElseThrow(() -> new CrudValidationException(
         String.format("Supplier(id=[%s] not found", supplierId)));

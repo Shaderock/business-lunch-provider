@@ -1,11 +1,10 @@
 package com.shaderock.lunch.backend.feature.food.price.entity;
 
+import com.shaderock.lunch.backend.data.entity.BaseEntity;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.entity.SupplierPreferences;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.util.UUID;
@@ -24,17 +23,21 @@ import lombok.ToString.Exclude;
 @Builder
 @ToString
 @Entity
-public class PriceForCategories {
+public class PriceForCategories extends BaseEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
   @Column(nullable = false)
   private int amount;
+
   @Column(nullable = false)
   private double price;
+
   @Exclude
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "supplier_preferences_id")
   private SupplierPreferences supplierPreferences;
+
+  @Builder(builderMethodName = "baseEntityBuilder")
+  public PriceForCategories(UUID id) {
+    super(id);
+  }
 }

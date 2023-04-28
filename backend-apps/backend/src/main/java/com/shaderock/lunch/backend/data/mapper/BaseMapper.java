@@ -39,10 +39,14 @@ public interface BaseMapper {
   }
 
   default Set<Option> idsToOptions(Set<UUID> optionsIds) {
-    return Stream.ofNullable(optionsIds)
-        .flatMap(Collection::stream)
-        .map(id -> Option.baseEntityBuilder().id(id).build())
-        .collect(Collectors.toSet());
+    Set<Option> options = new HashSet<>();
+    for (UUID optionId : optionsIds) {
+      Option option = new Option();
+      option.setId(optionId);
+      options.add(option);
+    }
+
+    return options;
   }
 
   default Collection<UUID> optionsToIds(Collection<Option> options) {
@@ -120,7 +124,7 @@ public interface BaseMapper {
   default Set<PriceForCategories> idsToPriceForCategories(Set<UUID> categoriesIds) {
     return Stream.ofNullable(categoriesIds)
         .flatMap(Collection::stream)
-        .map(id -> PriceForCategories.builder().id(id).build())
+        .map(id -> PriceForCategories.baseEntityBuilder().id(id).build())
         .collect(Collectors.toSet());
   }
 

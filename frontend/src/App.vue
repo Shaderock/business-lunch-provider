@@ -1,11 +1,9 @@
 <template>
   <v-app>
-    <the-app-bar></the-app-bar>
-    <the-side-bar></the-side-bar>
+    <the-app-bar/>
+    <the-side-bar/>
     <v-main>
-
-    <router-view></router-view>
-
+      <router-view/>
     </v-main>
   </v-app>
 </template>

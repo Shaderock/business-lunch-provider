@@ -1,9 +1,9 @@
 export class RouterPaths {
-  static readonly ANONYMOUS: string = '/anonymous'
+  static readonly ANONYMOUS: string = ''
+  static readonly ANONYMOUS_HOME: string = RouterPaths.ANONYMOUS + '/'
   static readonly ANONYMOUS_LOGIN: string = RouterPaths.ANONYMOUS + '/login'
   static readonly ANONYMOUS_REGISTER: string = RouterPaths.ANONYMOUS + '/register'
-  static readonly ANONYMOUS_REGISTER_COMPANY: string = RouterPaths.ANONYMOUS + '/register-company'
-  static readonly ANONYMOUS_REGISTER_SUPPLIER: string = RouterPaths.ANONYMOUS + '/register-supplier'
+  static readonly ANONYMOUS_SUPPLIER: string = RouterPaths.ANONYMOUS + '/supplier'
 
   static readonly USER: string = '/user'
   static readonly USER_PROFILE: string = RouterPaths.USER + '/profile'
@@ -12,8 +12,7 @@ export class RouterPaths {
 
   static readonly EMPLOYEE_OR_SUPPLIER_ORGANIZATION_DETAILS: string = '/organization-details'
 
-  private static readonly EMPLOYEE: string = '/employee'
-  static readonly EMPLOYEE_COMPANY_SUPPLIERS_SUBSCRIPTIONS: string = RouterPaths.EMPLOYEE + '/subscribed-suppliers'
+  static readonly EMPLOYEE: string = '/employee'
   static readonly EMPLOYEE_ORDER_HISTORY: string = RouterPaths.EMPLOYEE + '/orders-history'
   static readonly EMPLOYEE_PENDING_ORDERS: string = RouterPaths.EMPLOYEE + '/pending-orders'
   static readonly EMPLOYEE_CART: string = RouterPaths.EMPLOYEE + '/cart'
@@ -21,15 +20,16 @@ export class RouterPaths {
   static readonly EMPLOYEE_PREFERENCES_CONFIG: string = RouterPaths.EMPLOYEE + '/employee-preferences'
   static readonly EMPLOYEE_NOTIFICATIONS_CONFIG: string = RouterPaths.EMPLOYEE + '/employee-notifications'
 
-  private static readonly COMPANY_ADM: string = '/company-adm'
+  static readonly COMPANY_ADM: string = '/company-adm'
   static readonly COMPANY_ADM_COMPANY_PREFERENCES: string = RouterPaths.COMPANY_ADM + '/company-preferences'
   static readonly COMPANY_ADM_COMPANY_NOTIFICATIONS: string = RouterPaths.COMPANY_ADM + '/company-notification-config'
   static readonly COMPANY_ADM_EMPLOYEES_ORDERS: string = RouterPaths.COMPANY_ADM + '/employees-orders'
   static readonly COMPANY_ADM_COMPANY_DASHBOARD: string = RouterPaths.COMPANY_ADM + '/company-dashboard'
   static readonly COMPANY_ADM_EMPLOYEES: string = RouterPaths.COMPANY_ADM + '/employees'
   static readonly COMPANY_ADM_INVITED_USERS: string = RouterPaths.COMPANY_ADM + '/invited'
+  static readonly COMPANY_ADM_COMPANY_SUPPLIERS_SUBSCRIPTIONS: string = RouterPaths.COMPANY_ADM + '/subscribed-suppliers'
 
-  private static readonly SUPPLIER_ADM: string = '/supplier-adm'
+  static readonly SUPPLIER_ADM: string = '/supplier-adm'
   static readonly SUPPLIER_ADM_SUPPLIER_PREFERENCES: string = RouterPaths.SUPPLIER_ADM + '/supplier-preferences'
   static readonly SUPPLIER_ADM_SUBSCRIBED_COMPANIES: string = RouterPaths.SUPPLIER_ADM + '/subscribed-companies'
   static readonly SUPPLIER_ADM_FOOD_CATEGORIES: string = RouterPaths.SUPPLIER_ADM + '/food-categories'
@@ -37,7 +37,7 @@ export class RouterPaths {
   static readonly SUPPLIER_ADM_COMPANIES_ORDERS: string = RouterPaths.SUPPLIER_ADM + '/companies-orders'
   static readonly SUPPLIER_ADM_DASHBOARD: string = RouterPaths.SUPPLIER_ADM + '/supplier-dashboard'
 
-  private static readonly SYSTEM_ADM: string = '/system-adm'
+  static readonly SYSTEM_ADM: string = '/system-adm'
   static readonly SYSTEM_ADM_ORGANIZATIONS: string = RouterPaths.SYSTEM_ADM + '/organization'
   static readonly SYSTEM_ADM_COMPANIES: string = RouterPaths.SYSTEM_ADM + '/companies'
   static readonly SYSTEM_ADM_SUPPLIERS: string = RouterPaths.SYSTEM_ADM + '/suppliers'

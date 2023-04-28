@@ -133,7 +133,7 @@ export const useCompAdmInvitationStore = defineStore('companyAdminInvitations', 
       this.invitations = this.invitations.map(invitation => {
         return {
           ...invitation,
-          formattedCreatedAt: Utils.dateToDateString(invitation.createdAt)
+          formattedCreatedAt: Utils.formatDateWithoutTimeWithSlashes(invitation.createdAt)
         };
       });
     }
@@ -249,7 +249,6 @@ export const useSubscriptionSupplierStore = defineStore('companyAdminSubscriptio
         const preferences = this.suppliersPreferences.find(p => p.id === supplier.preferencesId)
         const details = this.suppliersDetails.find(d => d.id === supplier.organizationDetailsId)
         const subscription = this.subscriptions.find(s => s.supplierId === supplier.id)
-
         return {
           name: details?.name ?? '',
           email: details?.email ?? '',
@@ -264,7 +263,7 @@ export const useSubscriptionSupplierStore = defineStore('companyAdminSubscriptio
 
           subscriptionId: subscription?.id ?? '',
           subscriptionStatus: subscription?.subscriptionStatus ?? SubscriptionStatus.Pending,
-          subscriptionDate: subscription?.createdAt ? Utils.dateToDateString(subscription.createdAt) : ''
+          subscriptionDate: subscription?.createdAt ? Utils.formatDateWithoutTimeWithSlashes(subscription.createdAt) : ''
         }
       })
     },
@@ -319,6 +318,10 @@ export const useSubscriptionSupplierStore = defineStore('companyAdminSubscriptio
       this.subscriptions = subscriptionsResponse.data
 
       await useWorkingSuppliersStore().requestFreshDataIfNothingCached()
+    },
+    async requestDataIfEmpty() {
+      if (this.suppliers.length == 0 || this.subscriptions.length == 0)
+        await this.requestFreshData()
     }
   }
 })
