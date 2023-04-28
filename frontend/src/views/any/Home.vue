@@ -24,7 +24,7 @@
   <v-container v-if="isLoading">
     <v-row justify="space-evenly" justify-sm="center">
       <v-col v-for="n in 20" :key="n">
-        <v-card :width="cardWidth" elevation="10" height="400" variant="outlined">
+        <v-card :width="cardWidth" elevation="10" height="400" variant="tonal">
         </v-card>
       </v-col>
     </v-row>
@@ -38,8 +38,8 @@
             <v-col v-for="workingSupplier in useWorkingSuppliersStore().getWorkingSuppliersLimited"
                    :key="workingSupplier.name"
                    cols="auto">
-              <v-card :title="workingSupplier.name" :width="cardWidth" elevation="5"
-                      variant="outlined"
+              <v-card :title="workingSupplier.name" :width="cardWidth" elevation="10"
+                      variant="tonal"
                       @click="openSupplierProfile(workingSupplier)">
                 <v-img
                   :height="useOrganizationStore().getLogoCardMaxHeight"
@@ -59,6 +59,12 @@
                   <template v-slot:placeholder>
                     <div class="d-flex align-center justify-center fill-height">
                       <v-progress-circular indeterminate/>
+                    </div>
+                  </template>
+                  <template v-slot:error>
+                    <div class="d-flex align-center justify-center fill-height">
+                      <v-icon :size="useOrganizationStore().getLogoCardMaxHeight"
+                              icon="mdi-image"/>
                     </div>
                   </template>
                 </v-img>

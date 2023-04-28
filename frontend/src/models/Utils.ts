@@ -1,6 +1,9 @@
 import moment from "moment/moment";
 
 export class Utils {
+  static formatDateWithoutTimeWithDashes(date: Date): string {
+    return moment(date).format("YYYY-MM-DD")
+  }
 
   static dateToDateString(date: Date): string {
     return moment(date).format("YYYY/MM/DD")
@@ -24,5 +27,18 @@ export class Utils {
 
   static byteArrayToBase64String(array: ArrayBuffer): string {
     return btoa(new Uint8Array(array).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+  }
+
+  static uuid(): string {
+    let uuidValue: string = "", k, randomValue;
+    for (k = 0; k < 32; k++) {
+      randomValue = Math.random() * 16 | 0;
+
+      if (k == 8 || k == 12 || k == 16 || k == 20) {
+        uuidValue += "-"
+      }
+      uuidValue += (k == 12 ? 4 : (k == 16 ? (randomValue & 3 | 8) : randomValue)).toString(16);
+    }
+    return uuidValue;
   }
 }

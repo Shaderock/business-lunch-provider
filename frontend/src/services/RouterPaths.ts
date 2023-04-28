@@ -13,7 +13,6 @@ export class RouterPaths {
   static readonly EMPLOYEE_OR_SUPPLIER_ORGANIZATION_DETAILS: string = '/organization-details'
 
   static readonly EMPLOYEE: string = '/employee'
-  static readonly EMPLOYEE_COMPANY_SUPPLIERS_SUBSCRIPTIONS: string = RouterPaths.EMPLOYEE + '/subscribed-suppliers'
   static readonly EMPLOYEE_ORDER_HISTORY: string = RouterPaths.EMPLOYEE + '/orders-history'
   static readonly EMPLOYEE_PENDING_ORDERS: string = RouterPaths.EMPLOYEE + '/pending-orders'
   static readonly EMPLOYEE_CART: string = RouterPaths.EMPLOYEE + '/cart'
@@ -28,6 +27,7 @@ export class RouterPaths {
   static readonly COMPANY_ADM_COMPANY_DASHBOARD: string = RouterPaths.COMPANY_ADM + '/company-dashboard'
   static readonly COMPANY_ADM_EMPLOYEES: string = RouterPaths.COMPANY_ADM + '/employees'
   static readonly COMPANY_ADM_INVITED_USERS: string = RouterPaths.COMPANY_ADM + '/invited'
+  static readonly COMPANY_ADM_COMPANY_SUPPLIERS_SUBSCRIPTIONS: string = RouterPaths.COMPANY_ADM + '/subscribed-suppliers'
 
   static readonly SUPPLIER_ADM: string = '/supplier-adm'
   static readonly SUPPLIER_ADM_SUPPLIER_PREFERENCES: string = RouterPaths.SUPPLIER_ADM + '/supplier-preferences'

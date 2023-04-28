@@ -39,6 +39,8 @@ export class ApiConstants {
   static readonly PREFERENCES_URL_PART: string = "/preferences"
   static readonly SUPPLIER_ADM_PREFERENCES: string = ApiConstants.SUPPLIER_ADM + ApiConstants.PREFERENCES_URL_PART
   static readonly COMPANY_URL_PART: string = "/company"
+  static readonly EMPLOYEE_COMPANY_PREFERENCES: string =
+    ApiConstants.EMPLOYEE + ApiConstants.COMPANY_URL_PART + ApiConstants.PREFERENCES_URL_PART;
   static readonly COMPANY_ADM_COMPANY: string = ApiConstants.COMPANY_ADM + ApiConstants.COMPANY_URL_PART
   static readonly COMPANY_ADM_COMPANY_PREFERENCES: string =
     ApiConstants.COMPANY_ADM_COMPANY + ApiConstants.PREFERENCES_URL_PART
@@ -56,4 +58,5 @@ export class ApiConstants {
   static readonly SUPPLIER_ADM_SUPPLIER: string = ApiConstants.SUPPLIER_ADM + ApiConstants.SUPPLIER_URL_PART
   static readonly PUBLIC_SUPPLIER_PREFERENCES: string = ApiConstants.SUPPLIER_URL_PART + ApiConstants.PREFERENCES_URL_PART
   static readonly ANONYM_CATEGORIES: string = ApiConstants.ANONYM + "/category";
+  static readonly EMPLOYEE_COMPANY_SUBSCRIPTION: string = ApiConstants.EMPLOYEE + ApiConstants.COMPANY_URL_PART + ApiConstants.SUBSCRIPTION_URL_PART;
 }

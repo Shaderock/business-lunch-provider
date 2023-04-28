@@ -170,7 +170,7 @@
                   <v-row>
                     <v-col>
                       <v-select v-model="updatePreferences.orderType"
-                                :items="[OrderType.UnlimitedOptions, OrderType.OnlyOneOptionPerCategory]"
+                                :items="[OrderType.UnlimitedOptions, OrderType.OnlyOneOptionPerCategory, OrderType.OnlyOneOption]"
                                 :rules="[supplierPreferencesRules.required]"
                                 hint="Select the way employees orders will be created"
                                 label="Select order type"/>

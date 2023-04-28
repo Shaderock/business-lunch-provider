@@ -87,7 +87,7 @@ public class SubscriptionService {
   public Subscription read(@NonNull Company company, @NonNull Supplier supplier) {
     return subscriptionRepository.findByCompanyAndSupplier(company, supplier).orElseThrow(
         () -> new CrudValidationException(
-            String.format("Subscription for Company(id=[%s]) and Supplier(id=%s) not found",
+            String.format("Company(name=[%s]) is not subscribed for Supplier(name=%s)",
                 company.getId(), supplier.getId())));
   }
 

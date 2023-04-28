@@ -17,9 +17,11 @@ public class CategoryValidationService {
 
   private final SupplierValidationService supplierValidationService;
 
+  // todo validate  Minimum required amount of categories ordered is [2] but only [1] sent
   public void validateCreate(Category category, Supplier supplier) {
     if (supplier.getPreferences().getOrderType() == OrderType.ONLY_ONE_OPTION_PER_CATEGORY) {
       long currentCategories = supplier.getMenu().getCategories().size();
+      LOGGER.info("Current categories: {}", currentCategories);
       if (supplier.getPreferences()
           .getPricesForCategories()
           .stream()

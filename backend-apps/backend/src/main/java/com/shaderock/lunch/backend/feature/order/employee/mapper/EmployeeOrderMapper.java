@@ -16,5 +16,6 @@ public interface EmployeeOrderMapper extends BaseMapper {
   EmployeeOrderDto toDto(EmployeeOrder employeeOrder);
 
   @InheritInverseConfiguration
+  @Mapping(source = "optionIds", target = "options")
   EmployeeOrder toEntity(EmployeeOrderDto employeeOrderDto);
 }

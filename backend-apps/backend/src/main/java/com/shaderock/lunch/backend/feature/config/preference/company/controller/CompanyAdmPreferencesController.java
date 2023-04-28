@@ -1,7 +1,5 @@
 package com.shaderock.lunch.backend.feature.config.preference.company.controller;
 
-import com.shaderock.lunch.backend.feature.company.entity.Company;
-import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.config.preference.company.dto.CompanyPreferencesDto;
 import com.shaderock.lunch.backend.feature.config.preference.company.entity.CompanyPreferences;
 import com.shaderock.lunch.backend.feature.config.preference.company.mapper.CompanyPreferencesMapper;
@@ -15,7 +13,6 @@ import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,16 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CompanyAdmPreferencesController {
 
   private final CompanyPreferencesMapper preferencesMapper;
-  private final CompanyService companyService;
   private final CompanyPreferencesService companyPreferencesService;
   private final AppUserDetailsService userDetailsService;
-
-  @GetMapping
-  public ResponseEntity<CompanyPreferencesDto> read(Principal principal) {
-    Company company = companyService.read(principal);
-    CompanyPreferences preferences = company.getPreferences();
-    return ResponseEntity.ok(preferencesMapper.toDto(preferences));
-  }
 
   @PutMapping
   public ResponseEntity<CompanyPreferencesDto> update(Principal principal,

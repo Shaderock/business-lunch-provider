@@ -1,4 +1,5 @@
 export enum OrderType {
-  UnlimitedOptions = 'UNLIMITED_OPTIONS',
-  OnlyOneOptionPerCategory = 'ONLY_ONE_OPTION_PER_CATEGORY',
+  UnlimitedOptions = 'No restrictions',
+  OnlyOneOptionPerCategory = 'One option per one category',
+  OnlyOneOption = "Only one option per order"
 }

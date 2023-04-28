@@ -3,6 +3,7 @@ package com.shaderock.lunch.backend.util.startup;
 import com.shaderock.lunch.backend.feature.auth.AuthService;
 import com.shaderock.lunch.backend.feature.auth.registration.model.UserRegistrationForm;
 import com.shaderock.lunch.backend.feature.company.entity.Company;
+import com.shaderock.lunch.backend.feature.company.repository.CompanyRepository;
 import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.config.preference.company.entity.CompanyPreferences;
 import com.shaderock.lunch.backend.feature.config.preference.company.type.CompanyDiscountType;
@@ -16,19 +17,28 @@ import com.shaderock.lunch.backend.feature.food.category.entity.Category;
 import com.shaderock.lunch.backend.feature.food.category.service.CategoryService;
 import com.shaderock.lunch.backend.feature.food.option.entity.Option;
 import com.shaderock.lunch.backend.feature.food.option.service.OptionService;
+import com.shaderock.lunch.backend.feature.food.price.entity.PriceForCategories;
+import com.shaderock.lunch.backend.feature.food.price.repository.PriceForCategoriesRepository;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.feature.organization.form.OrganizationRegistrationForm;
+import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
+import com.shaderock.lunch.backend.feature.subscription.repository.SubscriptionRepository;
+import com.shaderock.lunch.backend.feature.subscription.service.SubscriptionService;
+import com.shaderock.lunch.backend.feature.subscription.type.SubscriptionStatus;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
+import com.shaderock.lunch.backend.feature.supplier.repository.SupplierRepository;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import jakarta.transaction.Transactional;
 import java.io.InputStream;
 import java.net.URI;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -48,7 +58,12 @@ public class StartupEntitiesGenerator implements
     ApplicationListener<ContextRefreshedEvent> {
 
   public static final String DEFAULT_USER_PASSWORD = "test";
+  private final PriceForCategoriesRepository priceForCategoriesRepository;
+  private final CompanyRepository companyRepository;
+  private final SupplierRepository supplierRepository;
+  private final SubscriptionRepository subscriptionRepository;
   private final AuthService authService;
+  private final SubscriptionService subscriptionService;
   private final AppUserDetailsService appUserDetailsService;
   private final SupplierService supplierService;
   private final CategoryService categoryService;
@@ -86,8 +101,26 @@ public class StartupEntitiesGenerator implements
     try {
       generateCompany(appUserDetailsService.loadUserByUsername(Organization.COMPANY.adminEmail));
       generateDummyEmployees();
+      generateSubscriptions();
     } catch (Exception e) {
       LOGGER.error("Couldn't generate default company. Reason: {}", e.getMessage());
+    }
+  }
+
+  private void generateSubscriptions() {
+    List<Supplier> suppliers = supplierService.read();
+    Company company = companyService.read(Organization.COMPANY.adminEmail);
+    for (Supplier supplier : suppliers) {
+      Subscription subscription = Subscription.builder()
+          .company(company)
+          .supplier(supplier)
+          .subscriptionStatus(SubscriptionStatus.ACCEPTED)
+          .createdAt(LocalDateTime.now())
+          .build();
+
+      Subscription persistedSubscription = subscriptionRepository.save(subscription);
+      supplier.getSubscribers().add(persistedSubscription);
+      company.getSubscriptions().add(persistedSubscription);
     }
   }
 
@@ -160,27 +193,38 @@ public class StartupEntitiesGenerator implements
 
   private void generateDefaultCategories(Supplier supplier) {
 
-    if (supplier.getPreferences().getOrderType() == OrderType.UNLIMITED_OPTIONS) {
-      int publicCategoriesAmount = faker.number().numberBetween(3, 6);
-      int privateCategoriesAmount = faker.number().numberBetween(0, 1);
+    int publicCategoriesAmount = faker.number().numberBetween(1, 5);
+    int privateCategoriesAmount = faker.number().numberBetween(0, 2);
 
-      generateCategories(supplier, publicCategoriesAmount, true);
-      generateCategories(supplier, privateCategoriesAmount, false);
-    }
+    generateCategories(supplier, publicCategoriesAmount, true);
+    generateCategories(supplier, privateCategoriesAmount, false);
   }
 
   private List<Category> generateCategories(Supplier supplier, int amount, boolean isPublic) {
     List<Category> categories = new ArrayList<>();
     for (int i = 0; i < amount; i++) {
+      if (supplier.getPreferences().getOrderType() == OrderType.ONLY_ONE_OPTION_PER_CATEGORY) {
+        OptionalInt max = supplier.getPreferences().getPricesForCategories().stream()
+            .mapToInt(PriceForCategories::getAmount).max();
+        int amountOfCategoriesCreated = max.isPresent() ? max.getAsInt() + 1 : 1;
+        PriceForCategories priceForCategories = priceForCategoriesRepository.save(
+            PriceForCategories.builder()
+                .amount(amountOfCategoriesCreated)
+                .supplierPreferences(supplier.getPreferences())
+                .price(faker.number().randomDouble(2, i * 10 + 1, i * 20 + 2))
+                .build());
+        LOGGER.info("Created Price for [{}] categories", priceForCategories.getAmount());
+        supplier.getPreferences().getPricesForCategories().add(priceForCategories);
+      }
+
       Category category = new Category();
       category.setName(generateCategoryName());
-
       Category persistedCategory = categoryService.create(category, supplier);
       persistedCategory.setPublic(isPublic);
       persistedCategory = categoryService.update(persistedCategory, supplier);
 
-      int publicOptionsPerCategory = isPublic ? 15 : 0;
-      int privateOptionsPerCategory = isPublic ? 3 : 15;
+      int publicOptionsPerCategory = isPublic ? 3 : 0;
+      int privateOptionsPerCategory = isPublic ? 1 : 3;
       generateOptions(supplier, persistedCategory, publicOptionsPerCategory, true);
       generateOptions(supplier, persistedCategory, privateOptionsPerCategory, false);
     }
@@ -247,6 +291,12 @@ public class StartupEntitiesGenerator implements
 
     preferences.setCompanyDiscountType(
         companyDiscountTypes.get(faker.number().numberBetween(0, companyDiscountTypes.size())));
+
+    AppUserDetails employeeDetails = appUserDetailsService.loadUserByUsername(
+        User.DEFAULT_EMPLOYEE_EMAIL.email);
+    employeeDetails.getAppUser().setOrganizationDetails(organizationDetails);
+    employeeDetails.getRoles().add(Role.EMPLOYEE);
+    organizationDetails.getUsers().add(employeeDetails.getAppUser());
   }
 
   private void generateDummyEmployees() {

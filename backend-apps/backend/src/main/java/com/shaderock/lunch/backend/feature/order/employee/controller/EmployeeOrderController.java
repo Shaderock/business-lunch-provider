@@ -1,15 +1,19 @@
 package com.shaderock.lunch.backend.feature.order.employee.controller;
 
+import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
 import com.shaderock.lunch.backend.feature.order.employee.dto.EmployeeOrderDto;
+import com.shaderock.lunch.backend.feature.order.employee.dto.EmployeeOrderValidationDto;
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
 import com.shaderock.lunch.backend.feature.order.employee.mapper.EmployeeOrderMapper;
 import com.shaderock.lunch.backend.feature.order.employee.service.EmployeeOrderService;
-import com.shaderock.lunch.backend.feature.order.employee.service.EmployeeOrderValidationService;
+import com.shaderock.lunch.backend.feature.order.employee.service.validation.EmployeeOrderValidationService;
 import com.shaderock.lunch.backend.feature.order.employee.type.EmployeeOrderStatus;
 import com.shaderock.lunch.backend.util.ApiConstants;
+import com.shaderock.lunch.backend.util.FilterManager;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
 import java.time.LocalDate;
@@ -36,8 +40,10 @@ public class EmployeeOrderController {
   private final EmployeeOrderService employeeOrderService;
   private final EmployeeOrderValidationService employeeOrderValidationService;
   private final AppUserDetailsService userDetailsService;
+  private final FilterManager filterManager;
 
   @PostMapping
+  @Transactional
   public ResponseEntity<EmployeeOrderDto> create(@RequestBody @NotNull EmployeeOrderDto orderDto,
       Principal principal) {
     AppUserDetails userDetails = userDetailsService.read(principal);
@@ -45,15 +51,53 @@ public class EmployeeOrderController {
     return ResponseEntity.ok(employeeOrderMapper.toDto(order));
   }
 
-  @GetMapping("/validate")
-  public ResponseEntity<Void> validate(@RequestBody @NotNull EmployeeOrderDto orderDto,
+  @PostMapping("/calculate")
+  @Transactional
+  public ResponseEntity<EmployeeOrderDto> preCalculate(
+      @RequestBody @NotNull EmployeeOrderDto orderDto,
       Principal principal) {
     AppUserDetails userDetails = userDetailsService.read(principal);
-    employeeOrderValidationService.validateCreate(orderDto, userDetails);
-    return ResponseEntity.noContent().build();
+
+    List<String> errors;
+
+    try {
+      errors = employeeOrderValidationService.validateCreate(orderDto, userDetails);
+    } catch (CrudValidationException e) {
+      errors = List.of(e.getMessage());
+    }
+
+    if (!errors.isEmpty()) {
+      throw new CrudValidationException("Order is invalid", errors);
+    }
+
+    EmployeeOrder order = employeeOrderService.calculateValidOrder(orderDto, userDetails);
+
+    return ResponseEntity.ok(employeeOrderMapper.toDto(order));
+  }
+
+  @PostMapping("/validate")
+  @Transactional
+  public ResponseEntity<EmployeeOrderValidationDto> validate(
+      @RequestBody @NotNull EmployeeOrderDto orderDto,
+      Principal principal) {
+    AppUserDetails userDetails = userDetailsService.read(principal);
+
+    List<String> errors;
+
+    try {
+      errors = employeeOrderValidationService.validateCreate(orderDto, userDetails);
+    } catch (CrudValidationException e) {
+      errors = List.of(e.getMessage());
+    }
+
+    return ResponseEntity.ok(EmployeeOrderValidationDto.builder()
+        .errors(errors)
+        .valid(errors.isEmpty())
+        .build());
   }
 
   @GetMapping
+  @Transactional
   // todo check if filter disabling is required here
   public ResponseEntity<List<EmployeeOrderDto>> read(
       @RequestParam(required = false) Optional<EmployeeOrderStatus> status,
@@ -65,6 +109,7 @@ public class EmployeeOrderController {
   }
 
   @DeleteMapping
+  @Transactional
   public ResponseEntity<Void> delete(@RequestBody @NotNull UUID orderId,
       Principal principal) {
     AppUserDetails userDetails = userDetailsService.read(principal);

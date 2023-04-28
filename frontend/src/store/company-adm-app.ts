@@ -246,10 +246,13 @@ export const useSubscriptionSupplierStore = defineStore('companyAdminSubscriptio
     },
     getSubscriptionSuppliers(): SubscriptionSupplier[] {
       return this.suppliers.map(supplier => {
+        console.log(supplier)
         const preferences = this.suppliersPreferences.find(p => p.id === supplier.preferencesId)
+        console.log(preferences)
         const details = this.suppliersDetails.find(d => d.id === supplier.organizationDetailsId)
+        console.log(details)
         const subscription = this.subscriptions.find(s => s.supplierId === supplier.id)
-
+        console.log(subscription)
         return {
           name: details?.name ?? '',
           email: details?.email ?? '',
@@ -319,6 +322,10 @@ export const useSubscriptionSupplierStore = defineStore('companyAdminSubscriptio
       this.subscriptions = subscriptionsResponse.data
 
       await useWorkingSuppliersStore().requestFreshDataIfNothingCached()
+    },
+    async requestDataIfEmpty() {
+      if (this.suppliers.length == 0 || this.subscriptions.length == 0)
+        await this.requestFreshData()
     }
   }
 })

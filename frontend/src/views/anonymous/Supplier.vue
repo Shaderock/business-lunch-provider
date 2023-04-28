@@ -70,6 +70,7 @@
 
           <v-spacer/>
 
+          <!-- todo add request offset-->
           <v-chip-group v-if="usePublicSupplierStore().isSupplierFound" class="disable-events">
             <v-chip
               :text="Utils.stringToTimeAsStringWithoutSeconds(usePublicSupplierStore().getPreferences?.workDayStart.toString())"
@@ -127,7 +128,10 @@
           </v-btn>
 
           <template v-slot:extension>
-            <v-tabs v-model="tabs" :disabled="isLoading" align-tabs="start" center-active
+            <v-tabs v-model="tabs"
+                    :disabled="isLoading"
+                    align-tabs="start"
+                    center-active
                     density="compact"
                     show-arrows>
               <v-tab v-for="categoryOptions in usePublicSupplierStore().getCategoriesOptions"
@@ -141,7 +145,6 @@
           </template>
         </v-toolbar>
       </v-col>
-
       <v-progress-linear v-if="isLoading" indeterminate/>
     </v-row>
   </v-container>
@@ -152,12 +155,12 @@
                      :key="categoryOptions.category.id"
                      :value="categoryOptions">
         <v-container class="fill-height">
-          <v-row justify="space-between" justify-sm="center">
+          <v-row justify="center" justify-sm="center">
             <v-col v-for="option in usePublicSupplierStore().getOptionsLimited" :key="option.id"
                    :value="option"
                    cols="auto">
-              <v-card :width="useOrganizationStore().getLogoCardWidth" elevation="5"
-                      variant="outlined">
+              <v-card :width="useOrganizationStore().getLogoCardWidth" elevation="10"
+                      variant="tonal">
                 <v-sheet class="overflow-hidden" color="background" height="50">
                   <v-card-title>{{ option.name }}</v-card-title>
                 </v-sheet>
@@ -199,7 +202,11 @@
 
                 <v-card-text class="text-caption">{{ option.gram }}</v-card-text>
                 <v-card-actions>
-                  <v-btn append-icon="mdi-cart-arrow-down" color="primary" variant="outlined">
+                  <v-btn v-if="usePublicSupplierStore().isCompanySubscribed"
+                         append-icon="mdi-cart-arrow-down"
+                         color="primary"
+                         variant="outlined"
+                         @click="addOptionToCart(option, categoryOptions)">
                     Add to cart
                   </v-btn>
                   <v-spacer/>
@@ -223,6 +230,8 @@ import router from "@/router";
 import {RouterPaths} from "@/services/RouterPaths";
 import {Utils} from "@/models/Utils";
 import {ApiConstants} from "@/services/ApiConstants";
+import {useCartStore} from "@/store/employee-app";
+import {Option} from "@/models/Option";
 
 const route = useRoute();
 const isLoading = ref(false)
@@ -254,7 +263,11 @@ function optionPhotoLoaded() {
 async function refreshData() {
   isLoading.value = true;
   usePublicSupplierStore().clearData()
-  await usePublicSupplierStore().requestFreshData().finally(() => updateStateAfterDataLoad())
+  try {
+    await usePublicSupplierStore().requestFreshData()
+  } finally {
+    updateStateAfterDataLoad()
+  }
 }
 
 function updateStateAfterDataLoad() {
@@ -264,6 +277,23 @@ function updateStateAfterDataLoad() {
     tabs.value = category;
   }
   isLoading.value = false;
+}
+
+function addOptionToCart(option: Option, categoryOptions: CategoryOptions) {
+  const supplier = usePublicSupplierStore().getSupplier
+  const details = usePublicSupplierStore().getDetails
+  const preferences = usePublicSupplierStore().getPreferences
+
+  if (supplier && details && preferences)
+    useCartStore().addCartOption(
+      {
+        id: Utils.uuid(),
+        option: option,
+        category: categoryOptions.category,
+        supplier: supplier,
+        supplierDetails: details,
+        supplierPreferences: preferences
+      })
 }
 
 function routerBack() {

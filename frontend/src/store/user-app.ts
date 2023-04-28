@@ -25,6 +25,8 @@ import {Category} from "@/models/Category";
 import {Option} from "@/models/Option";
 import categoryService from "@/services/CategoryService";
 import optionService from "@/services/OptionService";
+import {Subscription} from "@/models/Subscription";
+import subscriptionService from "@/services/SubscriptionService";
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -361,6 +363,7 @@ export const usePublicSupplierStore = defineStore('publicSupplierProfile', {
     supplier: null as Supplier | null,
     publicSuppliersDetails: null as PublicOrganizationDetails | null,
     publicSuppliersPreferences: null as PublicSupplierPreferences | null,
+    subscriptions: [] as Subscription [],
 
     categoriesOptions: [] as CategoryOptions[],
     currentCategoryOptions: null as CategoryOptions | null,
@@ -399,6 +402,13 @@ export const usePublicSupplierStore = defineStore('publicSupplierProfile', {
       })
       .slice(0, this.optionsLimit)
     },
+    isCompanySubscribed(): boolean {
+      if (useProfileStore().isEmployee) {
+        return this.subscriptions.filter(s => s.supplierId === this.getSupplier?.id).length > 0
+      } else {
+        return false
+      }
+    }
   },
   actions: {
     clearData(): void {
@@ -448,6 +458,12 @@ export const usePublicSupplierStore = defineStore('publicSupplierProfile', {
 
       if (this.categoriesOptions.length > 0) {
         await this.setCurrentCategoryAndFetch(this.categoriesOptions[0])
+      }
+
+      if (useProfileStore().isEmployee) {
+        const subscriptionsResponse: AxiosResponse<Subscription[]> =
+          await subscriptionService.requestCompanySubscriptions()
+        this.subscriptions = subscriptionsResponse.data
       }
     },
     async requestFreshDataIfEmpty() {

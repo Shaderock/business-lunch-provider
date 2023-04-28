@@ -13,12 +13,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,14 +32,6 @@ public class CompanyAdmSubscriptionController {
   private final CompanyService companyService;
   private final SupplierService supplierService;
   private final SubscriptionMapper subscriptionMapper;
-
-  @GetMapping("/all")
-  @Transactional
-  public ResponseEntity<List<SubscriptionDto>> read(Principal principal) {
-    Company company = companyService.read(principal);
-    List<Subscription> subscriptions = subscriptionService.read(company);
-    return ResponseEntity.ok(subscriptions.stream().map(subscriptionMapper::toDto).toList());
-  }
 
   @PostMapping("/subscribe")
   @Transactional

@@ -4,7 +4,7 @@ import {Subscription} from "@/models/Subscription";
 
 export class SubscriptionService {
   async requestCompanySubscriptions(): Promise<AxiosResponse<Subscription[]>> {
-    return axios.get(`${ApiConstants.COMPANY_ADM_SUBSCRIPTION}/all`)
+    return axios.get(`${ApiConstants.EMPLOYEE_COMPANY_SUBSCRIPTION}/all`)
   }
 
   async subscribe(supplierId: string): Promise<void> {

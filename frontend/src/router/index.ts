@@ -5,6 +5,7 @@ import {RouterPaths} from "@/services/RouterPaths";
 import {useAuthStore, useProfileStore} from "@/store/user-app";
 import {useOrganizationStore} from "@/store/employee-or-supplier-app";
 import {Role} from "@/models/Role";
+import {useCartStore} from "@/store/employee-app";
 
 const routes = [
   // anonymous
@@ -44,7 +45,8 @@ const routes = [
   // employee
 
   {
-    path: RouterPaths.EMPLOYEE_COMPANY_SUPPLIERS_SUBSCRIPTIONS, name: 'My Company Suppliers Subscriptions',
+    path: RouterPaths.COMPANY_ADM_COMPANY_SUPPLIERS_SUBSCRIPTIONS,
+    name: 'My Company Suppliers Subscriptions',
     component: () => import('@/views/company-admin/SupplierSubscriptions.vue')
   },
   {
@@ -200,6 +202,9 @@ async function initializeStores() {
     await useProfileStore().requestUserData()
   if (useProfileStore().isEmployee || useProfileStore().isSupplier) {
     await useOrganizationStore().requestFreshOrganizationData()
+    if (useProfileStore().isEmployee) {
+      await useCartStore().initializeFromLocalStorage()
+    }
   }
 }
 
