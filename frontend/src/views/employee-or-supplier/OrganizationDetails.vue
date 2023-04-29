@@ -2,7 +2,7 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="auto" md="8">
-        <v-card elevation="20">
+        <v-card elevation="20" variant="tonal">
           <v-toolbar extended extension-height="1">
             <v-toolbar-title>My Organization</v-toolbar-title>
 

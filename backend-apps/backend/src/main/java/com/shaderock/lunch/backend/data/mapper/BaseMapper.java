@@ -79,10 +79,13 @@ public interface BaseMapper {
   }
 
   default Set<EmployeeOrder> idsToEmployeeOrders(Collection<UUID> employeesOrdersIds) {
-    return Stream.ofNullable(employeesOrdersIds)
-        .flatMap(Collection::stream)
-        .map(id -> EmployeeOrder.baseEntityBuilder().id(id).build())
-        .collect(Collectors.toSet());
+    Set<EmployeeOrder> result = new HashSet<>();
+    for (UUID orderId : employeesOrdersIds) {
+      EmployeeOrder employeeOrder = new EmployeeOrder();
+      employeeOrder.setId(orderId);
+      result.add(employeeOrder);
+    }
+    return result;
   }
 
   default List<UUID> subOptionsToIds(List<SubOption> subOptions) {

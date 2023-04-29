@@ -57,6 +57,11 @@ export class OptionService {
     const params: URLSearchParams = new URLSearchParams([['date', date]])
     return axios.get(`${ApiConstants.EMPLOYEE_OPTION}`, {params});
   }
+
+  async requestBySupplierId(supplierId: string): Promise<AxiosResponse<Option[]>> {
+    const params: URLSearchParams = new URLSearchParams([['supplierId', supplierId]])
+    return axios.get(`${ApiConstants.ANONYM_OPTION}/by-supplier-id`, {params});
+  }
 }
 
 const optionService: OptionService = new OptionService()

@@ -22,6 +22,7 @@ export class RouterPaths {
 
   static readonly COMPANY_ADM: string = '/company-adm'
   static readonly COMPANY_ADM_COMPANY_PREFERENCES: string = RouterPaths.COMPANY_ADM + '/company-preferences'
+  static readonly COMPANY_ADM_COMPANY_ORDERS: string = RouterPaths.COMPANY_ADM + '/company-orders'
   static readonly COMPANY_ADM_COMPANY_NOTIFICATIONS: string = RouterPaths.COMPANY_ADM + '/company-notification-config'
   static readonly COMPANY_ADM_EMPLOYEES_ORDERS: string = RouterPaths.COMPANY_ADM + '/employees-orders'
   static readonly COMPANY_ADM_COMPANY_DASHBOARD: string = RouterPaths.COMPANY_ADM + '/company-dashboard'

@@ -2,6 +2,7 @@ package com.shaderock.lunch.backend.feature.order.employee.dto;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Data;
 
@@ -15,4 +16,7 @@ public class EmployeeOrderValidationDto implements Serializable {
 
   private final boolean valid;
   private final List<String> errors;
+  private final UUID supplierId;
+  private final UUID userDetailsId;
+  private final UUID orderId;
 }

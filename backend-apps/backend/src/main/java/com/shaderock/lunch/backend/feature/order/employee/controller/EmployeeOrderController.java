@@ -3,10 +3,12 @@ package com.shaderock.lunch.backend.feature.order.employee.controller;
 import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
+import com.shaderock.lunch.backend.feature.food.option.repository.OptionRepository;
 import com.shaderock.lunch.backend.feature.order.employee.dto.EmployeeOrderDto;
 import com.shaderock.lunch.backend.feature.order.employee.dto.EmployeeOrderValidationDto;
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
 import com.shaderock.lunch.backend.feature.order.employee.mapper.EmployeeOrderMapper;
+import com.shaderock.lunch.backend.feature.order.employee.repository.EmployeeOrderRepository;
 import com.shaderock.lunch.backend.feature.order.employee.service.EmployeeOrderService;
 import com.shaderock.lunch.backend.feature.order.employee.service.validation.EmployeeOrderValidationService;
 import com.shaderock.lunch.backend.feature.order.employee.type.EmployeeOrderStatus;
@@ -39,6 +41,8 @@ public class EmployeeOrderController {
   private final EmployeeOrderService employeeOrderService;
   private final EmployeeOrderValidationService employeeOrderValidationService;
   private final AppUserDetailsService userDetailsService;
+  private final OptionRepository optionRepository;
+  private final EmployeeOrderRepository orderRepository;
 
   @PostMapping
   @Transactional
@@ -54,8 +58,7 @@ public class EmployeeOrderController {
   @PostMapping("/calculate")
   @Transactional
   public ResponseEntity<EmployeeOrderDto> preCalculate(
-      @RequestBody @NotNull EmployeeOrderDto orderDto,
-      Principal principal) {
+      @RequestBody @NotNull EmployeeOrderDto orderDto, Principal principal) {
     AppUserDetails userDetails = userDetailsService.read(principal);
     preValidateOrder(orderDto, userDetails);
     EmployeeOrder order = employeeOrderService.calculateValidOrder(orderDto, userDetails);

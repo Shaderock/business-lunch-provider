@@ -11,6 +11,7 @@ import org.mapstruct.MappingConstants.ComponentModel;
 @Mapper(componentModel = ComponentModel.SPRING)
 public interface EmployeeOrderMapper extends BaseMapper {
 
+  @Mapping(target = "userDetailsId", source = "appUser.userDetails.id")
   @Mapping(target = "companyOrderId", source = "companyOrder.id")
   @Mapping(target = "optionIds", source = "options")
   EmployeeOrderDto toDto(EmployeeOrder employeeOrder);

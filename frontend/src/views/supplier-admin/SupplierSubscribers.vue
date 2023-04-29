@@ -27,7 +27,7 @@
             <v-btn :disabled="isLoading" icon variant="plain">
               <v-icon color="error" icon="mdi-delete"/>
               <v-menu activator="parent">
-                <v-card>
+                <v-card variant="tonal">
                   <v-card-title>Are you sure to decline subscription of {{
                       item.raw.name
                     }}?

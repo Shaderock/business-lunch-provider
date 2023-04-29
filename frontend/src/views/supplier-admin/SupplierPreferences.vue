@@ -2,7 +2,7 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="6">
-        <v-card class="mx-auto" elevation="20">
+        <v-card class="mx-auto" elevation="20" variant="tonal">
           <v-toolbar>
             <v-toolbar-title>Organization Preferences</v-toolbar-title>
 
@@ -63,7 +63,7 @@
       </v-col>
 
       <v-col cols="6">
-        <v-card class="mx-auto" elevation="20">
+        <v-card class="mx-auto" elevation="20" variant="tonal">
 
           <v-toolbar>
             <v-toolbar-title>Categories Prices</v-toolbar-title>

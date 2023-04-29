@@ -13,6 +13,7 @@ export class ApiConstants {
   static readonly COMPANY_ADM: string = ApiConstants.BACKEND_URL + "/company-adm"
   static readonly COMPANY_ADM_INVITATION: string = ApiConstants.COMPANY_ADM + "/invitation"
   static readonly COMPANY_ADM_USER_DETAILS: string = ApiConstants.COMPANY_ADM + "/user/details"
+  static readonly COMPANY_ADM_EMPLOYEE_ORDER: string = ApiConstants.COMPANY_ADM + "/employee-order";
   static readonly EMPLOYEE: string = ApiConstants.BACKEND_URL + "/employee"
   static readonly EMPLOYEE_ORDER: string = ApiConstants.EMPLOYEE + "/order"
   static readonly OPTION: string = ApiConstants.BACKEND_URL + "/option"
@@ -60,4 +61,5 @@ export class ApiConstants {
   static readonly ANONYM_CATEGORIES: string = ApiConstants.ANONYM + "/category";
   static readonly EMPLOYEE_COMPANY_SUBSCRIPTION: string = ApiConstants.EMPLOYEE + ApiConstants.COMPANY_URL_PART + ApiConstants.SUBSCRIPTION_URL_PART;
   static readonly EMPLOYEE_OPTION: string = ApiConstants.EMPLOYEE + "/option";
+  static readonly COMPANY_ADM_COMPANY_ORDER: string = ApiConstants.COMPANY_ADM + "/company-order";
 }

@@ -2,7 +2,7 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="12" md="6" sm="8">
-        <v-card class="mx-auto" elevation="20">
+        <v-card class="mx-auto" elevation="20" variant="tonal">
           <v-toolbar>
             <v-toolbar-title>Organization Preferences</v-toolbar-title>
             <v-btn color="primary" @click="initDialogue()">Edit Preferences</v-btn>

@@ -7,7 +7,7 @@
     item-value="name"
   >
     <template v-slot:top>
-      <v-card>
+      <v-card variant="tonal">
         <v-card-title>Organizations</v-card-title>
         <v-card-actions>
           <v-col cols="3">

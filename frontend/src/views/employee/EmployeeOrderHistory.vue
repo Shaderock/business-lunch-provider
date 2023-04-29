@@ -11,7 +11,6 @@
                 <v-text-field
                   v-model="selectedDate"
                   :disabled="isLoading"
-                  class="w-50"
                   hide-details="auto"
                   label="Select order date"
                   prepend-inner-icon="mdi-calendar"
@@ -31,7 +30,7 @@
                    variant="plain">
               <v-icon color="error" icon="mdi-delete"/>
               <v-menu activator="parent">
-                <v-card>
+                <v-card variant="tonal">
                   <v-card-title>Are you sure to remove this order?
                   </v-card-title>
                   <v-card-actions>

@@ -69,11 +69,27 @@ public class EmployeeOrderService {
         date.get());
   }
 
+  public List<EmployeeOrder> read(Company company, LocalDate date) {
+    return orderRepository.findByAppUser_OrganizationDetailsAndOrderDate(
+        company.getOrganizationDetails(), date);
+  }
+
   public EmployeeOrder read(@NonNull UUID orderId, @NonNull AppUserDetails userDetails) {
     return orderRepository.findByIdAndAppUser_UserDetails(orderId, userDetails).orElseThrow(() ->
         new CrudValidationException(
             String.format("Could not find order(id=[%s) for user(email=[%s])", orderId,
                 userDetails.getEmail())));
+  }
+
+  public List<EmployeeOrder> read(@NonNull List<UUID> ordersIds, @NonNull Company company) {
+    return orderRepository.findByIdInAndAppUser_OrganizationDetails(ordersIds,
+        company.getOrganizationDetails());
+  }
+
+  public EmployeeOrder read(UUID orderId, Company company) {
+    return orderRepository.findByIdAndAppUser_OrganizationDetails(orderId,
+            company.getOrganizationDetails())
+        .orElseThrow(() -> new CrudValidationException("Order not found"));
   }
 
   public void delete(@NonNull EmployeeOrder order) {

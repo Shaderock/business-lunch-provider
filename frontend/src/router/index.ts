@@ -103,6 +103,10 @@ const routes = [
     component: () => import('@/views/company-admin/CompanyEmployees.vue')
   },
   {
+    path: RouterPaths.COMPANY_ADM_COMPANY_ORDERS, name: 'Company Orders',
+    component: () => import('@/views/company-admin/CompanyOrders.vue')
+  },
+  {
     path: RouterPaths.COMPANY_ADM_INVITED_USERS, name: 'Company Invited Users',
     component: () => import('@/views/company-admin/CompanyInvitedUsers.vue')
   },
@@ -203,7 +207,7 @@ async function initializeStores() {
   if (useProfileStore().isEmployee || useProfileStore().isSupplier) {
     await useOrganizationStore().requestFreshOrganizationData()
     if (useProfileStore().isEmployee) {
-      await useCartStore().initializeFromLocalStorage()
+      useCartStore().initializeFromLocalStorage()
     }
   }
 }
