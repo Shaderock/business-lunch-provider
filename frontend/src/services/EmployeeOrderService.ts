@@ -26,6 +26,25 @@ export class EmployeeOrderService {
     const params: URLSearchParams = new URLSearchParams([['orderId', orderId]])
     return axios.delete(`${ApiConstants.EMPLOYEE_ORDER}`, {params});
   }
+
+  async compAdmRequestForDate(date: string): Promise<AxiosResponse<EmployeeOrder[]>> {
+    const params: URLSearchParams = new URLSearchParams([['date', date]])
+    return axios.get(`${ApiConstants.COMPANY_ADM_EMPLOYEE_ORDER}`, {params});
+  }
+
+  async compAdmRequestToValidateMultiple(ordersIds: string[], dateTime: Date): Promise<AxiosResponse<EmployeeOrderValidation[]>> {
+    const params: URLSearchParams = new URLSearchParams([['dateTime', dateTime.toISOString()]])
+    return axios.post(`${ApiConstants.COMPANY_ADM_EMPLOYEE_ORDER}/validate-multiple`, ordersIds, {params})
+  }
+
+  async compAdmCreateEmployeeOrder(employeeOrder: EmployeeOrder) {
+    return axios.post(`${ApiConstants.COMPANY_ADM_EMPLOYEE_ORDER}`, employeeOrder)
+  }
+
+  async compAdmDeleteEmpOrder(orderId: string) {
+    const params: URLSearchParams = new URLSearchParams([['orderId', orderId]])
+    return axios.delete(`${ApiConstants.COMPANY_ADM_EMPLOYEE_ORDER}`, {params})
+  }
 }
 
 const employeeOrderService: EmployeeOrderService = new EmployeeOrderService()

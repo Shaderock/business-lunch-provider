@@ -2,7 +2,7 @@
   <v-dialog v-model="isSupplierNotFoundDialogShown" persistent>
     <v-row justify="center">
       <v-col cols="auto">
-        <v-card>
+        <v-card v>
           <v-card-title>Supplier {{ usePublicSupplierStore().currentSupplierName }} not found
           </v-card-title>
           <v-card-text>

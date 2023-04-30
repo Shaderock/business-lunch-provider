@@ -1,11 +1,13 @@
 package com.shaderock.lunch.backend.feature.details.service;
 
+import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.details.repository.AppUserDetailsRepository;
 import jakarta.transaction.Transactional;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -51,5 +53,10 @@ public class AppUserDetailsService implements UserDetailsService {
 
   public List<AppUserDetails> read() {
     return appUserDetailsRepository.findAll();
+  }
+
+  public AppUserDetails read(UUID uuid) {
+    return appUserDetailsRepository.findById(uuid)
+        .orElseThrow(() -> new CrudValidationException("User not found"));
   }
 }

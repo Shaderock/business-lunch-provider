@@ -2,7 +2,7 @@
   <v-container class="fill-height" fluid>
     <v-row align="center" justify="center">
       <v-col cols="auto">
-        <v-card class="mx-auto" elevation="20" shaped>
+        <v-card class="mx-auto" elevation="20" shaped variant="tonal">
           <v-card-title class="text-h5 text-center">Login</v-card-title>
           <v-divider/>
           <v-card-text>

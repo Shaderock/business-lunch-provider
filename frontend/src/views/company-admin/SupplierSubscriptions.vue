@@ -4,7 +4,7 @@
       <v-col>
         <v-data-table :class="`elevation-20`"
                       :headers="subscriptionHeaders"
-                      :items="useSubscriptionSupplierStore().getSubscriptionSuppliers"
+                      :items="useCompAdmSubscriptionStore().getSubscriptionSuppliers"
                       density="compact">
 
           <template v-slot:top>
@@ -27,7 +27,7 @@
             <v-btn :disabled="isLoading" icon variant="plain">
               <v-icon color="error" icon="mdi-delete"/>
               <v-menu activator="parent">
-                <v-card>
+                <v-card variant="tonal">
                   <v-card-title>Are you sure you want to unsubscribe from {{ item.raw.name }}?
                   </v-card-title>
                   <v-card-actions>
@@ -52,7 +52,7 @@
         <v-card title="Subscribe to a supplier">
           <v-card-text>
             <v-select v-model="selectedSupplierNames"
-                      :items="useSubscriptionSupplierStore().getValidSuppliersDetailsListNameForSubscription"
+                      :items="useCompAdmSubscriptionStore().getValidSuppliersDetailsListNameForSubscription"
                       :loading="isSubscriptionInProgress"
                       :rules="[rules.required]"
                       chips
@@ -78,11 +78,11 @@
 <script lang="ts" setup>
 
 import {onBeforeMount, ref} from "vue";
-import {SubscriptionSupplier, useSubscriptionSupplierStore} from "@/store/company-adm-app";
+import {SubscriptionSupplier, useCompAdmSubscriptionStore} from "@/store/company-adm-app";
 import toastManager from "@/services/ToastManager";
 
 onBeforeMount(() => {
-  useSubscriptionSupplierStore().requestFreshData().finally(() => isLoading.value = false)
+  useCompAdmSubscriptionStore().requestFreshData().finally(() => isLoading.value = false)
 })
 
 const isLoading = ref(true)
@@ -107,14 +107,14 @@ const subscriptionHeaders = [
 ]
 
 function unsubscribe(subscriptionSupplier: SubscriptionSupplier) {
-  useSubscriptionSupplierStore().unsubscribe(subscriptionSupplier.supplierId)
+  useCompAdmSubscriptionStore().unsubscribe(subscriptionSupplier.supplierId)
 }
 
 async function subscribe(names: string[]) {
   isSubscriptionInProgress.value = true
-  await useSubscriptionSupplierStore().subscribe(names)
+  await useCompAdmSubscriptionStore().subscribe(names)
   toastManager.showSuccess("Subscription sent", "A request for subscription is awaiting to be confirmed by supplier")
-  await useSubscriptionSupplierStore().requestFreshData()
+  await useCompAdmSubscriptionStore().requestFreshData()
   isSubscriptionInProgress.value = false
   selectedSupplierNames.value = []
 }

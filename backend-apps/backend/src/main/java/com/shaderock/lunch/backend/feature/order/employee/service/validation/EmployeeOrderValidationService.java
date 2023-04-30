@@ -11,6 +11,7 @@ import com.shaderock.lunch.backend.feature.food.menu.entity.Menu;
 import com.shaderock.lunch.backend.feature.food.option.entity.Option;
 import com.shaderock.lunch.backend.feature.food.option.service.OptionService;
 import com.shaderock.lunch.backend.feature.order.employee.dto.EmployeeOrderDto;
+import com.shaderock.lunch.backend.feature.order.employee.dto.EmployeeOrderValidationDto;
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
 import com.shaderock.lunch.backend.feature.order.employee.mapper.EmployeeOrderMapper;
 import com.shaderock.lunch.backend.feature.order.employee.type.EmployeeOrderStatus;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -43,22 +45,9 @@ public class EmployeeOrderValidationService {
   private final List<OrderTypeOrderValidator> orderTypeOrderValidators;
   private final FilterManager filterManager;
 
-  public List<String> validateOptionsPublicAndNotDeleted(@NonNull List<UUID> optionsIds) {
-    List<String> errors = new ArrayList<>();
-    filterManager.ignoreVisibility();
-    filterManager.ignoreDeleted();
-    for (UUID optionId : optionsIds) {
-      Option option = optionService.read(optionId);
-      if (option.isDeleted() || !option.isPublic()) {
-        errors.add(String.format("%s option not found", option.getName()));
-      }
-    }
-    return errors;
-  }
-
   public List<String> validateCreate(@NonNull EmployeeOrderDto orderDto,
       @NonNull AppUserDetails userDetails) {
-    List<String> errors = validateOptionsPublicAndNotDeleted(
+    List<String> errors = validateOptionsIdsAndCategoriesPublicAndNotDeleted(
         orderDto.optionIds().stream().toList());
 
     if (!errors.isEmpty()) {
@@ -79,13 +68,74 @@ public class EmployeeOrderValidationService {
     Company company = companyService.read(order.getAppUser().getUserDetails());
     LocalTime deliverTime = company.getPreferences().getDeliverAt();
     LocalDateTime probableOrderDateTime = order.getOrderDate().atTime(deliverTime);
-    errors.addAll(
-        validateSupplierPreferences(order, supplier.getPreferences(), probableOrderDateTime));
+    errors.addAll(validateSupplierPreferences(order, supplier.getPreferences(),
+        Optional.of(probableOrderDateTime)));
     return errors;
   }
 
+  public EmployeeOrderValidationDto validateCreatedOrder(@NonNull EmployeeOrder order,
+      @NonNull AppUserDetails userDetails, Optional<LocalDateTime> deliverAt) {
+
+    if (order.getStatus() == EmployeeOrderStatus.ORDERED
+        || order.getStatus() == EmployeeOrderStatus.PENDING_SUPPLIER_CONFIRMATION) {
+      return EmployeeOrderValidationDto.builder().valid(true).build();
+    }
+
+    List<String> errors = validateOptionsAndCategoriesPicAndNotDeleted(
+        order.getOptions().stream().toList());
+
+    if (errors.isEmpty()) {
+      try {
+        filterManager.returnNotDeleted();
+        filterManager.returnPublic();
+
+        Supplier supplier = validateSupplier(order);
+        errors.addAll(validateSubscription(userDetails, supplier));
+        errors.addAll(validateSupplierPreferences(order, supplier.getPreferences(), deliverAt));
+      } catch (CrudValidationException e) {
+        errors = List.of(e.getMessage());
+      }
+    }
+
+    UUID supplierId = order.getOptions().stream()
+        .findFirst()
+        .map(option -> option.getCategory().getMenu().getSupplier().getId())
+        .orElseThrow(() -> new IllegalStateException("Order not validated"));
+
+    return EmployeeOrderValidationDto.builder()
+        .errors(errors)
+        .valid(errors.isEmpty())
+        .supplierId(supplierId)
+        .orderId(order.getId())
+        .userDetailsId(userDetails.getId())
+        .build();
+  }
+
+  public List<String> validateOptionsIdsAndCategoriesPublicAndNotDeleted(
+      @NonNull List<UUID> optionsIds) {
+    List<String> errors = new ArrayList<>();
+    filterManager.ignoreVisibility();
+    filterManager.ignoreDeleted();
+    for (UUID optionId : optionsIds) {
+      Option option = optionService.read(optionId);
+      if (option.isDeleted() || !option.isPublic()) {
+        errors.add(String.format("%s option not found", option.getName()));
+      }
+      if (option.getCategory().isDeleted() || !option.getCategory().isPublic()) {
+        errors.add(String.format("%s category not found", option.getCategory().getName()));
+      }
+    }
+    return errors;
+  }
+
+  public List<String> validateOptionsAndCategoriesPicAndNotDeleted(
+      @NonNull List<Option> options) {
+    return validateOptionsIdsAndCategoriesPublicAndNotDeleted(
+        options.stream().map(Option::getId).toList());
+  }
+
   private List<String> validateSupplierPreferences(EmployeeOrder order,
-      SupplierPreferences supplierPreferences, LocalDateTime orderDateTime) {
+      SupplierPreferences supplierPreferences, Optional<LocalDateTime> orderDateTime) {
     OrderTypeOrderValidator orderTypeOrderValidator = orderTypeOrderValidators.stream()
         .filter(validator -> validator.supports(supplierPreferences.getOrderType())).findFirst()
         .orElseThrow(() -> new IllegalStateException(
@@ -107,7 +157,16 @@ public class EmployeeOrderValidationService {
               supplierPreferences.getMinimumCategoriesForEmployeeOrder(), uniqueCategories.size()));
     }
 
-    if (order.getOrderDate().isBefore(LocalDate.now())) {
+    orderDateTime.ifPresent(
+        dateTime -> errors.addAll(validateOrderDateTime(supplierPreferences, dateTime)));
+
+    return errors;
+  }
+
+  public List<String> validateOrderDateTime(SupplierPreferences supplierPreferences,
+      LocalDateTime orderDateTime) {
+    List<String> errors = new ArrayList<>();
+    if (orderDateTime.toLocalDate().isBefore(LocalDate.now())) {
       errors.add("Can not order for previous days");
     }
 
@@ -123,8 +182,10 @@ public class EmployeeOrderValidationService {
               supplierPreferences.getSupplier().getOrganizationDetails().getName()));
     }
 
-    // todo validate working hours?
-
+    if (orderDateTime.toLocalTime().isAfter(supplierPreferences.getWorkDayEnd()) ||
+        orderDateTime.toLocalTime().isBefore(supplierPreferences.getWorkDayStart())) {
+      errors.add("Supplier is not working at requested time");
+    }
     return errors;
   }
 
@@ -148,7 +209,13 @@ public class EmployeeOrderValidationService {
       throw new CrudValidationException("Options have different suppliers");
     }
 
-    return suppliers.iterator().next();
+    Supplier supplier = suppliers.iterator().next();
+    if (supplier.isDeleted() || !supplier.isPublic()) {
+      throw new CrudValidationException(
+          String.format("Supplier %s not found", supplier.getOrganizationDetails().getName()));
+    }
+
+    return supplier;
   }
 
   public void validateDelete(@NonNull EmployeeOrder order) {

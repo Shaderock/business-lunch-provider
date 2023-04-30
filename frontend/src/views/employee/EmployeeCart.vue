@@ -29,14 +29,19 @@
                   @update:modelValue="updateSelectedDate()"/>
               </v-form>
               <v-spacer/>
+              <v-btn
+                color="secondary" prepend-icon="mdi-arrow-left-thin"
+                @click="router.back()">
+                Back
+              </v-btn>
               <v-btn :disabled="isLoading"
                      append-icon="mdi-delete"
                      color="error">
                 Remove options
                 <v-menu activator="parent">
-                  <v-card
-                    :title="`Are you sure to remove all options for
-                    ${useCartStore().getCurrentSupplierInfo?.supplierDetails.name}`">
+                  <v-card :title="`Are you sure to remove all options for
+                    ${useCartStore().getCurrentSupplierInfo?.supplierDetails.name}`"
+                          variant="tonal">
                     <v-form @submit.prevent="onSupplierOptionsDelete()">
                       <v-card-actions>
                         <v-btn block color="error" type="submit">Delete options</v-btn>
@@ -243,14 +248,22 @@
     </v-row>
   </v-container>
 
-  <v-container v-else class="fill-height">
-    <v-row justify="center">
-      <v-col>
-        <v-card class="text-h6" title="Cart is empty"/>
-      </v-col>
-    </v-row>
+  <div v-else class="d-flex align-center justify-center fill-height ">
+    <v-card variant="tonal">
+      <v-card-text class="text-h2">
+        <v-icon icon="mdi-cart-off"/>
+        Cart is empty
+      </v-card-text>
+      <v-card-actions>
+        <v-btn
+          color="secondary" prepend-icon="mdi-arrow-left-thin"
+          @click="router.back()">
+          Back
+        </v-btn>
+      </v-card-actions>
+    </v-card>
 
-  </v-container>
+  </div>
 
   <v-snackbar v-model="snackbar">
     {{ snackBarText }}
@@ -273,6 +286,7 @@ import {useOrganizationStore} from "@/store/employee-or-supplier-app";
 import {ApiConstants} from "@/services/ApiConstants";
 import {useProfileStore} from "@/store/user-app";
 import {Utils} from "@/models/Utils";
+import router from "@/router";
 
 const supplierTabs = ref()
 const snackbar = ref()

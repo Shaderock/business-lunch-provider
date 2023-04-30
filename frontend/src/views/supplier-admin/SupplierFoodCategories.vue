@@ -40,7 +40,7 @@
             <v-btn :disabled="isLoading" icon variant="plain">
               <v-icon color="error" icon="mdi-folder-remove"/>
               <v-menu activator="parent">
-                <v-card>
+                <v-card variant="tonal">
                   <v-card-title>Are you sure to delete category {{ item.raw.name }}?</v-card-title>
                   <v-card-actions>
                     <v-btn block
@@ -56,7 +56,7 @@
             <v-btn v-if="item.raw.isPublic" :disabled="isLoading" icon variant="plain">
               <v-icon color="secondary" icon="mdi-eye-off"/>
               <v-menu activator="parent">
-                <v-card>
+                <v-card variant="tonal">
                   <v-card-title>Are you sure to hide category {{ item.raw.name }}?</v-card-title>
                   <v-card-actions>
                     <v-btn block
@@ -73,7 +73,7 @@
                    variant="plain">
               <v-icon color="secondary" icon="mdi-folder-eye"/>
               <v-menu activator="parent">
-                <v-card>
+                <v-card variant="tonal">
                   <v-card-title>Are you sure to publish category {{ item.raw.name }}?</v-card-title>
                   <v-card-actions>
                     <v-btn block

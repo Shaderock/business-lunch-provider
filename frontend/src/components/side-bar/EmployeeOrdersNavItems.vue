@@ -6,12 +6,6 @@
   />
 
   <v-list-item
-    prepend-icon="mdi-store-clock"
-    title="Pending orders"
-    v-bind:to="RouterPaths.EMPLOYEE_PENDING_ORDERS"
-  />
-
-  <v-list-item
     prepend-icon="mdi-view-dashboard-variant"
     title="Dashboard"
     v-bind:to="RouterPaths.EMPLOYEE_DASHBOARD"

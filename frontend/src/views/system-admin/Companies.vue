@@ -6,7 +6,7 @@
     class="elevation-1"
     item-value="name">
     <template v-slot:top>
-      <v-card>
+      <v-card variant="tonal">
         <v-card-title>Companies</v-card-title>
         <v-card-actions>
           <v-col cols="3">

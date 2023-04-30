@@ -71,7 +71,7 @@
             <v-btn :disabled="isLoading" icon variant="plain">
               <v-icon color="error" icon="mdi-delete"/>
               <v-menu activator="parent">
-                <v-card>
+                <v-card variant="tonal">
                   <v-card-title>Are you sure to delete option {{ item.raw.name }}?</v-card-title>
                   <v-card-actions>
                     <v-btn block
@@ -87,7 +87,7 @@
             <v-btn v-if="item.raw.isPublic" :disabled="isLoading" icon variant="plain">
               <v-icon color="secondary" icon="mdi-eye-off"/>
               <v-menu activator="parent">
-                <v-card>
+                <v-card variant="tonal">
                   <v-card-title>Are you sure to hide option {{ item.raw.name }}?</v-card-title>
                   <v-card-actions>
                     <v-btn block
@@ -105,7 +105,7 @@
               :disabled="isLoading" icon variant="plain">
               <v-icon color="secondary" icon="mdi-eye"/>
               <v-menu activator="parent">
-                <v-card>
+                <v-card variant="tonal">
                   <v-card-title>Are you sure to publish option {{ item.raw.name }}?</v-card-title>
                   <v-card-actions>
                     <v-btn block

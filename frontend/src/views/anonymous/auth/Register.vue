@@ -2,7 +2,7 @@
   <v-container class="fill-height">
     <v-row align="center" justify="center">
       <v-col cols="12" md="5" sm="8">
-        <v-card elevation="20" shaped>
+        <v-card elevation="20" shaped variant="tonal">
           <v-card-title class="text-h5 text-center">Register</v-card-title>
           <v-card-text>
             <v-form>

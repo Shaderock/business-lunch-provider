@@ -1,7 +1,4 @@
 <template>
-
-  <v-progress-linear v-if="isLoading" indeterminate striped/>
-
   <v-tabs v-model="tab" :disabled="isLoading" align-tabs="center" stacked>
     <v-tab color="primary" value="suppliers">
       <v-icon icon="mdi-food"/>
@@ -20,6 +17,8 @@
       Filters
     </v-tab>
   </v-tabs>
+
+  <v-progress-linear v-if="isLoading" indeterminate striped/>
 
   <v-container v-if="isLoading">
     <v-row justify="space-evenly" justify-sm="center">
@@ -102,7 +101,7 @@
 
       </v-window-item>
       <v-window-item value="filters">
-
+        <!--        todo search with <v-autocomplete>-->
       </v-window-item>
     </v-window>
   </div>

@@ -73,9 +73,15 @@
             <v-list-item :hidden="!isHovering" disabled title="Company Orders"/>
 
             <v-list-item
-              prepend-icon="mdi-store"
-              title="Company Orders"
+              prepend-icon="mdi-store-plus"
+              title="Employees Orders"
               v-bind:to="RouterPaths.COMPANY_ADM_EMPLOYEES_ORDERS"
+            />
+
+            <v-list-item
+              prepend-icon="mdi-store-clock"
+              title="Company Orders"
+              v-bind:to="RouterPaths.COMPANY_ADM_COMPANY_ORDERS"
             />
 
             <v-list-item

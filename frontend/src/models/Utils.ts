@@ -29,6 +29,10 @@ export class Utils {
     return this.dateToTimeAsStringWithoutSeconds(moment(timeAsString, 'HH:mm').toDate())
   }
 
+  static dateAsStrAndTimeAsStrToDate(dateString: string, timeString: string): Date {
+    return moment(dateString + ' ' + timeString, 'YYYY/MM/DD HH:mm:ss').toDate();
+  }
+
   static byteArrayToBase64String(array: ArrayBuffer): string {
     return btoa(new Uint8Array(array).reduce((data, byte) => data + String.fromCharCode(byte), ''));
   }

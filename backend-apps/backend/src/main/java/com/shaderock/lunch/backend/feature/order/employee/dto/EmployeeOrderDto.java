@@ -15,6 +15,7 @@ import java.util.UUID;
 public record EmployeeOrderDto(
     UUID id,
     UUID companyOrderId,
+    UUID userDetailsId,
     @JsonSerialize(using = TwoDigitsAfterPointSerializer.class) double supplierDefaultPrice,
     @JsonSerialize(using = TwoDigitsAfterPointSerializer.class) double supplierDiscount,
     @JsonSerialize(using = TwoDigitsAfterPointSerializer.class) double companyDiscount,

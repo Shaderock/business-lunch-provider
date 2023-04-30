@@ -1,6 +1,6 @@
 package com.shaderock.lunch.backend.feature.order.company.entity;
 
-import com.shaderock.lunch.backend.data.entity.DeletableEntity;
+import com.shaderock.lunch.backend.data.entity.BaseEntity;
 import com.shaderock.lunch.backend.feature.order.company.type.CompanyOrderStatus;
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
 import jakarta.persistence.Column;
@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.ToString.Exclude;
-import org.hibernate.annotations.SQLDelete;
 
 @Getter
 @Setter
@@ -27,15 +26,17 @@ import org.hibernate.annotations.SQLDelete;
 @ToString
 @Builder
 @Entity
-@SQLDelete(sql = "UPDATE company_order SET is_deleted = true WHERE id=?")
-public class CompanyOrder extends DeletableEntity {
+public class CompanyOrder extends BaseEntity {
 
   @OneToMany(mappedBy = "companyOrder", fetch = FetchType.LAZY)
   @Exclude
   private Set<EmployeeOrder> employeesOrders;
 
   @Column
-  private LocalDateTime deliveryDateTime;
+  private LocalDateTime deliverAt;
+
+  @Column
+  private LocalDateTime createdAt;
 
   @Column
   @Enumerated(EnumType.STRING)

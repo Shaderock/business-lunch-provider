@@ -89,7 +89,7 @@ export const useCartStore = defineStore('employeeCartStore', {
       this.currentCartSupplier = cartSupplierInfo;
       const optionsIds: string[] = this.getCartSupplierCartOptions.map(o => o.option.id);
       if (optionsIds.length > 0) {
-        const employeeOrder = new EmployeeOrder('', '', 0, 0, 0, 0,
+        const employeeOrder = new EmployeeOrder('', '', '', 0, 0, 0, 0,
           EmployeeOrderStatus.PendingAdminConfirmation, optionsIds, this.selectedDate);
         const validationResponse: AxiosResponse<EmployeeOrderValidation> =
           await employeeOrderService.requestOrderValidation(employeeOrder);
@@ -114,7 +114,7 @@ export const useCartStore = defineStore('employeeCartStore', {
     async sendCurrentOptions(): Promise<void> {
       const optionsIds: string[] = this.getCartSupplierCartOptions.map(o => o.option.id);
       await employeeOrderService.createOrder(new EmployeeOrder(
-        '', '', 0, 0, 0, 0,
+        '', '', '', 0, 0, 0, 0,
         EmployeeOrderStatus.PendingAdminConfirmation, optionsIds, this.selectedDate));
       toastManager.showSuccess("Order sent", "New order has just been sent. Waiting confirmation")
       await this.removeCartOptionsForCurrentSupplier()

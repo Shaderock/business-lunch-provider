@@ -6,6 +6,7 @@ import com.shaderock.lunch.backend.feature.food.option.dto.OptionDto;
 import com.shaderock.lunch.backend.feature.food.option.entity.Option;
 import com.shaderock.lunch.backend.feature.food.option.mapper.OptionMapper;
 import com.shaderock.lunch.backend.feature.food.option.service.OptionService;
+import com.shaderock.lunch.backend.feature.order.employee.service.EmployeeOrderService;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.util.ApiConstants;
@@ -35,6 +36,7 @@ public class AnonymOptionController {
   private final CategoryService categoryService;
   private final OptionMapper optionMapper;
   private final ImageService imageService;
+  private final EmployeeOrderService employeeOrderService;
 
   @GetMapping("/by-option-id")
   public ResponseEntity<OptionDto> read(@RequestParam @NotBlank final UUID optionId) {
@@ -54,6 +56,7 @@ public class AnonymOptionController {
   }
 
   @GetMapping("/by-supplier-id")
+  @Transactional
   public ResponseEntity<List<OptionDto>> readAllBySupplierId(
       @RequestParam @NotBlank final UUID supplierId) {
     Supplier supplier = supplierService.read(supplierId);

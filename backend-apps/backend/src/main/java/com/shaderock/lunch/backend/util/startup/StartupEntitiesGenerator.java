@@ -193,7 +193,7 @@ public class StartupEntitiesGenerator implements
 
   private void generateDefaultCategories(Supplier supplier) {
 
-    int publicCategoriesAmount = faker.number().numberBetween(1, 5);
+    int publicCategoriesAmount = faker.number().numberBetween(1, 3);
     int privateCategoriesAmount = faker.number().numberBetween(0, 2);
 
     generateCategories(supplier, publicCategoriesAmount, true);
@@ -224,7 +224,7 @@ public class StartupEntitiesGenerator implements
       persistedCategory = categoryService.update(persistedCategory, supplier);
 
       int publicOptionsPerCategory = isPublic ? 3 : 0;
-      int privateOptionsPerCategory = isPublic ? 1 : 3;
+      int privateOptionsPerCategory = isPublic ? 1 : 1;
       generateOptions(supplier, persistedCategory, publicOptionsPerCategory, true);
       generateOptions(supplier, persistedCategory, privateOptionsPerCategory, false);
     }

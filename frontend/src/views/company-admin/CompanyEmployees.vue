@@ -6,7 +6,7 @@
         <v-data-table
           :class="`elevation-20`"
           :headers="employeesHeaders"
-          :items="employees">
+          :items="useCompAdmUserStore().getEmployees">
           <template v-slot:top>
             <v-toolbar extended extension-height="1">
               <v-toolbar-title>Employees</v-toolbar-title>
@@ -59,7 +59,7 @@
                    variant="plain">
               <v-icon color="error" icon="mdi-delete"/>
               <v-menu activator="parent">
-                <v-card>
+                <v-card variant="tonal">
                   <v-card-title>Are you sure to delete {{ item.raw.email }}?</v-card-title>
                   <v-card-actions>
                     <v-btn block
@@ -80,7 +80,7 @@
 
 <script lang="ts" setup>
 
-import {computed, ComputedRef, onMounted, ref} from "vue";
+import {onMounted, ref} from "vue";
 import {Employee, useCompAdmUserStore} from "@/store/company-adm-app";
 import {useProfileStore} from "@/store/user-app";
 
@@ -89,7 +89,7 @@ onMounted(() => {
 })
 
 const loading = ref(true)
-const employees: ComputedRef<Employee[]> = computed(() => useCompAdmUserStore().getEmployees)
+
 const employeesHeaders = [
   {title: 'Email', key: 'email'},
   {title: 'First Name', key: 'firstName'},
