@@ -8,6 +8,7 @@ import com.shaderock.lunch.backend.feature.order.company.entity.CompanyOrder;
 import com.shaderock.lunch.backend.feature.order.employee.dto.EmployeeOrderValidationDto;
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
 import com.shaderock.lunch.backend.feature.order.employee.service.validation.EmployeeOrderValidationService;
+import com.shaderock.lunch.backend.feature.order.employee.type.EmployeeOrderStatus;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +40,11 @@ public class CompanyOrderValidationService {
           .map(Menu::getSupplier)
           .findFirst()
           .orElseThrow(() -> new IllegalStateException("Order not validated"));
+
+      if (order.getEmployeesOrders().stream().anyMatch(employeeOrder -> employeeOrder.getStatus()
+          != EmployeeOrderStatus.PENDING_ADMIN_CONFIRMATION)) {
+        errors.add("Orders contains already confirmed employees orders");
+      }
 
       for (EmployeeOrder employeeOrder : order.getEmployeesOrders()) {
         employeeOrderValidations.add(

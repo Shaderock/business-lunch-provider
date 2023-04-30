@@ -1,5 +1,6 @@
 package com.shaderock.lunch.backend.feature.order.employee.controller;
 
+import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
 import com.shaderock.lunch.backend.feature.company.entity.Company;
 import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
@@ -26,6 +27,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -94,5 +96,48 @@ public class CompanyAdmEmployeeOrderController {
     Company company = companyService.read(principal);
     List<EmployeeOrder> orders = employeeOrderService.read(company, date);
     return ResponseEntity.ok(orders.stream().map(employeeOrderMapper::toDto).toList());
+  }
+
+  @PostMapping
+  @Transactional
+  public ResponseEntity<EmployeeOrderDto> create(@RequestBody @NotNull EmployeeOrderDto orderDto,
+      Principal principal) {
+    Company companyAdminCompany = companyService.read(principal);
+    AppUserDetails userDetails = userDetailsService.read(orderDto.userDetailsId());
+    Company userCompany = companyService.read(userDetails);
+
+    if (userCompany.getId() != companyAdminCompany.getId()) {
+      throw new CrudValidationException("User is not part of a company");
+    }
+
+    preValidateOrder(orderDto, userDetails);
+
+    EmployeeOrder order = employeeOrderService.create(orderDto, userDetails);
+    return ResponseEntity.ok(employeeOrderMapper.toDto(order));
+  }
+
+  private void preValidateOrder(EmployeeOrderDto orderDto, AppUserDetails userDetails) {
+    List<String> errors;
+
+    try {
+      errors = employeeOrderValidationService.validateCreate(orderDto, userDetails);
+    } catch (CrudValidationException e) {
+      errors = List.of(e.getMessage());
+    }
+
+    if (!errors.isEmpty()) {
+      throw new CrudValidationException("Order is invalid", errors);
+    }
+  }
+
+  @DeleteMapping
+  @Transactional
+  public ResponseEntity<EmployeeOrderDto> delete(@RequestParam @NotNull UUID orderId,
+      Principal principal) {
+    Company company = companyService.read(principal);
+    EmployeeOrder order = employeeOrderService.read(orderId, company);
+
+    employeeOrderService.deleteForce(order);
+    return ResponseEntity.noContent().build();
   }
 }

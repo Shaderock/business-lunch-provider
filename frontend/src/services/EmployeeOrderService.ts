@@ -36,6 +36,15 @@ export class EmployeeOrderService {
     const params: URLSearchParams = new URLSearchParams([['dateTime', dateTime.toISOString()]])
     return axios.post(`${ApiConstants.COMPANY_ADM_EMPLOYEE_ORDER}/validate-multiple`, ordersIds, {params})
   }
+
+  async compAdmCreateEmployeeOrder(employeeOrder: EmployeeOrder) {
+    return axios.post(`${ApiConstants.COMPANY_ADM_EMPLOYEE_ORDER}`, employeeOrder)
+  }
+
+  async compAdmDeleteEmpOrder(orderId: string) {
+    const params: URLSearchParams = new URLSearchParams([['orderId', orderId]])
+    return axios.delete(`${ApiConstants.COMPANY_ADM_EMPLOYEE_ORDER}`, {params})
+  }
 }
 
 const employeeOrderService: EmployeeOrderService = new EmployeeOrderService()

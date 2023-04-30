@@ -9,6 +9,7 @@ import com.shaderock.lunch.backend.feature.order.company.repository.CompanyOrder
 import com.shaderock.lunch.backend.feature.order.company.type.CompanyOrderStatus;
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
 import com.shaderock.lunch.backend.feature.order.employee.service.EmployeeOrderService;
+import com.shaderock.lunch.backend.feature.order.employee.type.EmployeeOrderStatus;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,6 +42,15 @@ public class CompanyOrderService {
 
     order.setStatus(CompanyOrderStatus.PENDING_SUPPLIER_CONFIRMATION);
     order.setCreatedAt(LocalDateTime.now());
+
+    CompanyOrder persistedCompanyOrder = companyOrderRepository.save(order);
+
+    persistedCompanyOrder.getEmployeesOrders()
+        .forEach(employeeOrder -> {
+          employeeOrder.setCompanyOrder(persistedCompanyOrder);
+          employeeOrder.setStatus(EmployeeOrderStatus.PENDING_SUPPLIER_CONFIRMATION);
+        });
+
     return companyOrderRepository.save(order);
   }
 

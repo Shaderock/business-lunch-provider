@@ -97,6 +97,10 @@ public class EmployeeOrderService {
     orderRepository.delete(order);
   }
 
+  public void deleteForce(@NonNull EmployeeOrder order) {
+    orderRepository.delete(order);
+  }
+
   public EmployeeOrder calculateValidOrder(@NonNull EmployeeOrderDto orderDto,
       AppUserDetails userDetails) {
     EmployeeOrder order = orderMapper.toEntity(orderDto);

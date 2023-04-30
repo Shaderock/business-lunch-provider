@@ -3,6 +3,7 @@
     <v-row justify="center">
       <v-col cols="12">
         <v-data-table
+          class="elevation-20"
           :headers="headers"
           :items="useEmployeeOrderStore().getEmployeeOrders">
           <template v-slot:top>

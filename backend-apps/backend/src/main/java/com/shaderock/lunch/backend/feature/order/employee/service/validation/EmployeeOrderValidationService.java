@@ -75,6 +75,12 @@ public class EmployeeOrderValidationService {
 
   public EmployeeOrderValidationDto validateCreatedOrder(@NonNull EmployeeOrder order,
       @NonNull AppUserDetails userDetails, Optional<LocalDateTime> deliverAt) {
+
+    if (order.getStatus() == EmployeeOrderStatus.ORDERED
+        || order.getStatus() == EmployeeOrderStatus.PENDING_SUPPLIER_CONFIRMATION) {
+      return EmployeeOrderValidationDto.builder().valid(true).build();
+    }
+
     List<String> errors = validateOptionsAndCategoriesPicAndNotDeleted(
         order.getOptions().stream().toList());
 

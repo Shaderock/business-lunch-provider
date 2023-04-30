@@ -3,9 +3,10 @@
     <v-row justify="center">
       <v-col cols="6">
         <v-card class="overflow-auto"
-                height="250"
+                height="270"
                 variant="tonal">
-          <v-card-title class="text-error">
+          <v-card-title
+            :class="useCompAdmEmpOrderStore().getCompanyOrderValidation.valid ? 'text-success' : 'text-error'">
             Order validation
           </v-card-title>
           <v-card-text>
@@ -17,12 +18,14 @@
               </div>
             </v-slide-x-transition>
             <v-slide-x-transition>
-              <div v-for="error in useCompAdmEmpOrderStore().getCompanyOrderValidation.errors"
-                   :key="error">
+              <div>
+                <div v-for="error in useCompAdmEmpOrderStore().getCompanyOrderValidation.errors"
+                     :key="error">
 
-                <v-icon color="error" icon="mdi-alert"/>
-                {{ error }}
-                <v-divider thickness="4"/>
+                  <v-icon color="error" icon="mdi-alert"/>
+                  {{ error }}
+                  <v-divider thickness="4"/>
+                </div>
               </div>
             </v-slide-x-transition>
           </v-card-text>
@@ -32,7 +35,7 @@
         <v-slide-x-transition>
           <v-card v-if="useCompAdmEmpOrderStore().getCompanyOrderValidation.valid"
                   class="overflow-auto"
-                  height="250"
+                  height="270"
                   variant="tonal">
             <v-card-title class="text-primary">
               Summary
@@ -42,7 +45,10 @@
             </v-card-subtitle>
             <v-card-text>
               <v-chip color="info" label>
-                {{ useCompAdmEmpOrderStore().getEmployeesOrdersRecords.length }}
+                {{
+                  useCompAdmEmpOrderStore().getEmployeesOrdersRecords
+                  .filter(r => r.status === EmployeeOrderStatus.PendingAdminConfirmation).length
+                }}
               </v-chip>
             </v-card-text>
             <v-card-subtitle>
@@ -53,6 +59,16 @@
                 {{ useCompAdmEmpOrderStore().getSelectedDateTime }}
               </v-chip>
             </v-card-text>
+            <v-card-actions>
+              <v-btn
+                :disabled="isLoading || !useCompAdmEmpOrderStore().getCompanyOrderValidation.valid"
+                append-icon="mdi-send-clock"
+                block
+                color="primary"
+                variant="outlined"
+                @click="onOrderSend">request lunch
+              </v-btn>
+            </v-card-actions>
           </v-card>
         </v-slide-x-transition>
       </v-col>
@@ -62,14 +78,16 @@
       <v-col cols="12">
         <v-data-table
           :headers="headers"
-          :items="useCompAdmEmpOrderStore().getEmployeesOrdersRecords"
+          :items="isLoading ? [] : useCompAdmEmpOrderStore().getEmployeesOrdersRecords"
+          :search="search"
           class="elevation-20">
           <template v-slot:top>
             <v-toolbar extended>
-              <v-form class="w-25 pl-3">
+              <v-form class="pl-3">
                 <v-text-field
                   v-model="selectedDate"
                   :disabled="isLoading"
+                  class="w-100"
                   hide-details="auto"
                   label="Select order date"
                   prepend-inner-icon="mdi-calendar"
@@ -77,28 +95,37 @@
                   @update:modelValue="updateSelectedDate()"/>
               </v-form>
               <v-divider vertical/>
-              <v-form class="w-25 pl-3">
+              <v-form class="pl-3">
                 <v-text-field
                   v-model="selectedTime"
                   :disabled="isLoading"
+                  class="w-100"
                   hide-details="auto"
                   label="Select order time"
                   prepend-inner-icon="mdi-clock"
                   type="time"
                   @update:modelValue="updateSelectedTime()"/>
               </v-form>
+              <v-form class="w-25 pl-3">
+                <v-text-field
+                  v-model="search"
+                  hide-details
+                  label="Search"
+                  prepend-inner-icon="mdi-magnify"
+                  single-line/>
+              </v-form>
               <v-spacer/>
+
               <v-btn :disabled="isLoading"
                      append-icon="mdi-refresh"
                      color="secondary"
                      @click="onRefresh">Refresh
               </v-btn>
-              <v-btn
-                :disabled="isLoading || !useCompAdmEmpOrderStore().getCompanyOrderValidation.valid"
-                append-icon="mdi-send-clock"
-                color="primary"
-                variant="outlined"
-                @click="onOrderSend">Send order
+              <v-btn :disabled="isLoading"
+                     append-icon="mdi-hamburger-plus"
+                     color="primary"
+                     variant="outlined"
+                     @click="isAddDialogOpened = true">Add order
               </v-btn>
 
               <template v-slot:extension>
@@ -145,6 +172,7 @@
                 </v-card>
               </v-menu>
             </v-btn>
+            <v-icon v-else color="success" icon="mdi-check"/>
           </template>
 
           <template v-slot:item.actions="{ item }">
@@ -168,7 +196,8 @@
               </v-menu>
             </v-btn>
 
-            <v-btn :disabled="isLoading"
+            <v-btn v-if="item.raw.status === EmployeeOrderStatus.PendingAdminConfirmation"
+                   :disabled="isLoading"
                    icon
                    variant="plain">
               <v-icon color="error" icon="mdi-delete"/>
@@ -192,11 +221,83 @@
       </v-col>
     </v-row>
   </v-container>
+
+  <v-dialog v-model="isAddDialogOpened" :persistent="isDialogLoading">
+    <v-row justify="center">
+      <v-col cols="4">
+        <v-card title="Add employee order">
+          <v-form @submit.prevent="onAddOrder()">
+            <v-card-text>
+              <v-autocomplete
+                v-model="selectedUserId"
+                :disabled="isDialogLoading"
+                :items="useCompAdmUserStore().getEmployeesDetails"
+                item-title="email"
+                item-value="id"
+                label="User"/>
+              <v-autocomplete
+                v-model="selectedSupplierId"
+                :disabled="isDialogLoading"
+                :items="useCompAdmSubscriptionStore().getPublicSubscriptionSuppliers"
+                item-title="name"
+                item-value="supplierId"
+                label="Supplier"
+                @update:modelValue="onSelectedSupplierChange"/>
+              <v-autocomplete
+                v-model="selectedOptions"
+                :disabled="!selectedSupplierId || isDialogLoading"
+                :items="optionsToSelect"
+                chips
+                clearable
+                item-title="name"
+                item-value="id"
+                label="Options"
+                multiple/>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                :disabled="selectedOptions.length === 0 || !selectedSupplierId || !selectedUserId"
+                :loading="isDialogLoading" block
+                color="primary" type="submit" variant="outlined">Validate & Add order
+              </v-btn>
+            </v-card-actions>
+          </v-form>
+        </v-card>
+      </v-col>
+      <v-fade-transition>
+        <v-col v-if="addDialogOrderValidation && !addDialogOrderValidation.valid" cols="4">
+          <v-card height="370">
+            <v-card-title class="text-error">Order Validation</v-card-title>
+            <v-card-text>
+              <v-list>
+                <v-list-item v-for="error in addDialogOrderValidation?.errors || []"
+                             :key="error">
+                  <v-list-item-title>
+                    <v-icon color="error" icon="mdi-alert"/>
+                    {{ error }}
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-fade-transition>
+    </v-row>
+  </v-dialog>
 </template>
 
 <script lang="ts" setup>
-import {onMounted, ref} from "vue";
-import {EmployeesOrdersTableRecord, useCompAdmEmpOrderStore} from "@/store/company-adm-app";
+import {computed, ComputedRef, onMounted, ref} from "vue";
+import {
+  EmployeesOrdersTableRecord,
+  useCompAdmEmpOrderStore,
+  useCompAdmSubscriptionStore,
+  useCompAdmUserStore
+} from "@/store/company-adm-app";
+import {EmployeeOrder} from "@/models/EmployeeOrder";
+import {EmployeeOrderStatus} from "@/models/EmployeeOrderStatus";
+import employeeOrderService from "@/services/EmployeeOrderService";
+import toastManager from "@/services/ToastManager";
 
 onMounted(() => {
   useCompAdmEmpOrderStore().requestFreshDataIfEmpty().finally(() => {
@@ -213,6 +314,15 @@ const isLoading = ref(true)
 const selectedDate = ref()
 const selectedTime = ref()
 const supplierTab = ref()
+const search = ref()
+const isAddDialogOpened = ref(false)
+const isDialogLoading = ref(false)
+const selectedSupplierId = ref('')
+const selectedUserId = ref()
+const selectedOptions = ref([])
+const optionsToSelect: ComputedRef<unknown[] | undefined> = computed(() => useCompAdmEmpOrderStore().getSuppliersOptions
+.find(so => so.supplier?.id === selectedSupplierId.value)?.options)
+const addDialogOrderValidation = ref()
 
 const headers = [
   {title: 'Email', key: 'email'},
@@ -225,6 +335,48 @@ const headers = [
   {title: 'Status', key: 'status'},
   {title: 'Actions', key: 'actions', sortable: false, align: 'center'},
 ]
+
+async function onAddOrder() {
+  try {
+    isDialogLoading.value = true
+    const employeeOrder = new EmployeeOrder(
+      '',
+      selectedUserId.value,
+      '',
+      0,
+      0,
+      0,
+      0,
+      EmployeeOrderStatus.PendingAdminConfirmation,
+      selectedOptions.value,
+      selectedDate.value);
+
+    const response = await employeeOrderService.requestOrderValidation(employeeOrder)
+    addDialogOrderValidation.value = response.data
+
+    if (addDialogOrderValidation.value.valid) {
+      await employeeOrderService.compAdmCreateEmployeeOrder(employeeOrder)
+      await useCompAdmEmpOrderStore().requestUpdateOrdersForSelectedDateTime()
+      selectedSupplierId.value = ''
+      selectedUserId.value = ''
+      selectedOptions.value = []
+      isAddDialogOpened.value = false
+      supplierTab.value = useCompAdmEmpOrderStore().getSelectedSupplier
+    }
+  } finally {
+    isDialogLoading.value = false
+  }
+}
+
+async function onSelectedSupplierChange() {
+  try {
+    isDialogLoading.value = true
+    await useCompAdmEmpOrderStore().requestSupplierOptionsRefreshIfEmpty(selectedSupplierId.value)
+  } finally {
+    selectedOptions.value = []
+    isDialogLoading.value = false
+  }
+}
 
 async function updateSelectedDate() {
   try {
@@ -258,6 +410,8 @@ async function onOrderSend() {
   try {
     isLoading.value = true
     await useCompAdmEmpOrderStore().sendOrder()
+    await useCompAdmEmpOrderStore().requestUpdateOrdersForSelectedDateTime()
+    toastManager.showSuccess("Lunch ordered", "Waiting for supplier confirmation")
   } finally {
     isLoading.value = false
   }
@@ -273,7 +427,6 @@ async function onRefresh() {
 }
 
 async function onSupplierTabChanged() {
-  console.log()
   try {
     isLoading.value = true
     await useCompAdmEmpOrderStore().setSelectedSupplierDetails(supplierTab.value)

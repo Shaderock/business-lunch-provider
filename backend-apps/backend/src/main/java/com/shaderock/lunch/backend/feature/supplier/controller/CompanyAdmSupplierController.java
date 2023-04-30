@@ -4,7 +4,7 @@ import com.shaderock.lunch.backend.feature.company.entity.Company;
 import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
 import com.shaderock.lunch.backend.feature.subscription.service.SubscriptionService;
-import com.shaderock.lunch.backend.feature.supplier.dto.PublicSupplierDto;
+import com.shaderock.lunch.backend.feature.supplier.dto.SupplierDto;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.mapper.SupplierMapper;
 import com.shaderock.lunch.backend.util.ApiConstants;
@@ -32,12 +32,12 @@ public class CompanyAdmSupplierController {
 
   @GetMapping("/subscription/all")
   @Transactional
-  public ResponseEntity<List<PublicSupplierDto>> read(Principal principal) {
+  public ResponseEntity<List<SupplierDto>> read(Principal principal) {
     filterManager.ignoreVisibility();
     Company company = companyService.read(principal);
     List<Subscription> subscriptions = subscriptionService.read(company);
 
     List<Supplier> suppliers = subscriptions.stream().map(Subscription::getSupplier).toList();
-    return ResponseEntity.ok(suppliers.stream().map(supplierMapper::toPublicDto).toList());
+    return ResponseEntity.ok(suppliers.stream().map(supplierMapper::toDto).toList());
   }
 }

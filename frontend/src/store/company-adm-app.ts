@@ -221,6 +221,7 @@ export interface SubscriptionSupplier {
   // supplier
   supplierId: string
   menuUrl: string
+  isPublic: boolean
 
   // details
   name: string
@@ -267,6 +268,7 @@ export const useCompAdmSubscriptionStore = defineStore('companyAdminSubscription
 
           supplierId: supplier.id ?? '',
           menuUrl: supplier.menuUrl,
+          isPublic: supplier.isPublic ?? false,
 
           minimumOrdersPerCompanyRequest: preferences?.minimumOrdersPerCompanyRequest ?? 0,
           minimumCategoriesForEmployeeOrder: preferences?.minimumCategoriesForEmployeeOrder ?? 0,
@@ -287,6 +289,9 @@ export const useCompAdmSubscriptionStore = defineStore('companyAdminSubscription
     getValidSuppliersDetailsListNameForSubscription(): string[] {
       return this.getValidSuppliersDetailsListForSubscription.map(supplier => supplier.name)
     },
+    getPublicSubscriptionSuppliers(): SubscriptionSupplier[] {
+      return this.getSubscriptionSuppliers.filter(s => s.isPublic)
+    }
   },
   actions: {
     async subscribe(supplierNames: string[]) {
@@ -298,7 +303,6 @@ export const useCompAdmSubscriptionStore = defineStore('companyAdminSubscription
             await subscriptionService.subscribe(chosenSupplier.supplierId)
           }
         }
-        // await this.requestFreshData()
       } catch (error) {
         console.log("Couldn't subscribe to a supplier")
       }
@@ -532,6 +536,7 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
             status: o.order.status
           }
         })
+        .filter(r => r.supplierId === this.getSelectedSupplier?.id)
       })
     },
     getPendingAdminConfirmationEmployeesOrdersInfos(): EmployeeOrdersInfo[] {
@@ -547,39 +552,6 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
         }
       })
     },
-    // async canOrderBeSent(): Promise<boolean> {
-    //   this.companyOrderInvalidReasons = []
-    //   let result: boolean = true
-    //   const minimumOrdersPerCompanyRequest: number | undefined =
-    //     this.getSelectedSupplierPreferences?.minimumOrdersPerCompanyRequest;
-    //   const workDayStart: Date | undefined = this.getSelectedSupplierPreferences?.workDayStart
-    //   const workDayEnd: Date | undefined = this.getSelectedSupplierPreferences?.workDayEnd
-    //
-    //   if (!minimumOrdersPerCompanyRequest || !workDayStart || !workDayEnd) {
-    //     this.companyOrderInvalidReasons = ["Supplier profile not found. Try again later"]
-    //     result = false
-    //   } else {
-    //     if (this.getEmployeesOrdersRecords.length > minimumOrdersPerCompanyRequest) {
-    //       this.companyOrderInvalidReasons = [`There should be at least ${minimumOrdersPerCompanyRequest} in the order but only ${this.getEmployeesOrdersRecords.length} present`]
-    //       result = false
-    //     }
-    //   }
-    //
-    //   if (this.getPendingAdminConfirmationEmployeesOrdersInfos
-    //     .filter(i => {
-    //       return i.ordersExtended
-    //         .filter(o => o.validation.valid)
-    //         .length === i.ordersExtended.length
-    //     }).length === this.getPendingAdminConfirmationEmployeesOrdersInfos.length) {
-    //     this.companyOrderInvalidReasons = ["There are invalid employees orders"]
-    //     result = false
-    //   }
-    //
-    //   this.getSelectedTime
-    //
-    //
-    //   return result
-    // }
   },
   actions: {
     async setSelectedDate(date: string) {
@@ -594,21 +566,21 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
       this.selectedSupplierDetails = details
       await this.requestUpdateOrdersForSelectedDateTime()
     },
-    async pushOrder(order: EmployeeOrder) {
-      const response: AxiosResponse<EmployeeOrder> =
-        await employeeOrderService.compAdmCreateEmployeeOrder(order)
-      this.getEmployeesOrders.push(response.data)
-
-      const validationResponse: AxiosResponse<EmployeeOrderValidation> =
-        await this.requestValidateOrderForSelectedDate(order)
-      this.employeesOrdersValidations.push(validationResponse.data)
-    },
     async deleteOrder(record: EmployeesOrdersTableRecord) {
-      // todo
+      await employeeOrderService.compAdmDeleteEmpOrder(record.orderId)
+      await this.requestUpdateOrdersForSelectedDateTime()
     },
     async sendOrder() {
       if (this.getCompanyOrderValidation.valid) {
-        // todo
+        const pendingOrders = this.getEmployeesOrdersRecords
+        .filter(r => r.status === EmployeeOrderStatus.PendingAdminConfirmation)
+        .filter(r => r.supplierId === this.getSelectedSupplier?.id);
+
+        await companyOrderService.createOrder(new CompanyOrder(
+          '',
+          pendingOrders.map(r => r.orderId),
+          this.getSelectedDateTime.toISOString(),
+          CompanyOrderStatus.PendingSupplierConfirmation))
       }
     },
     getOrderValidationByOrderId(orderId: string) {
@@ -635,8 +607,8 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
         }
       }
 
-      if (!this.getSelectedSupplierDetails || !this.getSuppliersDetails
-      .find(d => d.id === this.getSelectedSupplier?.id)) {
+      if (!this.getSelectedSupplierDetails?.id ||
+        !this.getSuppliersDetails.find(d => d.id === this.getSelectedSupplierDetails?.id)) {
 
         if (this.getSuppliersDetails.length > 0) {
           this.selectedSupplierDetails = this.getSuppliersDetails[0]
@@ -647,7 +619,9 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
         const response: AxiosResponse<CompanyOrderValidation> =
           await companyOrderService.requestOrderValidation(new CompanyOrder(
             '',
-            this.getEmployeesOrdersRecords.map(r => r.orderId),
+            this.getEmployeesOrdersRecords
+            .filter(r => r.status === EmployeeOrderStatus.PendingAdminConfirmation)
+            .map(r => r.orderId),
             this.getSelectedDateTime.toISOString(),
             CompanyOrderStatus.PendingSupplierConfirmation
           ))
@@ -656,11 +630,13 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
       }
     },
     async requestOrdersForSelectedDate() {
+      this.employeesOrders = []
       const response: AxiosResponse<EmployeeOrder[]> =
         await employeeOrderService.compAdmRequestForDate(this.selectedDate)
       this.employeesOrders = response.data
     },
     async requestValidateOrdersForSelectedDateTime() {
+      this.employeesOrdersValidations = []
       const response: AxiosResponse<EmployeeOrderValidation[]> =
         await employeeOrderService.compAdmRequestToValidateMultiple(this.getEmployeesOrders
         .map(o => o.id), this.getSelectedDateTime)
@@ -681,9 +657,6 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
             })
         }
       }
-    },
-    async requestValidateOrderForSelectedDateTime(order: EmployeeOrder): Promise<AxiosResponse<EmployeeOrderValidation>> {
-      return await employeeOrderService.compAdmRequestToValidateSingle(order, this.getSelectedDateTime)
     },
     async requestFreshDataIfEmpty() {
       if (this.getEmployeesOrders.length === 0) {
