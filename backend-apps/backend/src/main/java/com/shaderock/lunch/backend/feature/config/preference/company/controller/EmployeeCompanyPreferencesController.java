@@ -7,6 +7,7 @@ import com.shaderock.lunch.backend.feature.config.preference.company.entity.Comp
 import com.shaderock.lunch.backend.feature.config.preference.company.mapper.CompanyPreferencesMapper;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ public class EmployeeCompanyPreferencesController {
   private final CompanyPreferencesMapper preferencesMapper;
 
   @GetMapping
+  @Transactional
   public ResponseEntity<CompanyPreferencesDto> read(Principal principal) {
     Company company = companyService.read(principal);
     CompanyPreferences preferences = company.getPreferences();

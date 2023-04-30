@@ -5,12 +5,10 @@ import com.shaderock.lunch.backend.feature.company.entity.Company;
 import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
-import com.shaderock.lunch.backend.feature.food.option.repository.OptionRepository;
 import com.shaderock.lunch.backend.feature.order.employee.dto.EmployeeOrderDto;
 import com.shaderock.lunch.backend.feature.order.employee.dto.EmployeeOrderValidationDto;
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
 import com.shaderock.lunch.backend.feature.order.employee.mapper.EmployeeOrderMapper;
-import com.shaderock.lunch.backend.feature.order.employee.repository.EmployeeOrderRepository;
 import com.shaderock.lunch.backend.feature.order.employee.service.EmployeeOrderService;
 import com.shaderock.lunch.backend.feature.order.employee.service.validation.EmployeeOrderValidationService;
 import com.shaderock.lunch.backend.util.ApiConstants;
@@ -45,8 +43,6 @@ public class CompanyAdmEmployeeOrderController {
   private final EmployeeOrderService employeeOrderService;
   private final EmployeeOrderValidationService employeeOrderValidationService;
   private final AppUserDetailsService userDetailsService;
-  private final OptionRepository optionRepository;
-  private final EmployeeOrderRepository orderRepository;
   private final CompanyService companyService;
 
   @PostMapping("/validate-multiple")

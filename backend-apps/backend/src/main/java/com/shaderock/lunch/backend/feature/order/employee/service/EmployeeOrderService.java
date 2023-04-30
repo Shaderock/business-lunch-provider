@@ -92,6 +92,10 @@ public class EmployeeOrderService {
         .orElseThrow(() -> new CrudValidationException("Order not found"));
   }
 
+  public List<EmployeeOrder> read(Supplier supplier, LocalDate date) {
+    return orderRepository.findByOrderDateAndOptions_Category_Menu_Supplier(date, supplier);
+  }
+
   public void delete(@NonNull EmployeeOrder order) {
     orderValidationService.validateDelete(order);
     orderRepository.delete(order);

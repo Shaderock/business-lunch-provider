@@ -10,13 +10,14 @@ import java.util.UUID;
 /**
  * A DTO for the {@link Supplier} entity
  */
-public record SupplierDto(UUID id,
-                          UUID organizationDetailsId,
-                          URI websiteUrl,
-                          URI menuUrl,
-                          @NotNull
-                          boolean isPublic,
-                          Set<UUID> subscribersIds,
-                          UUID preferencesId) implements Serializable {
+public record SupplierDto(
+    UUID id,
+    UUID organizationDetailsId,
+    URI websiteUrl,
+    URI menuUrl,
+    @NotNull
+    boolean isPublic,
+    Set<UUID> subscribersIds,
+    UUID preferencesId) implements Serializable {
 
 }

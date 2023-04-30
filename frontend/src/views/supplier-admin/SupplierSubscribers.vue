@@ -4,7 +4,7 @@
       <v-col>
         <v-data-table :class="`elevation-20`"
                       :headers="subscribersHeaders"
-                      :items="useSubscribersCompaniesStore().getSubscribersCompanies"
+                      :items="useSupplierSubscribersCompaniesStore().getSubscribersCompanies"
                       density="compact">
           <template v-slot:top>
             <v-toolbar extended extension-height="1">
@@ -52,11 +52,11 @@
 <script lang="ts" setup>
 
 import {onBeforeMount, ref} from "vue";
-import {SubscriberCompany, useSubscribersCompaniesStore} from "@/store/supplier-adm-app";
+import {SubscriberCompany, useSupplierSubscribersCompaniesStore} from "@/store/supplier-adm-app";
 import {SubscriptionStatus} from "@/models/SubscriptionStatus";
 
 onBeforeMount(() => {
-  useSubscribersCompaniesStore().requestFreshData().finally(() => isLoading.value = false)
+  useSupplierSubscribersCompaniesStore().requestFreshData().finally(() => isLoading.value = false)
 })
 
 const isLoading = ref(true)
@@ -73,13 +73,13 @@ const subscribersHeaders = [
 
 async function declineSubscription(subscriberCompany: SubscriberCompany) {
   isLoading.value = true
-  await useSubscribersCompaniesStore().declineSubscription(subscriberCompany.companyId)
+  await useSupplierSubscribersCompaniesStore().declineSubscription(subscriberCompany.companyId)
   isLoading.value = false
 }
 
 async function acceptSubscription(subscriberCompany: SubscriberCompany) {
   isLoading.value = true
-  await useSubscribersCompaniesStore().acceptSubscription(subscriberCompany.companyId)
+  await useSupplierSubscribersCompaniesStore().acceptSubscription(subscriberCompany.companyId)
   isLoading.value = false
 }
 </script>

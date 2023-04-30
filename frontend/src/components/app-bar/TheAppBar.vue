@@ -68,7 +68,7 @@
 
           <v-divider/>
 
-          <v-list-item append-icon="mdi-logout" variant="plain" @click="logout()">
+          <v-list-item append-icon="mdi-logout" class="text-error" @click="logout()">
             Sign out
           </v-list-item>
         </v-list>

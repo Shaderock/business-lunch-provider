@@ -117,19 +117,21 @@
               <v-spacer/>
 
               <v-btn :disabled="isLoading"
-                     append-icon="mdi-refresh"
+                     class="mr-2"
                      color="secondary"
-                     @click="onRefresh">Refresh
+                     variant="outlined"
+                     @click="onRefresh">
+                <v-icon icon="mdi-refresh"/>
               </v-btn>
               <v-btn :disabled="isLoading"
-                     append-icon="mdi-hamburger-plus"
                      color="primary"
                      variant="outlined"
-                     @click="isAddDialogOpened = true">Add order
+                     @click="isAddDialogOpened = true">
+                <v-icon icon="mdi-hamburger-plus"/>
               </v-btn>
 
               <template v-slot:extension>
-                <v-tabs v-model="supplierTab" :disabled="isLoading">
+                <v-tabs v-model="supplierDetailsTab" :disabled="isLoading">
                   <v-tab v-for="supplierDetails in useCompAdmEmpOrderStore().getSuppliersDetails"
                          :key="supplierDetails.id"
                          :value="supplierDetails"
@@ -179,16 +181,17 @@
             <v-btn :disabled="isLoading"
                    icon
                    variant="plain">
-              <v-icon color="secondary" icon="mdi-open-in-new"/>
+              <v-icon icon="mdi-open-in-app"/>
               <v-menu activator="parent">
                 <v-card variant="tonal">
                   <v-card-title class="text-primary">Ordered Options</v-card-title>
                   <v-card-text>
                     <v-list>
-                      <div v-for="option in useCompAdmEmpOrderStore().getOptionsOfOrder(item.raw)"
-                           :key="option.id">
+                      <div
+                        v-for="(option, index) in useCompAdmEmpOrderStore().getOptionsOfOrder(item.raw)"
+                        :key="option.id">
+                        <v-divider v-if="index !== 0" thickness="4"/>
                         <v-list-item :title="option.name" prepend-icon="mdi-food"/>
-                        <v-divider inset/>
                       </div>
                     </v-list>
                   </v-card-text>
@@ -238,7 +241,7 @@
               <v-autocomplete
                 v-model="selectedSupplierId"
                 :disabled="isDialogLoading"
-                :items="useCompAdmSubscriptionStore().getPublicSubscriptionSuppliers"
+                :items="useEmployeeSubscriptionStore().getPublicSubscriptionSuppliers"
                 item-title="name"
                 item-value="supplierId"
                 label="Supplier"
@@ -291,8 +294,8 @@ import {computed, ComputedRef, onMounted, ref} from "vue";
 import {
   EmployeesOrdersTableRecord,
   useCompAdmEmpOrderStore,
-  useCompAdmSubscriptionStore,
-  useCompAdmUserStore
+  useCompAdmUserStore,
+  useEmployeeSubscriptionStore
 } from "@/store/company-adm-app";
 import {EmployeeOrder} from "@/models/EmployeeOrder";
 import {EmployeeOrderStatus} from "@/models/EmployeeOrderStatus";
@@ -304,7 +307,7 @@ onMounted(() => {
     selectedDate.value = useCompAdmEmpOrderStore().getSelectedDate
     selectedTime.value = useCompAdmEmpOrderStore().getSelectedTime
     useCompAdmEmpOrderStore().requestUpdateOrdersForSelectedDateTime().finally(() => {
-      supplierTab.value = useCompAdmEmpOrderStore().getSelectedSupplierDetails
+      supplierDetailsTab.value = useCompAdmEmpOrderStore().getSelectedSupplierDetails
       isLoading.value = false
     })
   })
@@ -313,7 +316,7 @@ onMounted(() => {
 const isLoading = ref(true)
 const selectedDate = ref()
 const selectedTime = ref()
-const supplierTab = ref()
+const supplierDetailsTab = ref()
 const search = ref()
 const isAddDialogOpened = ref(false)
 const isDialogLoading = ref(false)
@@ -361,7 +364,7 @@ async function onAddOrder() {
       selectedUserId.value = ''
       selectedOptions.value = []
       isAddDialogOpened.value = false
-      supplierTab.value = useCompAdmEmpOrderStore().getSelectedSupplier
+      supplierDetailsTab.value = useCompAdmEmpOrderStore().getSelectedSupplierDetails
     }
   } finally {
     isDialogLoading.value = false
@@ -383,7 +386,7 @@ async function updateSelectedDate() {
     isLoading.value = true
     await useCompAdmEmpOrderStore().setSelectedDate(selectedDate.value)
   } finally {
-    supplierTab.value = useCompAdmEmpOrderStore().getSelectedSupplierDetails
+    supplierDetailsTab.value = useCompAdmEmpOrderStore().getSelectedSupplierDetails
     isLoading.value = false
   }
 }
@@ -429,7 +432,7 @@ async function onRefresh() {
 async function onSupplierTabChanged() {
   try {
     isLoading.value = true
-    await useCompAdmEmpOrderStore().setSelectedSupplierDetails(supplierTab.value)
+    await useCompAdmEmpOrderStore().setSelectedSupplierDetails(supplierDetailsTab.value)
   } finally {
     isLoading.value = false
   }

@@ -14,7 +14,7 @@
             v-bind:to="RouterPaths.ANONYMOUS_HOME"
           />
 
-          <v-divider/>
+          <v-divider thickness="4"/>
 
           <div v-if="useProfileStore().isOnlyAppUser">
 
@@ -32,7 +32,7 @@
 
             <OrganizationDetailsNavItem/>
 
-            <v-divider/>
+            <v-divider thickness="4"/>
 
             <v-list-item :hidden="!isHovering" disabled title="My Orders"/>
 
@@ -56,19 +56,19 @@
               v-bind:to="RouterPaths.COMPANY_ADM_COMPANY_NOTIFICATIONS"
             />
 
-            <v-divider/>
+            <v-divider thickness="4"/>
 
             <v-list-item :hidden="!isHovering" disabled title="Subscriptions"/>
 
             <SupplierSubscriptionsNavItem/>
 
-            <v-divider/>
+            <v-divider thickness="4"/>
 
             <v-list-item :hidden="!isHovering" disabled title="My Orders"/>
 
             <EmployeeOrdersNavItems/>
 
-            <v-divider/>
+            <v-divider thickness="4"/>
 
             <v-list-item :hidden="!isHovering" disabled title="Company Orders"/>
 
@@ -90,7 +90,7 @@
               v-bind:to="RouterPaths.COMPANY_ADM_COMPANY_DASHBOARD"
             />
 
-            <v-divider/>
+            <v-divider thickness="4"/>
 
             <v-list-item :hidden="!isHovering" disabled title="Employees"/>
 
@@ -119,7 +119,7 @@
               v-bind:to="RouterPaths.SUPPLIER_ADM_SUPPLIER_PREFERENCES"
             />
 
-            <v-divider/>
+            <v-divider thickness="4"/>
 
             <v-list-item :hidden="!isHovering" disabled title="Subscriptions"/>
 
@@ -129,7 +129,7 @@
               v-bind:to="RouterPaths.SUPPLIER_ADM_SUBSCRIBED_COMPANIES"
             />
 
-            <v-divider/>
+            <v-divider thickness="4"/>
 
             <v-list-item :hidden="!isHovering" disabled title="Menu"></v-list-item>
 
@@ -145,7 +145,7 @@
               v-bind:to="RouterPaths.SUPPLIER_ADM_FOOD_OPTIONS"
             />
 
-            <v-divider/>
+            <v-divider thickness="4"/>
 
             <v-list-item :hidden="!isHovering" disabled title="Orders"></v-list-item>
 
@@ -178,7 +178,7 @@
               title="Organizaitons"
               v-bind:to="RouterPaths.SYSTEM_ADM_ORGANIZATIONS"/>
 
-            <v-divider/>
+            <v-divider thickness="4"/>
 
             <v-list-item
               prepend-icon="mdi-account-multiple"

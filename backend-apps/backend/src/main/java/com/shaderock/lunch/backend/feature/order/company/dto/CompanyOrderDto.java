@@ -13,6 +13,7 @@ import org.springframework.format.annotation.DateTimeFormat;
  */
 public record CompanyOrderDto(
     UUID id,
+    String companyName,
     Set<UUID> employeesOrderIds,
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     LocalDateTime deliverAt,

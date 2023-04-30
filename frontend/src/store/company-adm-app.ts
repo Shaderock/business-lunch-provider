@@ -239,7 +239,7 @@ export interface SubscriptionSupplier {
   subscriptionDate: string
 }
 
-export const useCompAdmSubscriptionStore = defineStore('companyAdminSubscriptionSuppliers', {
+export const useEmployeeSubscriptionStore = defineStore('employeeSubscriptionSuppliers', {
   state: () => ({
     suppliers: [] as Supplier[],
     suppliersPreferences: [] as PublicSupplierPreferences[],
@@ -334,48 +334,12 @@ export const useCompAdmSubscriptionStore = defineStore('companyAdminSubscription
 
       await useWorkingSuppliersStore().requestFreshDataIfNothingCached()
     },
-    async requestDataIfEmpty() {
+    async requestFreshDataIfEmpty() {
       if (this.suppliers.length == 0 || this.subscriptions.length == 0)
         await this.requestFreshData()
     }
   }
 })
-
-/*<template>
-  <v-select
-    v-model="selectedCategories"
-    :items="categories"
-    item-text="name"
-    item-value="id"
-    label="Select categories"
-    multiple
-  ></v-select>
-</template>
-
-<script lang="ts">
-import Vue from 'vue';
-import { Component } from 'vue-property-decorator';
-
-interface Category {
-  id: string;
-  name: string;
-}
-
-@Component
-export default class MyComponent extends Vue {
-  selectedCategories: string[] = [];
-  categories: Category[] = [
-    { id: '1', name: 'Category 1' },
-    { id: '2', name: 'Category 2' },
-    { id: '3', name: 'Category 3' },
-  ];
-}
-</script>
-
-In this example, we have an array of Category objects called categories, which we pass to the v-select component using the items prop. We also specify that the text displayed for each item should be the value of its name property (using the item-text prop), and that the value of each item should be its id property (using the item-value prop).
-
-When a user selects one or more items from the list, the v-model (selectedCategories) will be updated with an array of the selected items’ ids.
-*/
 
 export interface EmployeeOrdersInfo {
   employeeDetails: UserDetails
@@ -439,7 +403,7 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
       .find(s => s.organizationDetailsId === this.getSelectedSupplierDetails?.id)
     },
     getSelectedSupplierPreferences(): PublicSupplierPreferences | undefined {
-      return useCompAdmSubscriptionStore().getSuppliersPreferences
+      return useEmployeeSubscriptionStore().getSuppliersPreferences
       .find(p => this.getSelectedSupplier?.preferencesId === p.id)
     },
     getSelectedSupplierDetails(): OrganizationDetails | null {
@@ -452,7 +416,7 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
 
       const uniqueSuppliers = new Map(suppliers.map(s => [s.id, s]));
 
-      return useCompAdmSubscriptionStore().suppliersDetails
+      return useEmployeeSubscriptionStore().suppliersDetails
       .filter(sd => Array.from(uniqueSuppliers.values())
       .some(s => s.organizationDetailsId === sd.id));
     },
@@ -479,9 +443,9 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
             const validation: EmployeeOrderValidation | undefined =
               userValidations.find(v => v.orderId === o.id)
             const supplier: Supplier | undefined =
-              useCompAdmSubscriptionStore().getSuppliers.find(s => s.id === validation?.supplierId)
+              useEmployeeSubscriptionStore().getSuppliers.find(s => s.id === validation?.supplierId)
             const details: OrganizationDetails | undefined =
-              useCompAdmSubscriptionStore().getSuppliersDetails.find(d => d.id === supplier?.organizationDetailsId)
+              useEmployeeSubscriptionStore().getSuppliersDetails.find(d => d.id === supplier?.organizationDetailsId)
 
             return {
               order: o || new EmployeeOrder('', '', '', 0, 0, 0, 0, EmployeeOrderStatus.PendingAdminConfirmation, [], ''),
@@ -539,19 +503,6 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
         .filter(r => r.supplierId === this.getSelectedSupplier?.id)
       })
     },
-    getPendingAdminConfirmationEmployeesOrdersInfos(): EmployeeOrdersInfo[] {
-      return this.getEmployeesOrdersInfosForSelectedSupplier
-      .filter(i => i.ordersExtended.length > 0)
-      .map(i => {
-        const pendingAdminConfirmationExtendedOrders: EmployeeOrderExtended[] = i.ordersExtended
-        .filter(o => o.order.status === EmployeeOrderStatus.PendingAdminConfirmation)
-
-        return {
-          employeeDetails: i.employeeDetails,
-          ordersExtended: pendingAdminConfirmationExtendedOrders
-        }
-      })
-    },
   },
   actions: {
     async setSelectedDate(date: string) {
@@ -580,7 +531,10 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
           '',
           pendingOrders.map(r => r.orderId),
           this.getSelectedDateTime.toISOString(),
-          CompanyOrderStatus.PendingSupplierConfirmation))
+          Utils.formatDateWithoutTimeWithSlashes(new Date),
+          CompanyOrderStatus.PendingSupplierConfirmation,
+          '',
+        ))
       }
     },
     getOrderValidationByOrderId(orderId: string) {
@@ -623,7 +577,9 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
             .filter(r => r.status === EmployeeOrderStatus.PendingAdminConfirmation)
             .map(r => r.orderId),
             this.getSelectedDateTime.toISOString(),
-            CompanyOrderStatus.PendingSupplierConfirmation
+            Utils.formatDateWithoutTimeWithSlashes(new Date),
+            CompanyOrderStatus.PendingSupplierConfirmation,
+            ''
           ))
 
         this.companyOrderValidation = response.data
@@ -647,7 +603,7 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
       .find(s => s.supplier.id === supplierId)
       if (!supplierOption) {
         const response: AxiosResponse<Option[]> = await optionService.requestBySupplierId(supplierId)
-        const supplier = useCompAdmSubscriptionStore().suppliers
+        const supplier = useEmployeeSubscriptionStore().suppliers
         .find(s => s.id === supplierId)
         if (supplier) {
           this.getSuppliersOptions.push(
@@ -661,7 +617,7 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
     async requestFreshDataIfEmpty() {
       if (this.getEmployeesOrders.length === 0) {
         await useCompAdmUserStore().requestFreshEmployeesData()
-        await useCompAdmSubscriptionStore().requestDataIfEmpty()
+        await useEmployeeSubscriptionStore().requestFreshDataIfEmpty()
         await useCompAdmCompPrefStore().requestDataIfEmpty()
         this.selectedTime = Utils.dateToTimeAsStringWithoutSeconds(useCompAdmCompPrefStore().getDeliveryTime || new Date())
       }

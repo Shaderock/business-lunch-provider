@@ -95,7 +95,7 @@ public class OptionService {
       persistedOption.setPublic(false);
     }
 
-    if (persistedOption.getPublishedAt() != null) {
+    if (persistedOption.getPublishedAt() == null) {
       persistedOption.getCategory().getOptions().remove(persistedOption);
       persistedOption.setCategory(category);
       category.getOptions().add(persistedOption);
@@ -106,7 +106,8 @@ public class OptionService {
       persistedOption.setPrice(option.getPrice());
       persistedOption.setGram(option.getGram());
     }
-    return persistedOption;
+
+    return optionRepository.save(persistedOption);
   }
 
   @Transactional

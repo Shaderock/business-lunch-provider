@@ -22,13 +22,13 @@
             <v-divider inset/>
 
             <v-list-item
-              :subtitle="useSupAdmSupPrefStore().getPreferences.workDayStart?.toString()"
+              :subtitle="useSupAdmSupPrefStore().getPreferences.workDayStart?.toString() || ''"
               prepend-icon="mdi-clock-start"
               title="Delivered not sooner than"/>
             <v-divider inset/>
 
             <v-list-item
-              :subtitle="useSupAdmSupPrefStore().getPreferences.workDayEnd?.toString()"
+              :subtitle="useSupAdmSupPrefStore().getPreferences.workDayEnd?.toString() || ''"
               prepend-icon="mdi-clock-end"
               title="Delivered not later than"/>
             <v-divider inset/>
@@ -191,7 +191,8 @@
                                 closable-chips
                                 hint="What types of categories do you offer?"
                                 label="Tune your menu"
-                                multiple/>
+                                multiple
+                                prepend-inner-icon="mdi-tag-plus"/>
                     </v-col>
                   </v-row>
                 </v-card-text>

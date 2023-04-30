@@ -1,4 +1,5 @@
 export enum CompanyOrderStatus {
   PendingSupplierConfirmation = "Pending supplier confirmation",
-  Confirmed = "Confirmed"
+  ConfirmedBySupplier = "Confirmed",
+  DeclinedBySupplier = "Declined"
 }

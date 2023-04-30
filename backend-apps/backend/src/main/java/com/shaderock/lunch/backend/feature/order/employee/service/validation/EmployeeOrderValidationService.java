@@ -75,25 +75,25 @@ public class EmployeeOrderValidationService {
 
   public EmployeeOrderValidationDto validateCreatedOrder(@NonNull EmployeeOrder order,
       @NonNull AppUserDetails userDetails, Optional<LocalDateTime> deliverAt) {
+    List<String> errors = new ArrayList<>();
 
-    if (order.getStatus() == EmployeeOrderStatus.ORDERED
-        || order.getStatus() == EmployeeOrderStatus.PENDING_SUPPLIER_CONFIRMATION) {
-      return EmployeeOrderValidationDto.builder().valid(true).build();
-    }
+    if (!(order.getStatus() == EmployeeOrderStatus.CONFIRMED_BY_SUPPLIER
+        || order.getStatus() == EmployeeOrderStatus.PENDING_SUPPLIER_CONFIRMATION)) {
 
-    List<String> errors = validateOptionsAndCategoriesPicAndNotDeleted(
-        order.getOptions().stream().toList());
+      errors = validateOptionsAndCategoriesPicAndNotDeleted(
+          order.getOptions().stream().toList());
 
-    if (errors.isEmpty()) {
-      try {
-        filterManager.returnNotDeleted();
-        filterManager.returnPublic();
+      if (errors.isEmpty()) {
+        try {
+          filterManager.returnNotDeleted();
+          filterManager.returnPublic();
 
-        Supplier supplier = validateSupplier(order);
-        errors.addAll(validateSubscription(userDetails, supplier));
-        errors.addAll(validateSupplierPreferences(order, supplier.getPreferences(), deliverAt));
-      } catch (CrudValidationException e) {
-        errors = List.of(e.getMessage());
+          Supplier supplier = validateSupplier(order);
+          errors.addAll(validateSubscription(userDetails, supplier));
+          errors.addAll(validateSupplierPreferences(order, supplier.getPreferences(), deliverAt));
+        } catch (CrudValidationException e) {
+          errors = List.of(e.getMessage());
+        }
       }
     }
 

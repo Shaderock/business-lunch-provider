@@ -14,6 +14,7 @@ public interface CompanyOrderMapper extends BaseMapper {
   @Mapping(target = "employeesOrders", source = "employeesOrderIds")
   CompanyOrder toEntity(CompanyOrderDto companyOrderDto);
 
+  @Mapping(target = "companyName", source = "employeesOrders")
   @Mapping(target = "employeesOrderIds", source = "employeesOrders")
   CompanyOrderDto toDto(CompanyOrder companyOrder);
 }

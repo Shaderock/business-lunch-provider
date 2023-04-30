@@ -10,6 +10,7 @@ import com.shaderock.lunch.backend.feature.order.company.type.CompanyOrderStatus
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
 import com.shaderock.lunch.backend.feature.order.employee.service.EmployeeOrderService;
 import com.shaderock.lunch.backend.feature.order.employee.type.EmployeeOrderStatus;
+import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -80,14 +81,47 @@ public class CompanyOrderService {
         .toList();
   }
 
+  public List<CompanyOrder> read(@NonNull LocalDate date, @NonNull Supplier supplier) {
+    return companyOrderRepository.findByEmployeesOrders_Options_Category_Menu_Supplier(supplier)
+        .stream()
+        .filter(d -> d.getDeliverAt().toLocalDate().isEqual(date))
+        .toList();
+  }
+
+  public CompanyOrder read(@NonNull UUID orderId, @NonNull Supplier supplier) {
+    return companyOrderRepository.findByIdAndEmployeesOrders_Options_Category_Menu_Supplier(orderId,
+        supplier).orElseThrow(() -> new CrudValidationException("Order for supplier not found"));
+  }
+
   @Transactional
   public CompanyOrder update() {
     throw new NotImplementedException();
   }
 
   @Transactional
+  public void confirmOrder(UUID orderId, Supplier supplier) {
+    CompanyOrder order = read(orderId, supplier);
+    companyOrderValidationService.validateConfirmOrder(order);
+    order.setStatus(CompanyOrderStatus.CONFIRMED_BY_SUPPLIER);
+    order.getEmployeesOrders().forEach(
+        employeeOrder -> employeeOrder.setStatus(EmployeeOrderStatus.CONFIRMED_BY_SUPPLIER));
+    companyOrderRepository.save(order);
+  }
+
+  @Transactional
+  public void declineOrder(UUID orderId, Supplier supplier) {
+    CompanyOrder order = read(orderId, supplier);
+    companyOrderValidationService.validateDeclineOrder(order);
+    order.setStatus(CompanyOrderStatus.DECLINED_BY_SUPPLIER);
+    order.getEmployeesOrders().forEach(
+        employeeOrder -> employeeOrder.setStatus(EmployeeOrderStatus.DECLINED_BY_SUPPLIER));
+    companyOrderRepository.save(order);
+  }
+
+  @Transactional
   public void delete(@NonNull CompanyOrder companyOrder) {
-    if (companyOrder.getStatus() == CompanyOrderStatus.CONFIRMED) {
+    if (companyOrder.getStatus() == CompanyOrderStatus.CONFIRMED_BY_SUPPLIER
+        || companyOrder.getStatus() == CompanyOrderStatus.DECLINED_BY_SUPPLIER) {
       throw new CrudValidationException("Can not delete an already confirmed order");
     }
 

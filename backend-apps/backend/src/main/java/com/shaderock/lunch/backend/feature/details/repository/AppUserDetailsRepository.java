@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface AppUserDetailsRepository extends BaseEntityRepository<AppUserDetails> {
 
+  Optional<AppUserDetails> findByEmailAndIsEnabledTrue(String email);
+
   Optional<AppUserDetails> findByEmail(String email);
 
   Optional<AppUserDetails> findByRegistrationToken(String token);

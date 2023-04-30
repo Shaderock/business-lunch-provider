@@ -45,6 +45,7 @@ public class CategoryService {
 
     newCategory.setMenu(supplier.getMenu());
     newCategory.setCreatedAt(LocalDate.now());
+    newCategory.setPublishedAt(null);
     newCategory.setId(null);
 
     Category persistedCategory = categoryRepository.save(newCategory);
