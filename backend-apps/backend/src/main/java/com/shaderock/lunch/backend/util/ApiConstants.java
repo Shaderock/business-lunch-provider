@@ -25,11 +25,14 @@ public class ApiConstants {
   public static final String OPTION = API + "/option";
   public static final String ORGANIZATION_PART = "/organization";
   public static final String COMPANY_ADM_ORGANIZATION = COMPANY_ADM + ORGANIZATION_PART;
+  public static final String EMPLOYEE_ORGANIZATION = EMPLOYEE + ORGANIZATION_PART;
   public static final String ORGANIZATION = API + ORGANIZATION_PART;
   public static final String SUPPLIER_ADM = API + "/supplier-adm";
   public static final String SUPPLIER_ADM_CATEGORY = SUPPLIER_ADM + "/category";
   public static final String SUPPLIER_ADM_OPTION = SUPPLIER_ADM + "/option";
   public static final String SUPPLIER_ADM_ORGANIZATION = SUPPLIER_ADM + ORGANIZATION_PART;
+  public static final String SUPPLIER_ADM_COMPANY_ORDER = SUPPLIER_ADM + "/company-order";
+  public static final String SUPPLIER_ADM_EMPLOYEE_ORDER = SUPPLIER_ADM + "/employee-order";
   public static final String USER = API + "/user";
   public static final String USER_DETAILS = USER + "/details";
   public static final String USER_EMPLOYEE_PREFERENCES = USER + "/employee-preferences";
@@ -60,6 +63,8 @@ public class ApiConstants {
   public static final String SUPPLIER_ADM_COMPANY_PREFERENCES =
       SUPPLIER_ADM_COMPANY + PREFERENCES_URL_PART;
   private static final String SUPPLIER_URL_PART = "/supplier";
+  public static final String EMPLOYEE_SUPPLIER_PREFERENCES =
+      EMPLOYEE + SUPPLIER_URL_PART + PREFERENCES_URL_PART;
   public static final String EMPLOYEE_SUPPLIER = EMPLOYEE + SUPPLIER_URL_PART;
   public static final String COMPANY_ADM_SUPPLIER = COMPANY_ADM + SUPPLIER_URL_PART;
   public static final String COMPANY_ADM_SUPPLIER_PREFERENCES =

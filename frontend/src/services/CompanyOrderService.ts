@@ -22,6 +22,21 @@ export class CompanyOrderService {
     const params: URLSearchParams = new URLSearchParams([['orderId', orderId]])
     return axios.delete(`${ApiConstants.COMPANY_ADM_COMPANY_ORDER}`, {params});
   }
+
+  async supAdmRequestForDate(date: string): Promise<AxiosResponse<CompanyOrder[]>> {
+    const params: URLSearchParams = new URLSearchParams([['date', date]])
+    return axios.get(`${ApiConstants.SUPPLIER_ADM_COMPANY_ORDER}`, {params})
+  }
+
+  async supAdmConfirmOrder(orderId: string) {
+    const params: URLSearchParams = new URLSearchParams([['orderId', orderId]])
+    return axios.post(`${ApiConstants.SUPPLIER_ADM_COMPANY_ORDER}/confirm`, null, {params})
+  }
+
+  async supAdmDeclineOrder(orderId: string) {
+    const params: URLSearchParams = new URLSearchParams([['orderId', orderId]])
+    return axios.post(`${ApiConstants.SUPPLIER_ADM_COMPANY_ORDER}/decline`, null, {params})
+  }
 }
 
 const companyOrderService: CompanyOrderService = new CompanyOrderService()

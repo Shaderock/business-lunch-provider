@@ -62,4 +62,10 @@ export class ApiConstants {
   static readonly EMPLOYEE_COMPANY_SUBSCRIPTION: string = ApiConstants.EMPLOYEE + ApiConstants.COMPANY_URL_PART + ApiConstants.SUBSCRIPTION_URL_PART;
   static readonly EMPLOYEE_OPTION: string = ApiConstants.EMPLOYEE + "/option";
   static readonly COMPANY_ADM_COMPANY_ORDER: string = ApiConstants.COMPANY_ADM + "/company-order";
+  static readonly SUPPLIER_ADM_COMPANY_ORDER: string = ApiConstants.SUPPLIER_ADM + "/company-order";
+  static readonly SUPPLIER_ADM_EMPLOYEE_ORDER: string = ApiConstants.SUPPLIER_ADM + "/employee-order";
+  static readonly EMPLOYEE_SUPPLIER: string = ApiConstants.EMPLOYEE + ApiConstants.SUPPLIER_URL_PART;
+  static readonly EMPLOYEE_SUPPLIER_PREFERENCES: string = ApiConstants.EMPLOYEE + ApiConstants.SUPPLIER_URL_PART +
+    ApiConstants.PREFERENCES_URL_PART;
+  static readonly EMPLOYEE_ORGANIZATION: string = ApiConstants.EMPLOYEE + ApiConstants.ORGANIZATION_PART;
 }

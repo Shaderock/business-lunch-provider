@@ -45,6 +45,11 @@ export class EmployeeOrderService {
     const params: URLSearchParams = new URLSearchParams([['orderId', orderId]])
     return axios.delete(`${ApiConstants.COMPANY_ADM_EMPLOYEE_ORDER}`, {params})
   }
+
+  async supAdmRequestForDate(date: string): Promise<AxiosResponse<EmployeeOrder[]>> {
+    const params: URLSearchParams = new URLSearchParams([['date', date]])
+    return axios.get(`${ApiConstants.SUPPLIER_ADM_EMPLOYEE_ORDER}`, {params})
+  }
 }
 
 const employeeOrderService: EmployeeOrderService = new EmployeeOrderService()

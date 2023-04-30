@@ -3,13 +3,10 @@ package com.shaderock.lunch.backend.feature.order.company.controller;
 import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
 import com.shaderock.lunch.backend.feature.company.entity.Company;
 import com.shaderock.lunch.backend.feature.company.service.CompanyService;
-import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
-import com.shaderock.lunch.backend.feature.food.option.repository.OptionRepository;
 import com.shaderock.lunch.backend.feature.order.company.dto.CompanyOrderDto;
 import com.shaderock.lunch.backend.feature.order.company.dto.CompanyOrderValidationDto;
 import com.shaderock.lunch.backend.feature.order.company.entity.CompanyOrder;
 import com.shaderock.lunch.backend.feature.order.company.entity.CompanyOrderMapper;
-import com.shaderock.lunch.backend.feature.order.company.repository.CompanyOrderRepository;
 import com.shaderock.lunch.backend.feature.order.company.service.CompanyOrderService;
 import com.shaderock.lunch.backend.feature.order.company.service.CompanyOrderValidationService;
 import com.shaderock.lunch.backend.util.ApiConstants;
@@ -38,9 +35,6 @@ public class CompanyAdmCompanyOrderController {
 
   private final CompanyOrderMapper companyOrderMapper;
   private final CompanyOrderValidationService companyOrderValidationService;
-  private final AppUserDetailsService userDetailsService;
-  private final OptionRepository optionRepository;
-  private final CompanyOrderRepository orderRepository;
   private final CompanyOrderService companyOrderService;
   private final CompanyService companyService;
 
@@ -86,7 +80,6 @@ public class CompanyAdmCompanyOrderController {
       @RequestParam LocalDate date,
       Principal principal) {
     Company company = companyService.read(principal);
-    companyService.read(principal);
     List<CompanyOrder> orders = companyOrderService.read(date, company);
     return ResponseEntity.ok(orders.stream().map(companyOrderMapper::toDto).toList());
   }

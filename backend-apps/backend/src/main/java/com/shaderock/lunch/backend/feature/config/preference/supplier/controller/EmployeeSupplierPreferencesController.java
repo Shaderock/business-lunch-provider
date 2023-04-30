@@ -1,12 +1,10 @@
-package com.shaderock.lunch.backend.feature.organization.controller;
+package com.shaderock.lunch.backend.feature.config.preference.supplier.controller;
 
 import com.shaderock.lunch.backend.feature.company.entity.Company;
 import com.shaderock.lunch.backend.feature.company.service.CompanyService;
-import com.shaderock.lunch.backend.feature.organization.dto.PublicOrganizationDetailsDto;
-import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
-import com.shaderock.lunch.backend.feature.organization.mapper.OrganizationDetailsMapper;
+import com.shaderock.lunch.backend.feature.config.preference.supplier.dto.PublicSupplierPreferencesDto;
+import com.shaderock.lunch.backend.feature.config.preference.supplier.mapper.PublicSupplierPreferencesMapper;
 import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
-import com.shaderock.lunch.backend.feature.subscription.service.SubscriptionService;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.util.ApiConstants;
 import com.shaderock.lunch.backend.util.FilterManager;
@@ -21,28 +19,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
+@RequestMapping(ApiConstants.EMPLOYEE_SUPPLIER_PREFERENCES)
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(ApiConstants.COMPANY_ADM_ORGANIZATION)
-public class CompanyAdmOrganization {
+@RequiredArgsConstructor
+public class EmployeeSupplierPreferencesController {
 
-  private final OrganizationDetailsMapper organizationDetailsMapper;
-  private final SubscriptionService subscriptionService;
+  private final PublicSupplierPreferencesMapper preferencesMapper;
   private final CompanyService companyService;
   private final FilterManager filterManager;
 
   @GetMapping("/subscription/all")
   @Transactional
-  public ResponseEntity<List<PublicOrganizationDetailsDto>> read(Principal principal) {
+  public ResponseEntity<List<PublicSupplierPreferencesDto>> read(Principal principal) {
     filterManager.ignoreVisibility();
     Company company = companyService.read(principal);
-    List<Subscription> subscriptions = subscriptionService.read(company);
-    List<OrganizationDetails> organizationDetailsList = subscriptions.stream()
+
+    List<PublicSupplierPreferencesDto> supplierPreferencesDtos = company.getSubscriptions().stream()
         .map(Subscription::getSupplier)
-        .map(Supplier::getOrganizationDetails)
+        .map(Supplier::getPreferences)
+        .map(preferencesMapper::toDto)
         .toList();
 
-    return ResponseEntity.ok(
-        organizationDetailsList.stream().map(organizationDetailsMapper::toPublicDto).toList());
+    return ResponseEntity.ok(supplierPreferencesDtos);
   }
+
 }

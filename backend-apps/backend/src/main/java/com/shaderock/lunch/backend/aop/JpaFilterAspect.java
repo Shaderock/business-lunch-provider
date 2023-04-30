@@ -1,10 +1,13 @@
 package com.shaderock.lunch.backend.aop;
 
+import com.shaderock.lunch.backend.feature.company.controller.SupplierAdmCompanyController;
 import com.shaderock.lunch.backend.feature.company.controller.SysAdmCompanyController;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.controller.SupplierAdmPreferencesController;
 import com.shaderock.lunch.backend.feature.details.controller.SysAdmUserDetailsController;
 import com.shaderock.lunch.backend.feature.food.category.controller.SupplierAdmCategoryController;
 import com.shaderock.lunch.backend.feature.food.option.controller.SupplierAdmOptionController;
+import com.shaderock.lunch.backend.feature.order.company.controller.SupplierAdmCompanyOrderController;
+import com.shaderock.lunch.backend.feature.order.employee.controller.SupplierAdmEmployeeOrderController;
 import com.shaderock.lunch.backend.feature.organization.controller.SysAdmOrganizationController;
 import com.shaderock.lunch.backend.feature.supplier.controller.SupplierAdmSupplierController;
 import com.shaderock.lunch.backend.feature.supplier.controller.SysAdmSupplierController;
@@ -25,6 +28,9 @@ public class JpaFilterAspect {
   private final FilterManager filterManager;
   private final List<Class<?>> ignoreVisibilityControllers = List.of(
       SupplierAdmCategoryController.class,
+      SupplierAdmCompanyOrderController.class,
+      SupplierAdmEmployeeOrderController.class,
+      SupplierAdmCompanyController.class,
       SupplierAdmOptionController.class,
       SupplierAdmPreferencesController.class,
       SupplierAdmSupplierController.class);

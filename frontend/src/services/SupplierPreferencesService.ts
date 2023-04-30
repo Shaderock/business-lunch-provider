@@ -28,7 +28,7 @@ export class SupplierPreferencesService {
   }
 
   async requestSubscriptionSuppliersPreferences(): Promise<AxiosResponse<PublicSupplierPreferences[]>> {
-    return axios.get(`${ApiConstants.COMPANY_ADM_SUPPLIER_PREFERENCES}/subscription/all`)
+    return axios.get(`${ApiConstants.EMPLOYEE_SUPPLIER_PREFERENCES}/subscription/all`)
   }
 
   async requestPreferencesForSupplier(supplierName: string): Promise<AxiosResponse<PublicSupplierPreferences>> {

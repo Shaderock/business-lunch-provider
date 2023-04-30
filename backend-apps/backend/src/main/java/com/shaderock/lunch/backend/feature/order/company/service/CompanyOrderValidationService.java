@@ -1,10 +1,12 @@
 package com.shaderock.lunch.backend.feature.order.company.service;
 
+import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
 import com.shaderock.lunch.backend.feature.food.category.entity.Category;
 import com.shaderock.lunch.backend.feature.food.menu.entity.Menu;
 import com.shaderock.lunch.backend.feature.food.option.entity.Option;
 import com.shaderock.lunch.backend.feature.order.company.dto.CompanyOrderValidationDto;
 import com.shaderock.lunch.backend.feature.order.company.entity.CompanyOrder;
+import com.shaderock.lunch.backend.feature.order.company.type.CompanyOrderStatus;
 import com.shaderock.lunch.backend.feature.order.employee.dto.EmployeeOrderValidationDto;
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
 import com.shaderock.lunch.backend.feature.order.employee.service.validation.EmployeeOrderValidationService;
@@ -60,7 +62,7 @@ public class CompanyOrderValidationService {
                 order.getDeliverAt()));
       }
 
-      if (supplier.getPreferences().getMinimumOrdersPerCompanyRequest() < order.getEmployeesOrders()
+      if (supplier.getPreferences().getMinimumOrdersPerCompanyRequest() > order.getEmployeesOrders()
           .size()) {
         errors.add(String.format("There should be at least %s orders but only %s sent",
             supplier.getPreferences().getMinimumOrdersPerCompanyRequest(),
@@ -73,5 +75,17 @@ public class CompanyOrderValidationService {
         .valid(errors.isEmpty())
         .errors(errors)
         .build();
+  }
+
+  public void validateConfirmOrder(CompanyOrder companyOrder) {
+    if (companyOrder.getStatus() != CompanyOrderStatus.PENDING_SUPPLIER_CONFIRMATION) {
+      throw new CrudValidationException("Can not confirm a non-pending company order");
+    }
+  }
+
+  public void validateDeclineOrder(CompanyOrder companyOrder) {
+    if (companyOrder.getStatus() != CompanyOrderStatus.PENDING_SUPPLIER_CONFIRMATION) {
+      throw new CrudValidationException("Can not decline a non-pending company order");
+    }
   }
 }

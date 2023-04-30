@@ -27,6 +27,7 @@ import categoryService from "@/services/CategoryService";
 import optionService from "@/services/OptionService";
 import {Subscription} from "@/models/Subscription";
 import subscriptionService from "@/services/SubscriptionService";
+import {useEmployeeSubscriptionStore} from "@/store/company-adm-app";
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -275,6 +276,7 @@ export const useWorkingSuppliersStore = defineStore('publicSuppliers', {
     suppliersLimit: 12 as number,
 
     //filters
+    filterShowOnlySubscribed: false as boolean,
     filterShowClosed: null as boolean | null,
 
     filterShowByOrderType: false,
@@ -294,9 +296,13 @@ export const useWorkingSuppliersStore = defineStore('publicSuppliers', {
       return this.publicSuppliersDetails
     },
     getWorkingSuppliers(): WorkingSupplier[] {
-      return this.publicSuppliers.map(supplier => {
-        const details = this.publicSuppliersDetails.find(d => d.id === supplier.organizationDetailsId)
-        const preferences = this.publicSuppliersPreferences.find(p => p.id === supplier.preferencesId)
+      let workingSuppliers = this.publicSuppliers
+      .map(supplier => {
+        const details = this.publicSuppliersDetails
+        .find(d => d.id === supplier.organizationDetailsId)
+        const preferences = this.publicSuppliersPreferences
+        .find(p => p.id === supplier.preferencesId)
+
         return {
           name: details?.name ?? '',
           description: details?.description ?? '',
@@ -317,6 +323,15 @@ export const useWorkingSuppliersStore = defineStore('publicSuppliers', {
           categoriesTags: preferences?.categoriesTags ?? []
         }
       })
+
+      if (this.filterShowOnlySubscribed) {
+        workingSuppliers = workingSuppliers
+        .filter(s =>
+          useEmployeeSubscriptionStore().getSubscriptionSuppliers
+          .some(subscribedSupplier => subscribedSupplier.supplierId === s.supplierId))
+      }
+
+      return workingSuppliers
     },
     getWorkingSuppliersLimited(): WorkingSupplier[] {
       return this.getWorkingSuppliers.slice(0, this.suppliersLimit)
@@ -326,6 +341,9 @@ export const useWorkingSuppliersStore = defineStore('publicSuppliers', {
     }
   },
   actions: {
+    setShowSubscribed(returnOnlySubscribed: boolean) {
+      this.filterShowOnlySubscribed = returnOnlySubscribed
+    },
     async requestFreshData() {
       this.publicSuppliers = []
       this.publicSuppliersDetails = []
@@ -341,6 +359,10 @@ export const useWorkingSuppliersStore = defineStore('publicSuppliers', {
       const preferencesResponse: AxiosResponse<PublicSupplierPreferences[]> =
         await supplierPreferencesService.anonymousRequestForAllPreferences()
       this.publicSuppliersPreferences = preferencesResponse.data
+
+      if (useProfileStore().isEmployee) {
+        await useEmployeeSubscriptionStore().requestFreshDataIfEmpty()
+      }
     },
     async requestFreshDataIfNothingCached() {
       if (this.publicSuppliers.length === 0)

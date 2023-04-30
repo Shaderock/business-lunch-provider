@@ -4,7 +4,7 @@
       <v-col>
         <v-data-table :class="`elevation-20`"
                       :headers="subscriptionHeaders"
-                      :items="useCompAdmSubscriptionStore().getSubscriptionSuppliers"
+                      :items="useEmployeeSubscriptionStore().getSubscriptionSuppliers"
                       density="compact">
 
           <template v-slot:top>
@@ -52,7 +52,7 @@
         <v-card title="Subscribe to a supplier">
           <v-card-text>
             <v-select v-model="selectedSupplierNames"
-                      :items="useCompAdmSubscriptionStore().getValidSuppliersDetailsListNameForSubscription"
+                      :items="useEmployeeSubscriptionStore().getValidSuppliersDetailsListNameForSubscription"
                       :loading="isSubscriptionInProgress"
                       :rules="[rules.required]"
                       chips
@@ -78,11 +78,11 @@
 <script lang="ts" setup>
 
 import {onBeforeMount, ref} from "vue";
-import {SubscriptionSupplier, useCompAdmSubscriptionStore} from "@/store/company-adm-app";
+import {SubscriptionSupplier, useEmployeeSubscriptionStore} from "@/store/company-adm-app";
 import toastManager from "@/services/ToastManager";
 
 onBeforeMount(() => {
-  useCompAdmSubscriptionStore().requestFreshData().finally(() => isLoading.value = false)
+  useEmployeeSubscriptionStore().requestFreshData().finally(() => isLoading.value = false)
 })
 
 const isLoading = ref(true)
@@ -107,14 +107,14 @@ const subscriptionHeaders = [
 ]
 
 function unsubscribe(subscriptionSupplier: SubscriptionSupplier) {
-  useCompAdmSubscriptionStore().unsubscribe(subscriptionSupplier.supplierId)
+  useEmployeeSubscriptionStore().unsubscribe(subscriptionSupplier.supplierId)
 }
 
 async function subscribe(names: string[]) {
   isSubscriptionInProgress.value = true
-  await useCompAdmSubscriptionStore().subscribe(names)
+  await useEmployeeSubscriptionStore().subscribe(names)
   toastManager.showSuccess("Subscription sent", "A request for subscription is awaiting to be confirmed by supplier")
-  await useCompAdmSubscriptionStore().requestFreshData()
+  await useEmployeeSubscriptionStore().requestFreshData()
   isSubscriptionInProgress.value = false
   selectedSupplierNames.value = []
 }

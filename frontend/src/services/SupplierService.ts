@@ -27,7 +27,7 @@ export class SupplierService {
   }
 
   async requestSubscriptionSuppliers(): Promise<any> {
-    return axios.get(`${ApiConstants.COMPANY_ADM_SUPPLIER}/subscription/all`);
+    return axios.get(`${ApiConstants.EMPLOYEE_SUPPLIER}/subscription/all`);
   }
 
   async requestSupplier(supplierName: string): Promise<AxiosResponse<Supplier>> {

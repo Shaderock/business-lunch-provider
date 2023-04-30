@@ -80,10 +80,12 @@ public interface BaseMapper {
 
   default Set<EmployeeOrder> idsToEmployeeOrders(Collection<UUID> employeesOrdersIds) {
     Set<EmployeeOrder> result = new HashSet<>();
-    for (UUID orderId : employeesOrdersIds) {
-      EmployeeOrder employeeOrder = new EmployeeOrder();
-      employeeOrder.setId(orderId);
-      result.add(employeeOrder);
+    if (employeesOrdersIds != null) {
+      for (UUID orderId : employeesOrdersIds) {
+        EmployeeOrder employeeOrder = new EmployeeOrder();
+        employeeOrder.setId(orderId);
+        result.add(employeeOrder);
+      }
     }
     return result;
   }
@@ -129,6 +131,13 @@ public interface BaseMapper {
         .flatMap(Collection::stream)
         .map(id -> PriceForCategories.baseEntityBuilder().id(id).build())
         .collect(Collectors.toSet());
+  }
+
+  default String employeeOrderToCompanyName(Set<EmployeeOrder> employeeOrders) {
+    return employeeOrders.stream()
+        .findFirst()
+        .map(employeeOrder -> employeeOrder.getAppUser().getOrganizationDetails().getName())
+        .orElse(null);
   }
 
   default boolean hasImage(byte[] imageBytes) {

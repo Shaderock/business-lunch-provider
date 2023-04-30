@@ -33,6 +33,10 @@ export class Utils {
     return moment(dateString + ' ' + timeString, 'YYYY/MM/DD HH:mm:ss').toDate();
   }
 
+  static dateAndTimeAsStrToTimeAsString(dateTimeString: string): string {
+    return moment(dateTimeString, 'YYYY/MM/DDTHH:mm:ss').format('HH:mm');
+  }
+
   static byteArrayToBase64String(array: ArrayBuffer): string {
     return btoa(new Uint8Array(array).reduce((data, byte) => data + String.fromCharCode(byte), ''));
   }

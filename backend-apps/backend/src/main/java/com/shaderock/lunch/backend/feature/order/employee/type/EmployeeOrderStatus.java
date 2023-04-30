@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 public enum EmployeeOrderStatus {
   PENDING_ADMIN_CONFIRMATION("Pending admin confirmation"),
   PENDING_SUPPLIER_CONFIRMATION("Pending supplier confirmation"),
-  ORDERED("Ordered");
+  CONFIRMED_BY_SUPPLIER("Confirmed"),
+  DECLINED_BY_SUPPLIER("Declined");
 
   @JsonValue
   private final String name;

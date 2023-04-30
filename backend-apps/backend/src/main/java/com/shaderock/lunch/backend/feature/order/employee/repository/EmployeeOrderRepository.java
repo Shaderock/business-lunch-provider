@@ -5,6 +5,7 @@ import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
 import com.shaderock.lunch.backend.feature.order.employee.type.EmployeeOrderStatus;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
+import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.user.entity.AppUser;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -13,6 +14,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface EmployeeOrderRepository extends BaseEntityRepository<EmployeeOrder> {
+
+  List<EmployeeOrder> findByOrderDateAndOptions_Category_Menu_Supplier(LocalDate orderDate,
+      Supplier supplier);
 
   List<EmployeeOrder> findByAppUser_OrganizationDetailsAndOrderDate(
       OrganizationDetails organizationDetails, LocalDate orderDate);

@@ -73,16 +73,18 @@
           <!-- todo add request offset-->
           <v-chip-group v-if="usePublicSupplierStore().isSupplierFound" class="disable-events">
             <v-chip
-              :text="Utils.stringToTimeAsStringWithoutSeconds(usePublicSupplierStore().getPreferences?.workDayStart.toString())"
+              :text="Utils.stringToTimeAsStringWithoutSeconds(usePublicSupplierStore()
+              .getPreferences?.workDayStart.toString() || new Date().toString())"
               label
               prepend-icon="mdi-clock-start"/>
             <v-chip
-              :text="Utils.stringToTimeAsStringWithoutSeconds(usePublicSupplierStore().getPreferences?.workDayEnd.toString())"
+              :text="Utils.stringToTimeAsStringWithoutSeconds(usePublicSupplierStore()
+              .getPreferences?.workDayEnd.toString() || new Date().toString())"
               append-icon="mdi-clock-end"
               label/>
           </v-chip-group>
 
-          <v-btn append-icon="mdi-open-in-new" color="secondary" variant="tonal">
+          <v-btn append-icon="mdi-open-in-app" variant="tonal">
             Details
             <v-dialog activator="parent">
               <v-row justify="center">

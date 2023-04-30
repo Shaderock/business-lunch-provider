@@ -79,6 +79,7 @@ public class AuthService {
     AppUser persistedUser = appUserRepository.save(appUser);
     employeePreferencesService.create(persistedUser);
     persistedDetails.setAppUser(persistedUser);
+    appUserDetailsRepository.save(persistedDetails);
     try {
       if (sendConfirmationEmail) {
         mailService.sendConfirmationEmail(persistedDetails);

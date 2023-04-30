@@ -60,7 +60,7 @@ export class OrganizationService {
   }
 
   async requestSubscriptionSuppliersDetails(): Promise<AxiosResponse<OrganizationDetails[]>> {
-    return axios.get(`${ApiConstants.COMPANY_ADM_ORGANIZATION}/subscription/all`)
+    return axios.get(`${ApiConstants.EMPLOYEE_ORGANIZATION}/subscription/all`)
   }
 
   async requestSubscribersCompaniesDetails() {

@@ -20,6 +20,11 @@ import {Category} from "@/models/Category";
 import categoryService from "@/services/CategoryService";
 import {Option} from "@/models/Option";
 import optionService from "@/services/OptionService";
+import {EmployeeOrder} from "@/models/EmployeeOrder";
+import employeeOrderService from "@/services/EmployeeOrderService";
+import {CompanyOrderStatus} from "@/models/CompanyOrderStatus";
+import {CompanyOrder} from "@/models/CompanyOrder";
+import companyOrderService from "@/services/CompanyOrderService";
 
 export const useSupAdmSupPrefStore = defineStore('supplierAdminSupplierPreferences', {
   state: () => ({
@@ -114,7 +119,7 @@ export const useSupAdmSupStore = defineStore('supplierAdminSupplier', {
     },
     async requestFreshDataIfEmpty() {
       if (this.supplier.id == '') {
-        this.requestFreshSupplierData()
+        await this.requestFreshSupplierData()
       }
     }
   }
@@ -139,7 +144,7 @@ export interface SubscriberCompany {
   subscriptionDate: string
 }
 
-export const useSubscribersCompaniesStore = defineStore('supplierAdminSubscribersCompanies', {
+export const useSupplierSubscribersCompaniesStore = defineStore('supplierAdminSubscribersCompanies', {
   state: () => ({
     companies: [] as Company[],
     companiesPreferences: [] as PublicCompanyPreferences[],
@@ -213,6 +218,11 @@ export const useSubscribersCompaniesStore = defineStore('supplierAdminSubscriber
       const subscriptionsResponse: AxiosResponse<Subscription[]> =
         await subscriptionService.requestSupplierSubscribers()
       this.subscriptions = subscriptionsResponse.data
+    },
+    async requestFreshDataIfEmpty() {
+      if (this.getCompanies.length === 0) {
+        await this.requestFreshData()
+      }
     }
   }
 })
@@ -529,5 +539,151 @@ export const useSupplierOptionsStore = defineStore('supplierAdminOptions', {
   }
 })
 
+export interface CompanyOrderExtended {
+  employeesOrders: EmployeeOrder[]
+  companyOrder: CompanyOrder
+  subscriberCompany: SubscriberCompany
+  orderedOptionsExtended: OptionExtended[]
+}
 
+export interface OptionExtended {
+  option: Option,
+  amount: number
+}
 
+export interface CompanyOrderRecord {
+  orderId: string
+  companyName: string
+  email: string
+  phone: string
+  defaultSupplierPriceSum: number
+  supplierDiscountSum: number
+  income: number
+  status: CompanyOrderStatus
+  deliverAt: string
+}
+
+export const useSupplierAdmOrdersStore = defineStore('supplierAdminOrders', {
+  state: () => ({
+    selectedDate: Utils.formatDateWithoutTimeWithDashes(new Date),
+    employeesOrders: [] as EmployeeOrder[],
+    companiesOrders: [] as CompanyOrder[],
+  }),
+  getters: {
+    getSelectedDate(): string {
+      return this.selectedDate
+    },
+    getEmployeesOrders(): EmployeeOrder[] {
+      return this.employeesOrders
+    },
+    getCompaniesOrders(): CompanyOrder[] {
+      return this.companiesOrders
+    },
+    getCompaniesOrdersExtended(): CompanyOrderExtended[] {
+      return this.getCompaniesOrders
+      .map(co => {
+        const employeesOrders: EmployeeOrder[] = this.getEmployeesOrders
+        .filter(eo => eo.companyOrderId === co.id)
+
+        const subscriberCompany: SubscriberCompany | undefined =
+          useSupplierSubscribersCompaniesStore().getSubscribersCompanies
+          .find(c => c.name === co.companyName)
+
+        const orderedOptionsMap: Record<string, OptionExtended> = {}
+        const allOptions = useSupplierOptionsStore().getOptions
+        employeesOrders.forEach(eo => {
+          eo.optionIds.forEach(optionId => {
+            const option = allOptions.find(o => o.id === optionId)
+            if (option) {
+              if (orderedOptionsMap[optionId]) {
+                orderedOptionsMap[optionId].amount += 1
+              } else {
+                orderedOptionsMap[optionId] = {
+                  option: option,
+                  amount: 1
+                }
+              }
+            }
+          })
+        })
+        const orderedOptionsExtended = Object.values(orderedOptionsMap)
+
+        return {
+          companyOrder: co,
+          employeesOrders: employeesOrders,
+          orderedOptionsExtended: orderedOptionsExtended,
+          subscriberCompany: subscriberCompany ?? {
+            companyId: '',
+            name: '',
+            phone: '',
+            email: '',
+            deliveryAddress: '',
+            subscriptionId: '',
+            subscriptionStatus: SubscriptionStatus.Accepted,
+            subscriptionDate: '',
+          }
+        }
+      })
+      .filter(coe => coe.subscriberCompany.companyId !== '')
+    },
+    getCompaniesOrdersRecords(): CompanyOrderRecord[] {
+      return this.getCompaniesOrdersExtended.map(coe => {
+        const defaultSupplierPriceSum: number = coe.employeesOrders
+        .reduce((sum: number, order) => sum + Number(order.supplierDefaultPrice), 0);
+        const supplierDiscountSum: number = coe.employeesOrders
+        .reduce((sum: number, order) => sum + Number(order.supplierDiscount), 0);
+        const income: number = defaultSupplierPriceSum - supplierDiscountSum;
+        return {
+          orderId: coe.companyOrder.id,
+          companyName: coe.subscriberCompany.name,
+          email: coe.subscriberCompany.email,
+          phone: coe.subscriberCompany.phone,
+          defaultSupplierPriceSum: defaultSupplierPriceSum,
+          supplierDiscountSum: supplierDiscountSum,
+          income: income,
+          status: coe.companyOrder.status,
+          deliverAt: Utils.dateAndTimeAsStrToTimeAsString(coe.companyOrder.deliverAt),
+        }
+      })
+    }
+  },
+  actions: {
+    async setSelectedDate(date: string) {
+      this.selectedDate = date
+      await this.requestUpdateOrdersForSelectedDate()
+    },
+    async confirmOrder(record: CompanyOrderRecord) {
+      await companyOrderService.supAdmConfirmOrder(record.orderId)
+      await this.requestUpdateOrdersForSelectedDate()
+    },
+    async declineOrder(record: CompanyOrderRecord) {
+      await companyOrderService.supAdmDeclineOrder(record.orderId)
+      await this.requestUpdateOrdersForSelectedDate()
+    },
+    async requestUpdateOrdersForSelectedDate() {
+      await this.requestOrdersForSelectedDate()
+    },
+    getCompanyOrderExtended(record: CompanyOrderRecord): CompanyOrderExtended | undefined {
+      return this.getCompaniesOrdersExtended.find(coe => coe.companyOrder.id === record.orderId)
+    },
+    async requestOrdersForSelectedDate() {
+      this.employeesOrders = []
+      const employeeOrderResponse: AxiosResponse<EmployeeOrder[]> =
+        await employeeOrderService.supAdmRequestForDate(this.selectedDate)
+      this.employeesOrders = employeeOrderResponse.data
+
+      this.companiesOrders = []
+      const companiesOrdersResponse: AxiosResponse<CompanyOrder[]> =
+        await companyOrderService.supAdmRequestForDate(this.selectedDate)
+      this.companiesOrders = companiesOrdersResponse.data
+    },
+    async requestFreshData() {
+      await useSupplierOptionsStore().requestFreshDataIfEmpty()
+      await useSupplierSubscribersCompaniesStore().requestFreshDataIfEmpty()
+    },
+    async requestFreshDataIfEmpty() {
+      if (this.getCompaniesOrders.length === 0 || this.getEmployeesOrders.length === 0)
+        await this.requestFreshData()
+    }
+  }
+})
