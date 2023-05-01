@@ -3,9 +3,9 @@
     <v-row justify="center">
       <v-col cols="12">
         <v-data-table
-          class="elevation-20"
           :headers="headers"
-          :items="useEmployeeOrderStore().getEmployeeOrders">
+          :items="useEmployeeOrderStore().getEmployeeOrders"
+          class="elevation-20">
           <template v-slot:top>
             <v-toolbar extended extension-height="1">
               <v-form class="w-50">
@@ -25,8 +25,22 @@
 
           </template>
 
+          <template v-slot:item.status="{ item }">
+            <v-icon v-if="item.raw.status === EmployeeOrderStatus.DeclinedBySupplier"
+                    color="error" icon="mdi-close"/>
+            <v-icon v-else-if="item.raw.status === EmployeeOrderStatus.ConfirmedBySupplier"
+                    color="success"
+                    icon="mdi-check"/>
+            <v-icon v-else-if="item.raw.status === EmployeeOrderStatus.PendingSupplierConfirmation"
+                    icon="mdi-store-clock"/>
+            <v-icon v-else-if="item.raw.status === EmployeeOrderStatus.PendingAdminConfirmation"
+                    icon="mdi-clipboard-text-clock"/>
+            {{ item.raw.status }}
+          </template>
+
           <template v-slot:item.actions="{ item }">
-            <v-btn :disabled="isLoading"
+            <v-btn v-if="item.raw.status === EmployeeOrderStatus.PendingAdminConfirmation"
+                   :disabled="isLoading"
                    icon
                    variant="plain">
               <v-icon color="error" icon="mdi-delete"/>
@@ -111,6 +125,7 @@ import {useEmployeeOrderStore} from "@/store/employee-app";
 import {useOrganizationStore} from "@/store/employee-or-supplier-app";
 import {ApiConstants} from "@/services/ApiConstants";
 import {EmployeeOrder} from "@/models/EmployeeOrder";
+import {EmployeeOrderStatus} from "@/models/EmployeeOrderStatus";
 
 onMounted(() => {
   selectedDate.value = useEmployeeOrderStore().getSelectedDate

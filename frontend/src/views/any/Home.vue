@@ -1,14 +1,14 @@
 <template>
   <v-tabs v-model="tab" :disabled="isLoading" align-tabs="center" stacked>
-    <v-tab color="primary" value="suppliers"
-           @click="useWorkingSuppliersStore().setShowSubscribed(false)">
-      <v-icon icon="mdi-food"/>
-      Suppliers
-    </v-tab>
     <v-tab v-if="useProfileStore().isEmployee" color="primary" value="subscribed"
            @click="useWorkingSuppliersStore().setShowSubscribed(true)">
       <v-icon icon="mdi-star"/>
       Subscribed
+    </v-tab>
+    <v-tab color="primary" value="suppliers"
+           @click="useWorkingSuppliersStore().setShowSubscribed(false)">
+      <v-icon icon="mdi-food"/>
+      Suppliers
     </v-tab>
     <v-tab color="primary" value="favorites"
            @click="useWorkingSuppliersStore().setShowSubscribed(false)">
@@ -59,11 +59,16 @@ import {useOrganizationStore} from "@/store/employee-or-supplier-app";
 
 onMounted(() => {
   useWorkingSuppliersStore().requestFreshDataIfNothingCached().finally(() => {
-    tab.value = "suppliers"
+    if (useProfileStore().isEmployee) {
+      tab.value = "subscribed"
+      useWorkingSuppliersStore().setShowSubscribed(true)
+    } else {
+      tab.value = "suppliers"
+    }
     isLoading.value = false
   })
 })
 
 const isLoading = ref(true)
-const tab = ref("suppliers")
+const tab = ref('')
 </script>

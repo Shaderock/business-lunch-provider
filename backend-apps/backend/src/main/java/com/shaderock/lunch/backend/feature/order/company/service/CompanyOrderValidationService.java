@@ -52,15 +52,15 @@ public class CompanyOrderValidationService {
         employeeOrderValidations.add(
             employeeOrderValidationService.validateCreatedOrder(employeeOrder,
                 employeeOrder.getAppUser().getUserDetails(), Optional.empty()));
-
-        if (!employeeOrderValidations.stream().allMatch(EmployeeOrderValidationDto::isValid)) {
-          errors.add("There are invalid employees orders");
-        }
-
-        errors.addAll(
-            employeeOrderValidationService.validateOrderDateTime(supplier.getPreferences(),
-                order.getDeliverAt()));
       }
+
+      if (!employeeOrderValidations.stream().allMatch(EmployeeOrderValidationDto::isValid)) {
+        errors.add("There are invalid employees orders");
+      }
+
+      errors.addAll(
+          employeeOrderValidationService.validateOrderDateTime(supplier.getPreferences(),
+              order.getDeliverAt()));
 
       if (supplier.getPreferences().getMinimumOrdersPerCompanyRequest() > order.getEmployeesOrders()
           .size()) {

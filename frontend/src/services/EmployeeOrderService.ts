@@ -2,6 +2,7 @@ import axios, {AxiosResponse} from "axios";
 import {EmployeeOrderValidation} from "@/models/EmployeeOrderValidation";
 import {ApiConstants} from "@/services/ApiConstants";
 import {EmployeeOrder} from "@/models/EmployeeOrder";
+import {Utils} from "@/models/Utils";
 
 export class EmployeeOrderService {
 
@@ -33,8 +34,12 @@ export class EmployeeOrderService {
   }
 
   async compAdmRequestToValidateMultiple(ordersIds: string[], dateTime: Date): Promise<AxiosResponse<EmployeeOrderValidation[]>> {
-    const params: URLSearchParams = new URLSearchParams([['dateTime', dateTime.toISOString()]])
+    const params: URLSearchParams = new URLSearchParams([['dateTime', Utils.formatDateTimeToDateAsString(dateTime)]])
     return axios.post(`${ApiConstants.COMPANY_ADM_EMPLOYEE_ORDER}/validate-multiple`, ordersIds, {params})
+  }
+
+  async compAdmRequestToValidateSingle(order: EmployeeOrder): Promise<AxiosResponse<EmployeeOrderValidation[]>> {
+    return axios.post(`${ApiConstants.COMPANY_ADM_EMPLOYEE_ORDER}/validate-create-single`, order)
   }
 
   async compAdmCreateEmployeeOrder(employeeOrder: EmployeeOrder) {

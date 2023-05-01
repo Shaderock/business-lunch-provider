@@ -530,7 +530,8 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
         await companyOrderService.createOrder(new CompanyOrder(
           '',
           pendingOrders.map(r => r.orderId),
-          this.getSelectedDateTime.toISOString(),
+          // this.getSelectedDateTime.toISOString(),
+          Utils.formatDateTimeToDateAsString(this.getSelectedDateTime),
           Utils.formatDateWithoutTimeWithSlashes(new Date),
           CompanyOrderStatus.PendingSupplierConfirmation,
           '',
@@ -560,7 +561,6 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
           await this.requestSupplierOptionsRefreshIfEmpty(orderExtended.id)
         }
       }
-
       if (!this.getSelectedSupplierDetails?.id ||
         !this.getSuppliersDetails.find(d => d.id === this.getSelectedSupplierDetails?.id)) {
 
@@ -568,7 +568,6 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
           this.selectedSupplierDetails = this.getSuppliersDetails[0]
         }
       }
-
       if (this.getSelectedSupplierDetails) {
         const response: AxiosResponse<CompanyOrderValidation> =
           await companyOrderService.requestOrderValidation(new CompanyOrder(
@@ -576,7 +575,8 @@ export const useCompAdmEmpOrderStore = defineStore('companyAdminEmployeeOrders',
             this.getEmployeesOrdersRecords
             .filter(r => r.status === EmployeeOrderStatus.PendingAdminConfirmation)
             .map(r => r.orderId),
-            this.getSelectedDateTime.toISOString(),
+            // this.getSelectedDateTime.toISOString(),
+            Utils.formatDateTimeToDateAsString(this.getSelectedDateTime),
             Utils.formatDateWithoutTimeWithSlashes(new Date),
             CompanyOrderStatus.PendingSupplierConfirmation,
             ''

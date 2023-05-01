@@ -9,6 +9,10 @@ export class Utils {
     return moment(date).format("YYYY/MM/DD")
   }
 
+  static formatDateTimeToDateAsString(dateTime: Date): string {
+    return moment(dateTime).format("YYYY-MM-DDTHH:mm:ss.SSS")
+  }
+
   static formatDateToTimeAsString(date: Date): string {
     return moment(date).format("HH:mm:ss")
   }

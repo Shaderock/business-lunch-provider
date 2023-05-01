@@ -21,13 +21,13 @@ import com.shaderock.lunch.backend.util.FilterManager;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +46,7 @@ public class EmployeeOrderValidationService {
   private final FilterManager filterManager;
 
   public List<String> validateCreate(@NonNull EmployeeOrderDto orderDto,
-      @NonNull AppUserDetails userDetails) {
+      @NonNull AppUserDetails userDetails, Optional<LocalDateTime> orderDateTime) {
     List<String> errors = validateOptionsIdsAndCategoriesPublicAndNotDeleted(
         orderDto.optionIds().stream().toList());
 
@@ -65,11 +65,8 @@ public class EmployeeOrderValidationService {
     Supplier supplier = validateSupplier(order);
     errors.addAll(validateSubscription(userDetails, supplier));
 
-    Company company = companyService.read(order.getAppUser().getUserDetails());
-    LocalTime deliverTime = company.getPreferences().getDeliverAt();
-    LocalDateTime probableOrderDateTime = order.getOrderDate().atTime(deliverTime);
     errors.addAll(validateSupplierPreferences(order, supplier.getPreferences(),
-        Optional.of(probableOrderDateTime)));
+        orderDateTime));
     return errors;
   }
 
@@ -77,8 +74,10 @@ public class EmployeeOrderValidationService {
       @NonNull AppUserDetails userDetails, Optional<LocalDateTime> deliverAt) {
     List<String> errors = new ArrayList<>();
 
-    if (!(order.getStatus() == EmployeeOrderStatus.CONFIRMED_BY_SUPPLIER
-        || order.getStatus() == EmployeeOrderStatus.PENDING_SUPPLIER_CONFIRMATION)) {
+    if (Stream.of(EmployeeOrderStatus.CONFIRMED_BY_SUPPLIER,
+            EmployeeOrderStatus.PENDING_SUPPLIER_CONFIRMATION,
+            EmployeeOrderStatus.DECLINED_BY_SUPPLIER)
+        .noneMatch(status -> order.getStatus() == status)) {
 
       errors = validateOptionsAndCategoriesPicAndNotDeleted(
           order.getOptions().stream().toList());
@@ -178,7 +177,7 @@ public class EmployeeOrderValidationService {
 
     if (requestOffset.compareTo(inAdvanceDuration) > 0) {
       errors.add(
-          String.format("Request offset of %s is greater than the actual order time in advance",
+          String.format("Order should be requested in more time in advance for %s",
               supplierPreferences.getSupplier().getOrganizationDetails().getName()));
     }
 

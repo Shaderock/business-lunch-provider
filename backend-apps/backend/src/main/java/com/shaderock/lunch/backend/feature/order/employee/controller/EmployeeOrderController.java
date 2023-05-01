@@ -1,14 +1,14 @@
 package com.shaderock.lunch.backend.feature.order.employee.controller;
 
 import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
+import com.shaderock.lunch.backend.feature.company.entity.Company;
+import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.details.entity.AppUserDetails;
 import com.shaderock.lunch.backend.feature.details.service.AppUserDetailsService;
-import com.shaderock.lunch.backend.feature.food.option.repository.OptionRepository;
 import com.shaderock.lunch.backend.feature.order.employee.dto.EmployeeOrderDto;
 import com.shaderock.lunch.backend.feature.order.employee.dto.EmployeeOrderValidationDto;
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
 import com.shaderock.lunch.backend.feature.order.employee.mapper.EmployeeOrderMapper;
-import com.shaderock.lunch.backend.feature.order.employee.repository.EmployeeOrderRepository;
 import com.shaderock.lunch.backend.feature.order.employee.service.EmployeeOrderService;
 import com.shaderock.lunch.backend.feature.order.employee.service.validation.EmployeeOrderValidationService;
 import com.shaderock.lunch.backend.feature.order.employee.type.EmployeeOrderStatus;
@@ -18,6 +18,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,8 +43,7 @@ public class EmployeeOrderController {
   private final EmployeeOrderService employeeOrderService;
   private final EmployeeOrderValidationService employeeOrderValidationService;
   private final AppUserDetailsService userDetailsService;
-  private final OptionRepository optionRepository;
-  private final EmployeeOrderRepository orderRepository;
+  private final CompanyService companyService;
 
   @PostMapping
   @Transactional
@@ -51,7 +52,7 @@ public class EmployeeOrderController {
     AppUserDetails userDetails = userDetailsService.read(principal);
     preValidateOrder(orderDto, userDetails);
 
-    EmployeeOrder order = employeeOrderService.create(orderDto, userDetails);
+    EmployeeOrder order = employeeOrderService.create(orderDto, userDetails, Optional.empty());
     return ResponseEntity.ok(employeeOrderMapper.toDto(order));
   }
 
@@ -70,7 +71,11 @@ public class EmployeeOrderController {
     List<String> errors;
 
     try {
-      errors = employeeOrderValidationService.validateCreate(orderDto, userDetails);
+      Company company = companyService.read(userDetails);
+      LocalTime deliverTime = company.getPreferences().getDeliverAt();
+      LocalDateTime probableOrderDateTime = orderDto.orderDate().atTime(deliverTime);
+      errors = employeeOrderValidationService.validateCreate(orderDto, userDetails,
+          Optional.of(probableOrderDateTime));
     } catch (CrudValidationException e) {
       errors = List.of(e.getMessage());
     }
@@ -90,7 +95,11 @@ public class EmployeeOrderController {
     List<String> errors;
 
     try {
-      errors = employeeOrderValidationService.validateCreate(orderDto, userDetails);
+      Company company = companyService.read(userDetails);
+      LocalTime deliverTime = company.getPreferences().getDeliverAt();
+      LocalDateTime probableOrderDateTime = orderDto.orderDate().atTime(deliverTime);
+      errors = employeeOrderValidationService.validateCreate(orderDto, userDetails,
+          Optional.of(probableOrderDateTime));
     } catch (CrudValidationException e) {
       errors = List.of(e.getMessage());
     }

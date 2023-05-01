@@ -46,6 +46,19 @@
             </v-toolbar>
           </template>
 
+          <template v-slot:item.status="{ item }">
+            <v-icon v-if="item.raw.status === EmployeeOrderStatus.DeclinedBySupplier"
+                    color="error" icon="mdi-close"/>
+            <v-icon v-else-if="item.raw.status === EmployeeOrderStatus.ConfirmedBySupplier"
+                    color="success"
+                    icon="mdi-check"/>
+            <v-icon v-else-if="item.raw.status === EmployeeOrderStatus.PendingSupplierConfirmation"
+                    icon="mdi-store-clock"/>
+            <v-icon v-else-if="item.raw.status === EmployeeOrderStatus.PendingAdminConfirmation"
+                    icon="mdi-clipboard-text-clock"/>
+            {{ item.raw.status }}
+          </template>
+
           <template v-slot:item.actions="{ item }">
             <v-btn :disabled="isLoading"
                    icon
@@ -127,6 +140,7 @@
 import {onMounted, ref} from "vue";
 import {CompanyOrderStatus} from "@/models/CompanyOrderStatus";
 import {CompanyOrderRecord, useSupplierAdmOrdersStore} from "@/store/supplier-adm-app";
+import {EmployeeOrderStatus} from "@/models/EmployeeOrderStatus";
 
 onMounted(() => {
   useSupplierAdmOrdersStore().requestFreshDataIfEmpty().finally(() => {
@@ -149,8 +163,8 @@ const headers = [
   {title: 'Initial price', key: 'defaultSupplierPriceSum'},
   {title: 'Discount', key: 'supplierDiscountSum'},
   {title: 'Income', key: 'income'},
-  {title: 'Status', key: 'status'},
-  {title: 'Deliver time', key: 'deliverAt'},
+  {title: 'Status', key: 'status', align: 'center'},
+  {title: 'Deliver time', key: 'deliverAt', align: 'center'},
   {title: 'Actions', key: 'actions', sortable: false, align: 'center'},
 ]
 

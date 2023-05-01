@@ -18,6 +18,7 @@ import com.shaderock.lunch.backend.feature.order.employee.service.validation.Emp
 import com.shaderock.lunch.backend.feature.order.employee.type.EmployeeOrderStatus;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,8 +41,8 @@ public class EmployeeOrderService {
   private final CompanyService companyService;
 
   public EmployeeOrder create(@NonNull EmployeeOrderDto orderDto,
-      @NonNull AppUserDetails userDetails) {
-    orderValidationService.validateCreate(orderDto, userDetails);
+      @NonNull AppUserDetails userDetails, Optional<LocalDateTime> dateTime) {
+    orderValidationService.validateCreate(orderDto, userDetails, dateTime);
     EmployeeOrder order = calculateValidOrder(orderDto, userDetails);
     order.setCompanyOrder(null);
     order.setStatus(EmployeeOrderStatus.PENDING_ADMIN_CONFIRMATION);

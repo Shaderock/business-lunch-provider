@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(ApiConstants.COMPANY_ADM_COMPANY_ORDER)
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
+@Slf4j
 public class CompanyAdmCompanyOrderController {
 
   private final CompanyOrderMapper companyOrderMapper;
@@ -65,6 +67,7 @@ public class CompanyAdmCompanyOrderController {
   @Transactional
   public ResponseEntity<CompanyOrderValidationDto> validate(
       @RequestBody @NotNull CompanyOrderDto orderDto, Principal principal) {
+    LOGGER.info("DeliverAt=[{}]", orderDto.deliverAt());
     Company company = companyService.read(principal);
     CompanyOrder order = companyOrderMapper.toEntity(orderDto);
     order = companyOrderService.convertMappedEmployeesOrdersToValidEmployeesOrders(order, company);

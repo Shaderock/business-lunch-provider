@@ -23,7 +23,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(ApiConstants.COMPANY_ADM_EMPLOYEE_ORDER)
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
+@Slf4j
 public class CompanyAdmEmployeeOrderController {
 
   private final EmployeeOrderMapper employeeOrderMapper;
@@ -49,7 +52,8 @@ public class CompanyAdmEmployeeOrderController {
   @Transactional
   public ResponseEntity<List<EmployeeOrderValidationDto>> validate(
       @RequestBody List<UUID> ordersIds, Principal principal,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime) {
+      @RequestParam @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime dateTime) {
+    LOGGER.info("DateTime: [{}]", dateTime);
     Company company = companyService.read(principal);
     List<EmployeeOrder> employeeOrders = employeeOrderService.read(ordersIds, company);
     List<EmployeeOrderValidationDto> responseValidations = new ArrayList<>();
@@ -67,21 +71,24 @@ public class CompanyAdmEmployeeOrderController {
     return ResponseEntity.ok(responseValidations);
   }
 
-  @PostMapping("/validate-single")
+  @PostMapping("/validate-create-single")
   @Transactional
   public ResponseEntity<EmployeeOrderValidationDto> validate(
-      @RequestBody UUID orderId, Principal principal,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime) {
-    Company company = companyService.read(principal);
-    EmployeeOrder employeeOrder = employeeOrderService.read(orderId, company);
+      @RequestBody EmployeeOrderDto orderDto) {
+    List<String> errors;
+    AppUserDetails userDetails = userDetailsService.read(orderDto.userDetailsId());
 
-    AppUserDetails userDetails = employeeOrder.getAppUser().getUserDetails();
+    try {
+      errors = employeeOrderValidationService.validateCreate(orderDto, userDetails,
+          Optional.empty());
+    } catch (CrudValidationException e) {
+      errors = List.of(e.getMessage());
+    }
 
-    EmployeeOrderValidationDto employeeOrderValidationDto =
-        employeeOrderValidationService.validateCreatedOrder(employeeOrder, userDetails,
-            Optional.of(dateTime));
-
-    return ResponseEntity.ok(employeeOrderValidationDto);
+    return ResponseEntity.ok(EmployeeOrderValidationDto.builder()
+        .errors(errors)
+        .valid(errors.isEmpty())
+        .build());
   }
 
   @GetMapping
@@ -108,7 +115,7 @@ public class CompanyAdmEmployeeOrderController {
 
     preValidateOrder(orderDto, userDetails);
 
-    EmployeeOrder order = employeeOrderService.create(orderDto, userDetails);
+    EmployeeOrder order = employeeOrderService.create(orderDto, userDetails, Optional.empty());
     return ResponseEntity.ok(employeeOrderMapper.toDto(order));
   }
 
@@ -116,7 +123,8 @@ public class CompanyAdmEmployeeOrderController {
     List<String> errors;
 
     try {
-      errors = employeeOrderValidationService.validateCreate(orderDto, userDetails);
+      errors = employeeOrderValidationService.validateCreate(orderDto, userDetails,
+          Optional.empty());
     } catch (CrudValidationException e) {
       errors = List.of(e.getMessage());
     }

@@ -28,6 +28,7 @@ import optionService from "@/services/OptionService";
 import {Subscription} from "@/models/Subscription";
 import subscriptionService from "@/services/SubscriptionService";
 import {useEmployeeSubscriptionStore} from "@/store/company-adm-app";
+import {SubscriptionStatus} from "@/models/SubscriptionStatus";
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -328,7 +329,8 @@ export const useWorkingSuppliersStore = defineStore('publicSuppliers', {
         workingSuppliers = workingSuppliers
         .filter(s =>
           useEmployeeSubscriptionStore().getSubscriptionSuppliers
-          .some(subscribedSupplier => subscribedSupplier.supplierId === s.supplierId))
+          .some(subscribedSupplier => subscribedSupplier.supplierId === s.supplierId &&
+            subscribedSupplier.subscriptionStatus === SubscriptionStatus.Accepted))
       }
 
       return workingSuppliers

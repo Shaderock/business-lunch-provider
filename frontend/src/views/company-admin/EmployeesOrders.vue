@@ -177,6 +177,19 @@
             <v-icon v-else color="success" icon="mdi-check"/>
           </template>
 
+          <template v-slot:item.status="{ item }">
+            <v-icon v-if="item.raw.status === EmployeeOrderStatus.DeclinedBySupplier"
+                    color="error" icon="mdi-close"/>
+            <v-icon v-else-if="item.raw.status === EmployeeOrderStatus.ConfirmedBySupplier"
+                    color="success"
+                    icon="mdi-check"/>
+            <v-icon v-else-if="item.raw.status === EmployeeOrderStatus.PendingSupplierConfirmation"
+                    icon="mdi-store-clock"/>
+            <v-icon v-else-if="item.raw.status === EmployeeOrderStatus.PendingAdminConfirmation"
+                    icon="mdi-clipboard-text-clock"/>
+            {{ item.raw.status }}
+          </template>
+
           <template v-slot:item.actions="{ item }">
             <v-btn :disabled="isLoading"
                    icon
@@ -333,9 +346,9 @@ const headers = [
   {title: 'Sup discount', key: 'supplierDiscount'},
   {title: 'Com discount', key: 'companyDiscount'},
   {title: 'Final price', key: 'finalPrice'},
-  {title: 'Options', key: 'options'},
-  {title: 'Valid', key: 'isValid'},
-  {title: 'Status', key: 'status'},
+  {title: 'Options', key: 'options', align: 'center'},
+  {title: 'Valid', key: 'isValid', align: 'center'},
+  {title: 'Status', key: 'status', align: 'center'},
   {title: 'Actions', key: 'actions', sortable: false, align: 'center'},
 ]
 
@@ -354,7 +367,8 @@ async function onAddOrder() {
       selectedOptions.value,
       selectedDate.value);
 
-    const response = await employeeOrderService.requestOrderValidation(employeeOrder)
+    const response = await employeeOrderService
+    .compAdmRequestToValidateSingle(employeeOrder)
     addDialogOrderValidation.value = response.data
 
     if (addDialogOrderValidation.value.valid) {
