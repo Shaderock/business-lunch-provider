@@ -23,7 +23,7 @@ public class OneOptionPerCategoryPriceCalculator implements OrderTypePriceCalcul
       @NonNull SupplierPreferences supplierPreferences) {
     int optionsAmount = employeeOrder.getOptions().size();
 
-    return supplierPreferences.getPricesForCategories().stream()
+    return supplierPreferences.getCategoriesPrices().stream()
         .filter(priceForCategories -> priceForCategories.getAmount() == optionsAmount)
         .findFirst()
         .orElseThrow(() -> new IllegalStateException("Order not validated"))

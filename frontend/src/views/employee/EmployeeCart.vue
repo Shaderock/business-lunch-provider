@@ -89,7 +89,9 @@
                     <v-list-item-subtitle>
                       {{ cartOption.option.name }}
                     </v-list-item-subtitle>
-                    <template v-slot:append>
+                    <template
+                      v-if="useCartStore().getCurrentSupplierInfo?.supplierPreferences.orderType !== OrderType.OnlyOneOptionPerCategory"
+                      v-slot:append>
                       <v-chip color="info" label>{{ cartOption.option.price }}</v-chip>
                     </template>
                   </v-list-item>
@@ -234,7 +236,50 @@
                             </v-menu>
                           </v-btn>
                           <v-spacer/>
-                          <v-chip color="info" label>{{ cartOption.option.price }} MDL</v-chip>
+                          <v-chip
+                            v-if="useCartStore().getCurrentSupplierInfo?.supplierPreferences.orderType !== OrderType.OnlyOneOptionPerCategory"
+                            color="info" label>{{ cartOption.option.price }} MDL
+                          </v-chip>
+
+                          <v-menu v-else open-on-hover>
+                            <template v-slot:activator="{ props }">
+                              <v-btn
+                                append-icon="mdi-information"
+                                color="info"
+                                size="small"
+                                v-bind="props"
+                                variant="tonal">
+                                By Category
+                              </v-btn>
+                            </template>
+                            <v-list>
+                              <v-list-item
+                                v-for="categoriesPrice in useCartStore().getCurrentSupplierInfo?.supplierCategoriesPrices
+                                .sort((cur, next) => cur.amount - next.amount)"
+                                :key="categoriesPrice">
+                                <v-tooltip
+                                  v-if="categoriesPrice.amount === usePublicSupplierStore().getPreferences?.minimumCategoriesForEmployeeOrder"
+                                  class="color-info" location="bottom">
+                                  <template v-slot:activator="{ props }">
+                                    <v-list-item-title class="text-info mr-10" v-bind="props">
+                                      {{ categoriesPrice.amount }} categories
+                                      <v-icon icon="mdi-information"/>
+                                    </v-list-item-title>
+                                  </template>
+                                  Minimum required categories for one order
+                                </v-tooltip>
+
+                                <v-list-item-title v-else class="mr-10">
+                                  {{ categoriesPrice.amount }} categories
+                                </v-list-item-title>
+
+                                <template v-slot:append>
+                                  <v-chip color="info" label>{{ categoriesPrice.price }} MDL
+                                  </v-chip>
+                                </template>
+                              </v-list-item>
+                            </v-list>
+                          </v-menu>
                         </v-card-actions>
                       </v-card>
                     </v-col>
@@ -284,9 +329,10 @@ import {onMounted, ref} from "vue";
 import {CartOption, CartSupplierInfo, useCartStore} from "@/store/employee-app";
 import {useOrganizationStore} from "@/store/employee-or-supplier-app";
 import {ApiConstants} from "@/services/ApiConstants";
-import {useProfileStore} from "@/store/user-app";
+import {useProfileStore, usePublicSupplierStore} from "@/store/user-app";
 import {Utils} from "@/models/Utils";
 import router from "@/router";
+import {OrderType} from "@/models/OrderType";
 
 const supplierTabs = ref()
 const snackbar = ref()

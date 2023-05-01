@@ -12,6 +12,7 @@ import {AxiosResponse} from "axios";
 import {Utils} from "@/models/Utils";
 import toastManager from "@/services/ToastManager";
 import optionService from "@/services/OptionService";
+import {CategoriesPrice} from "@/models/CategoriesPrice";
 
 export interface CartOption {
   id: string,
@@ -19,13 +20,15 @@ export interface CartOption {
   category: Category,
   supplier: Supplier,
   supplierDetails: PublicOrganizationDetails,
-  supplierPreferences: PublicSupplierPreferences
+  supplierPreferences: PublicSupplierPreferences,
+  supplierCategoriesPrices: CategoriesPrice[]
 }
 
 export interface CartSupplierInfo {
   supplier: Supplier,
   supplierDetails: PublicOrganizationDetails,
   supplierPreferences: PublicSupplierPreferences
+  supplierCategoriesPrices: CategoriesPrice[]
 }
 
 export const useCartStore = defineStore('employeeCartStore', {
@@ -60,6 +63,7 @@ export const useCartStore = defineStore('employeeCartStore', {
             supplier: o.supplier,
             supplierDetails: o.supplierDetails,
             supplierPreferences: o.supplierPreferences,
+            supplierCategoriesPrices: o.supplierCategoriesPrices
           });
         }
       });

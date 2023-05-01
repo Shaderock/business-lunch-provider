@@ -1,7 +1,7 @@
 package com.shaderock.lunch.backend.data.mapper;
 
 import com.shaderock.lunch.backend.feature.food.option.entity.Option;
-import com.shaderock.lunch.backend.feature.food.price.entity.PriceForCategories;
+import com.shaderock.lunch.backend.feature.food.price.entity.CategoriesPrice;
 import com.shaderock.lunch.backend.feature.food.suboption.entity.SubOption;
 import com.shaderock.lunch.backend.feature.notification.entity.Notification;
 import com.shaderock.lunch.backend.feature.order.employee.entity.EmployeeOrder;
@@ -119,17 +119,17 @@ public interface BaseMapper {
         .toList();
   }
 
-  default Set<UUID> priceForCategoriesToIds(Set<PriceForCategories> priceForCategories) {
-    return Stream.ofNullable(priceForCategories)
+  default Set<UUID> priceForCategoriesToIds(Set<CategoriesPrice> categoryPrices) {
+    return Stream.ofNullable(categoryPrices)
         .flatMap(Collection::stream)
-        .map(PriceForCategories::getId)
+        .map(CategoriesPrice::getId)
         .collect(Collectors.toSet());
   }
 
-  default Set<PriceForCategories> idsToPriceForCategories(Set<UUID> categoriesIds) {
+  default Set<CategoriesPrice> idsToPriceForCategories(Set<UUID> categoriesIds) {
     return Stream.ofNullable(categoriesIds)
         .flatMap(Collection::stream)
-        .map(id -> PriceForCategories.baseEntityBuilder().id(id).build())
+        .map(id -> CategoriesPrice.baseEntityBuilder().id(id).build())
         .collect(Collectors.toSet());
   }
 

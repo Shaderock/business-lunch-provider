@@ -2,7 +2,7 @@ package com.shaderock.lunch.backend.feature.config.preference.supplier.controlle
 
 import com.shaderock.lunch.backend.feature.config.preference.supplier.dto.PublicSupplierPreferencesDto;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.entity.SupplierPreferences;
-import com.shaderock.lunch.backend.feature.config.preference.supplier.mapper.PublicSupplierPreferencesMapper;
+import com.shaderock.lunch.backend.feature.config.preference.supplier.mapper.SupplierPreferencesMapper;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
 import com.shaderock.lunch.backend.util.ApiConstants;
@@ -22,20 +22,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AnonymSupplierPreferencesController {
 
-  private final PublicSupplierPreferencesMapper preferencesMapper;
+  private final SupplierPreferencesMapper preferencesMapper;
   private final SupplierService supplierService;
 
   @GetMapping("/all")
   public ResponseEntity<List<PublicSupplierPreferencesDto>> read() {
     List<SupplierPreferences> preferencesList = supplierService.read().stream()
         .map(Supplier::getPreferences).toList();
-    return ResponseEntity.ok(preferencesList.stream().map(preferencesMapper::toDto).toList());
+    return ResponseEntity.ok(preferencesList.stream().map(preferencesMapper::toPublicDto).toList());
   }
 
   @GetMapping
   public ResponseEntity<PublicSupplierPreferencesDto> readByName(
       @RequestParam @NotNull String supplierName) {
     Supplier supplier = supplierService.readByName(supplierName);
-    return ResponseEntity.ok(preferencesMapper.toDto(supplier.getPreferences()));
+    return ResponseEntity.ok(preferencesMapper.toPublicDto(supplier.getPreferences()));
   }
 }

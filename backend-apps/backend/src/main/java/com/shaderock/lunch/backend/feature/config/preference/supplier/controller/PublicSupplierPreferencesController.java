@@ -2,7 +2,7 @@ package com.shaderock.lunch.backend.feature.config.preference.supplier.controlle
 
 import com.shaderock.lunch.backend.feature.config.preference.supplier.dto.PublicSupplierPreferencesDto;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.entity.SupplierPreferences;
-import com.shaderock.lunch.backend.feature.config.preference.supplier.mapper.PublicSupplierPreferencesMapper;
+import com.shaderock.lunch.backend.feature.config.preference.supplier.mapper.SupplierPreferencesMapper;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.service.SupplierPreferencesService;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PublicSupplierPreferencesController {
 
-  private final PublicSupplierPreferencesMapper preferencesMapper;
+  private final SupplierPreferencesMapper preferencesMapper;
   private final SupplierPreferencesService preferencesService;
   private final SupplierService supplierService;
 
@@ -32,7 +32,7 @@ public class PublicSupplierPreferencesController {
       @RequestParam @NotNull UUID supplierId) {
     Supplier supplier = supplierService.read(supplierId);
     SupplierPreferences preferences = preferencesService.read(supplier);
-    PublicSupplierPreferencesDto result = preferencesMapper.toDto(preferences);
+    PublicSupplierPreferencesDto result = preferencesMapper.toPublicDto(preferences);
     return ResponseEntity.ok(result);
   }
 }

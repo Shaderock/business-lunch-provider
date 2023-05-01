@@ -25,6 +25,8 @@ import employeeOrderService from "@/services/EmployeeOrderService";
 import {CompanyOrderStatus} from "@/models/CompanyOrderStatus";
 import {CompanyOrder} from "@/models/CompanyOrder";
 import companyOrderService from "@/services/CompanyOrderService";
+import {CategoriesPrice} from "@/models/CategoriesPrice";
+import categoriesPriceService from "@/services/CategoriesPriceService";
 
 export const useSupAdmSupPrefStore = defineStore('supplierAdminSupplierPreferences', {
   state: () => ({
@@ -38,11 +40,19 @@ export const useSupAdmSupPrefStore = defineStore('supplierAdminSupplierPreferenc
       OrderType.OnlyOneOptionPerCategory,
       [],
       null,
-      [])
+      []),
+    categoriesPrices: [] as CategoriesPrice[]
   }),
   getters: {
     getPreferences(): SupplierPreferences {
       return this.preferences
+    },
+    getCategoriesPrices(): CategoriesPrice[] {
+      return this.categoriesPrices.sort((cur, next) =>
+        cur.amount - next.amount)
+    },
+    getNextCategoriesPricesAmount(): number {
+      return this.getCategoriesPrices.length + 1
     },
     getRequestOffset(): Duration | null {
       return moment.duration(this.preferences.requestOffset)
@@ -76,10 +86,30 @@ export const useSupAdmSupPrefStore = defineStore('supplierAdminSupplierPreferenc
     },
   },
   actions: {
+    async addPriceForCategories(pfc: CategoriesPrice) {
+      await categoriesPriceService.createPriceForCategories(pfc)
+      await this.requestFreshPreferencesData()
+    },
+    async editPriceForCategories(pfc: CategoriesPrice) {
+      await categoriesPriceService.updatePriceForCategories(pfc)
+      await this.requestFreshPreferencesData()
+    },
+    async removePriceForCategories() {
+      await categoriesPriceService.removePriceForCategories()
+      await this.requestFreshPreferencesData()
+    },
     async requestFreshPreferencesData() {
       const response: AxiosResponse<SupplierPreferences> = await supplierPreferencesService.getSupplierPreferences()
       this.preferences = response.data
-    }
+
+      const responsePrices: AxiosResponse<CategoriesPrice[]> = await categoriesPriceService.requestAllAsSupplierAdmin()
+      this.categoriesPrices = responsePrices.data
+    },
+    async requestFreshPreferencesDataIfEmpty() {
+      if (!this.getPreferences.id || this.getCategoriesPrices.length === 0) {
+        await this.requestFreshPreferencesData()
+      }
+    },
   }
 })
 

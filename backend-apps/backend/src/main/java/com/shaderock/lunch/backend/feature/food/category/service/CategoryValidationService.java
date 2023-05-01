@@ -23,7 +23,7 @@ public class CategoryValidationService {
       long currentCategories = supplier.getMenu().getCategories().size();
       LOGGER.info("Current categories: {}", currentCategories);
       if (supplier.getPreferences()
-          .getPricesForCategories()
+          .getCategoriesPrices()
           .stream()
           .noneMatch(
               priceForCategories -> priceForCategories.getAmount() == currentCategories + 1)) {

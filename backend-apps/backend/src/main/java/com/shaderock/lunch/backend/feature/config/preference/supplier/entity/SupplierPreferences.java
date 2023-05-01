@@ -3,7 +3,7 @@ package com.shaderock.lunch.backend.feature.config.preference.supplier.entity;
 import com.shaderock.lunch.backend.data.entity.DeletableEntity;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.type.CategoryTag;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.type.OrderType;
-import com.shaderock.lunch.backend.feature.food.price.entity.PriceForCategories;
+import com.shaderock.lunch.backend.feature.food.price.entity.CategoriesPrice;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -65,7 +65,7 @@ public class SupplierPreferences extends DeletableEntity {
 
   @OneToMany(mappedBy = "supplierPreferences", fetch = FetchType.LAZY)
   @Exclude
-  private Set<PriceForCategories> pricesForCategories;
+  private Set<CategoriesPrice> categoriesPrices;
 
   @OneToOne(mappedBy = "preferences")
   private OrderCapacity orderCapacity;

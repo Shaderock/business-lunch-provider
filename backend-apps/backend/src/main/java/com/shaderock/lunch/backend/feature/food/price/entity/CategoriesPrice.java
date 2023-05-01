@@ -23,7 +23,7 @@ import lombok.ToString.Exclude;
 @Builder
 @ToString
 @Entity
-public class PriceForCategories extends BaseEntity {
+public class CategoriesPrice extends BaseEntity {
 
   @Column(nullable = false)
   private int amount;
@@ -37,7 +37,7 @@ public class PriceForCategories extends BaseEntity {
   private SupplierPreferences supplierPreferences;
 
   @Builder(builderMethodName = "baseEntityBuilder")
-  public PriceForCategories(UUID id) {
+  public CategoriesPrice(UUID id) {
     super(id);
   }
 }

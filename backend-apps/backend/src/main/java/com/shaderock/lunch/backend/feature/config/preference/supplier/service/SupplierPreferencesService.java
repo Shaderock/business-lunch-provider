@@ -56,7 +56,7 @@ public class SupplierPreferencesService {
   }
 
   // todo validate for nulls. you can't set something back to null
-  // todo don't allow changing order type while any categories exist
+  // todo don't allow changing order type while there are not enough categories or minimal price for one option per order is not configured
   // todo deliver end time should be greater than start time
   // offset can't be negative
   // ordertype can't be null

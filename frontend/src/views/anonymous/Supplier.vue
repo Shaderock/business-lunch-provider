@@ -70,7 +70,6 @@
 
           <v-spacer/>
 
-          <!-- todo add request offset-->
           <v-chip-group v-if="usePublicSupplierStore().isSupplierFound" class="disable-events">
             <v-chip
               :text="Utils.stringToTimeAsStringWithoutSeconds(usePublicSupplierStore()
@@ -84,15 +83,16 @@
               label/>
           </v-chip-group>
 
-          <v-btn append-icon="mdi-open-in-app" variant="tonal">
+          <v-btn append-icon="mdi-open-in-app" color="info" variant="tonal">
             Details
             <v-dialog activator="parent">
               <v-row justify="center">
-                <v-col cols="auto">
-                  <v-card max-width="450">
+                <v-col md="6">
+                  <v-card>
                     <v-card-title>{{ usePublicSupplierStore().getDetails.name }}</v-card-title>
                     <v-card-text>
                       <v-list>
+                        <v-list-subheader title="Details"/>
                         <v-divider inset/>
                         <v-list-item :subtitle="usePublicSupplierStore().getDetails?.email || ''"
                                      prepend-icon="mdi-email"
@@ -116,14 +116,29 @@
                                      title="Menu URL"/>
                         <v-divider inset/>
 
+                        <v-list-subheader title="Preferences"/>
+
                         <v-list-item
                           :subtitle="usePublicSupplierStore().getPreferences?.minimumCategoriesForEmployeeOrder || 0"
                           title="Minimum categories in an order"/>
                         <v-divider inset/>
 
                         <v-list-item
+                          :subtitle="usePublicSupplierStore().getPreferences?.minimumOrdersPerCompanyRequest || 0"
+                          title="Minimum employees orders per company lunch request"/>
+                        <v-divider inset/>
+
+                        <v-list-item
                           :subtitle="usePublicSupplierStore().getPreferences?.orderType || ''"
                           title="Order type"/>
+                        <v-divider inset/>
+
+                        <v-list-subheader title="Delivery"/>
+
+                        <v-list-item
+                          :subtitle="moment.duration(usePublicSupplierStore().getPreferences?.requestOffset).humanize()"
+                          prepend-icon="mdi-car-clock"
+                          title="Request offset"/>
                         <v-divider inset/>
 
                         <v-list-item-subtitle class="pt-2">Description</v-list-item-subtitle>
@@ -222,7 +237,48 @@
                     Add to cart
                   </v-btn>
                   <v-spacer/>
-                  <v-chip color="info" label>{{ option.price }} MDL</v-chip>
+                  <v-chip
+                    v-if="usePublicSupplierStore().getPreferences?.orderType !== OrderType.OnlyOneOptionPerCategory"
+                    color="info" label>{{ option.price }} MDL
+                  </v-chip>
+
+                  <v-menu v-else open-on-hover>
+                    <template v-slot:activator="{ props }">
+                      <v-btn
+                        append-icon="mdi-information"
+                        color="info"
+                        size="small"
+                        v-bind="props"
+                        variant="tonal">
+                        By category
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item
+                        v-for="categoriesPrice in usePublicSupplierStore().getCategoriesPrices"
+                        :key="categoriesPrice.id">
+                        <v-tooltip
+                          v-if="categoriesPrice.amount === usePublicSupplierStore().getPreferences?.minimumCategoriesForEmployeeOrder"
+                          class="color-info" location="bottom">
+                          <template v-slot:activator="{ props }">
+                            <v-list-item-title class="text-info mr-10" v-bind="props">
+                              {{ categoriesPrice.amount }} categories
+                              <v-icon icon="mdi-information"/>
+                            </v-list-item-title>
+                          </template>
+                          Minimum required categories for one order
+                        </v-tooltip>
+
+                        <v-list-item-title v-else class="mr-10">
+                          {{ categoriesPrice.amount }} categories
+                        </v-list-item-title>
+
+                        <template v-slot:append>
+                          <v-chip color="info" label>{{ categoriesPrice.price }} MDL</v-chip>
+                        </template>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
                 </v-card-actions>
               </v-card>
             </v-col>
@@ -244,6 +300,8 @@ import {Utils} from "@/models/Utils";
 import {ApiConstants} from "@/services/ApiConstants";
 import {useCartStore} from "@/store/employee-app";
 import {Option} from "@/models/Option";
+import {OrderType} from "@/models/OrderType";
+import moment from 'moment';
 
 const route = useRoute();
 const isLoading = ref(false)
@@ -295,6 +353,7 @@ function addOptionToCart(option: Option, categoryOptions: CategoryOptions) {
   const supplier = usePublicSupplierStore().getSupplier
   const details = usePublicSupplierStore().getDetails
   const preferences = usePublicSupplierStore().getPreferences
+  const categoriesPrices = usePublicSupplierStore().getCategoriesPrices
 
   if (supplier && details && preferences)
     useCartStore().addCartOption(
@@ -304,7 +363,8 @@ function addOptionToCart(option: Option, categoryOptions: CategoryOptions) {
         category: categoryOptions.category,
         supplier: supplier,
         supplierDetails: details,
-        supplierPreferences: preferences
+        supplierPreferences: preferences,
+        supplierCategoriesPrices: categoriesPrices
       })
 }
 

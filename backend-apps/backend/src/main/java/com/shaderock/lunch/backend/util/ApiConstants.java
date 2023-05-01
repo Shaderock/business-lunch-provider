@@ -33,6 +33,8 @@ public class ApiConstants {
   public static final String SUPPLIER_ADM_ORGANIZATION = SUPPLIER_ADM + ORGANIZATION_PART;
   public static final String SUPPLIER_ADM_COMPANY_ORDER = SUPPLIER_ADM + "/company-order";
   public static final String SUPPLIER_ADM_EMPLOYEE_ORDER = SUPPLIER_ADM + "/employee-order";
+  public static final String SUPPLIER_ADM_CATEGORIES_PRICE =
+      SUPPLIER_ADM + "/categories-price";
   public static final String USER = API + "/user";
   public static final String USER_DETAILS = USER + "/details";
   public static final String USER_EMPLOYEE_PREFERENCES = USER + "/employee-preferences";
@@ -40,6 +42,7 @@ public class ApiConstants {
   public static final String ANONYM_ORGANIZATION = ANONYM + ORGANIZATION_PART;
   public static final String ANONYM_CATEGORY = ANONYM + "/category";
   public static final String ANONYM_OPTION = ANONYM + "/option";
+  public static final String ANONYM_CATEGORIES_PRICE = ANONYM + "/categories-price";
   public static final String INVITATION = API + "/invitation";
   public static final String NOTIFICATIONS = API + "/notifications";
   private static final String ORGANIZATION_ADM = API + "/organization-adm";

@@ -17,8 +17,8 @@ import com.shaderock.lunch.backend.feature.food.category.entity.Category;
 import com.shaderock.lunch.backend.feature.food.category.service.CategoryService;
 import com.shaderock.lunch.backend.feature.food.option.entity.Option;
 import com.shaderock.lunch.backend.feature.food.option.service.OptionService;
-import com.shaderock.lunch.backend.feature.food.price.entity.PriceForCategories;
-import com.shaderock.lunch.backend.feature.food.price.repository.PriceForCategoriesRepository;
+import com.shaderock.lunch.backend.feature.food.price.entity.CategoriesPrice;
+import com.shaderock.lunch.backend.feature.food.price.repository.CategoriesPriceRepository;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.feature.organization.form.OrganizationRegistrationForm;
 import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
@@ -58,7 +58,7 @@ public class StartupEntitiesGenerator implements
     ApplicationListener<ContextRefreshedEvent> {
 
   public static final String DEFAULT_USER_PASSWORD = "test";
-  private final PriceForCategoriesRepository priceForCategoriesRepository;
+  private final CategoriesPriceRepository categoriesPriceRepository;
   private final CompanyRepository companyRepository;
   private final SupplierRepository supplierRepository;
   private final SubscriptionRepository subscriptionRepository;
@@ -170,7 +170,7 @@ public class StartupEntitiesGenerator implements
         LocalTime.of(faker.number().numberBetween(15, 21), faker.number().numberBetween(0, 59)));
 
     preferences.setMinimumOrdersPerCompanyRequest(faker.number().numberBetween(1, 20));
-    preferences.setMinimumCategoriesForEmployeeOrder(faker.number().numberBetween(1, 3));
+    preferences.setMinimumCategoriesForEmployeeOrder(faker.number().numberBetween(1, 4));
 
     preferences.setRequestOffset(Duration.ofDays(faker.number().numberBetween(0, 1))
         .plusHours(faker.number().numberBetween(0, 3))
@@ -193,7 +193,7 @@ public class StartupEntitiesGenerator implements
 
   private void generateDefaultCategories(Supplier supplier) {
 
-    int publicCategoriesAmount = faker.number().numberBetween(1, 3);
+    int publicCategoriesAmount = faker.number().numberBetween(1, 7);
     int privateCategoriesAmount = faker.number().numberBetween(0, 2);
 
     generateCategories(supplier, publicCategoriesAmount, true);
@@ -204,17 +204,17 @@ public class StartupEntitiesGenerator implements
     List<Category> categories = new ArrayList<>();
     for (int i = 0; i < amount; i++) {
       if (supplier.getPreferences().getOrderType() == OrderType.ONLY_ONE_OPTION_PER_CATEGORY) {
-        OptionalInt max = supplier.getPreferences().getPricesForCategories().stream()
-            .mapToInt(PriceForCategories::getAmount).max();
+        OptionalInt max = supplier.getPreferences().getCategoriesPrices().stream()
+            .mapToInt(CategoriesPrice::getAmount).max();
         int amountOfCategoriesCreated = max.isPresent() ? max.getAsInt() + 1 : 1;
-        PriceForCategories priceForCategories = priceForCategoriesRepository.save(
-            PriceForCategories.builder()
+        CategoriesPrice categoriesPrice = categoriesPriceRepository.save(
+            CategoriesPrice.builder()
                 .amount(amountOfCategoriesCreated)
                 .supplierPreferences(supplier.getPreferences())
                 .price(faker.number().randomDouble(2, i * 10 + 1, i * 20 + 2))
                 .build());
-        LOGGER.info("Created Price for [{}] categories", priceForCategories.getAmount());
-        supplier.getPreferences().getPricesForCategories().add(priceForCategories);
+        LOGGER.info("Created Price for [{}] categories", categoriesPrice.getAmount());
+        supplier.getPreferences().getCategoriesPrices().add(categoriesPrice);
       }
 
       Category category = new Category();

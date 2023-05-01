@@ -28,7 +28,7 @@ public record SupplierPreferencesDto(
     @Min(value = 1, message = "minimumCategoriesForEmployeeOrder must be greater than 0")
     Integer minimumCategoriesForEmployeeOrder,
     OrderType orderType,
-    Set<UUID> pricesForCategoriesIds,
+    Set<UUID> categoriesPricesIds,
     UUID orderCapacityId,
     List<CategoryTag> categoriesTags) implements Serializable {
 

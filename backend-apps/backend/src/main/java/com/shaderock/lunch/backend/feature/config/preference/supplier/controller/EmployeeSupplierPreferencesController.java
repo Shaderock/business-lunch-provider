@@ -3,7 +3,7 @@ package com.shaderock.lunch.backend.feature.config.preference.supplier.controlle
 import com.shaderock.lunch.backend.feature.company.entity.Company;
 import com.shaderock.lunch.backend.feature.company.service.CompanyService;
 import com.shaderock.lunch.backend.feature.config.preference.supplier.dto.PublicSupplierPreferencesDto;
-import com.shaderock.lunch.backend.feature.config.preference.supplier.mapper.PublicSupplierPreferencesMapper;
+import com.shaderock.lunch.backend.feature.config.preference.supplier.mapper.SupplierPreferencesMapper;
 import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.util.ApiConstants;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class EmployeeSupplierPreferencesController {
 
-  private final PublicSupplierPreferencesMapper preferencesMapper;
+  private final SupplierPreferencesMapper preferencesMapper;
   private final CompanyService companyService;
   private final FilterManager filterManager;
 
@@ -37,7 +37,7 @@ public class EmployeeSupplierPreferencesController {
     List<PublicSupplierPreferencesDto> supplierPreferencesDtos = company.getSubscriptions().stream()
         .map(Subscription::getSupplier)
         .map(Supplier::getPreferences)
-        .map(preferencesMapper::toDto)
+        .map(preferencesMapper::toPublicDto)
         .toList();
 
     return ResponseEntity.ok(supplierPreferencesDtos);

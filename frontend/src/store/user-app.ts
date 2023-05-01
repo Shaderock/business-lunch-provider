@@ -29,6 +29,8 @@ import {Subscription} from "@/models/Subscription";
 import subscriptionService from "@/services/SubscriptionService";
 import {useEmployeeSubscriptionStore} from "@/store/company-adm-app";
 import {SubscriptionStatus} from "@/models/SubscriptionStatus";
+import categoriesPriceService from "@/services/CategoriesPriceService";
+import {CategoriesPrice} from "@/models/CategoriesPrice";
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -388,6 +390,7 @@ export const usePublicSupplierStore = defineStore('publicSupplierProfile', {
     publicSuppliersDetails: null as PublicOrganizationDetails | null,
     publicSuppliersPreferences: null as PublicSupplierPreferences | null,
     subscriptions: [] as Subscription [],
+    categoriesPrices: [] as CategoriesPrice[],
 
     categoriesOptions: [] as CategoryOptions[],
     currentCategoryOptions: null as CategoryOptions | null,
@@ -414,6 +417,10 @@ export const usePublicSupplierStore = defineStore('publicSupplierProfile', {
     },
     getCurrentCategory(): CategoryOptions | null {
       return this.currentCategoryOptions
+    },
+    getCategoriesPrices(): CategoriesPrice[] {
+      return this.categoriesPrices.sort((cur, next) =>
+        cur.amount - next.amount)
     },
     getCategoriesOptions(): CategoryOptions[] {
       return this.categoriesOptions
@@ -470,10 +477,15 @@ export const usePublicSupplierStore = defineStore('publicSupplierProfile', {
 
       const supplierResponse = await supplierService.requestSupplier(this.currentSupplierName)
       this.supplier = supplierResponse.data
+      if (this.getSupplier?.id) {
+        const categoriesPricesResponse = await categoriesPriceService.requestBySupplierId(this.getSupplier?.id)
+        this.categoriesPrices = categoriesPricesResponse.data
+      }
       const organizationResponse = await organizationService.requestDetailsForSupplier(this.currentSupplierName)
       this.publicSuppliersDetails = organizationResponse.data
       const preferencesResponse = await supplierPreferencesService.requestPreferencesForSupplier(this.currentSupplierName)
       this.publicSuppliersPreferences = preferencesResponse.data
+
       const categoriesResponse = await categoryService.requestCategoriesForSupplier(this.currentSupplierName)
 
       for (const category of categoriesResponse.data) {

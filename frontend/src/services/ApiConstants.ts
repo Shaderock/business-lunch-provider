@@ -68,4 +68,6 @@ export class ApiConstants {
   static readonly EMPLOYEE_SUPPLIER_PREFERENCES: string = ApiConstants.EMPLOYEE + ApiConstants.SUPPLIER_URL_PART +
     ApiConstants.PREFERENCES_URL_PART;
   static readonly EMPLOYEE_ORGANIZATION: string = ApiConstants.EMPLOYEE + ApiConstants.ORGANIZATION_PART;
+  static readonly SUPPLIER_ADM_CATEGORIES_PRICE: string = ApiConstants.SUPPLIER_ADM + "/categories-price";
+  static readonly ANONYM_CATEGORIES_PRICE: string = ApiConstants.ANONYM + "/categories-price";
 }

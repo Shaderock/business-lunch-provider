@@ -3,10 +3,15 @@
     <v-row justify="center">
       <v-col cols="6">
         <v-card class="mx-auto" elevation="20" variant="tonal">
-          <v-toolbar>
+          <v-toolbar extended extension-height="1">
             <v-toolbar-title>Organization Preferences</v-toolbar-title>
 
-            <v-btn color="primary" @click="initDialogue()">Edit Preferences</v-btn>
+            <v-btn :disabled="isLoading" color="primary" @click="initDialogue()">Edit Preferences
+            </v-btn>
+
+            <template v-slot:extension>
+              <v-progress-linear v-if="isLoading" striped/>
+            </template>
           </v-toolbar>
 
           <v-list>
@@ -24,13 +29,13 @@
             <v-list-item
               :subtitle="useSupAdmSupPrefStore().getPreferences.workDayStart?.toString() || ''"
               prepend-icon="mdi-clock-start"
-              title="Delivered not sooner than"/>
+              title="Work day start"/>
             <v-divider inset/>
 
             <v-list-item
               :subtitle="useSupAdmSupPrefStore().getPreferences.workDayEnd?.toString() || ''"
               prepend-icon="mdi-clock-end"
-              title="Delivered not later than"/>
+              title="Work day end"/>
             <v-divider inset/>
 
             <v-list-subheader>Orders</v-list-subheader>
@@ -63,34 +68,57 @@
       </v-col>
 
       <v-col cols="6">
-        <v-card class="mx-auto" elevation="20" variant="tonal">
+        <v-data-table :headers="headers"
+                      :items="useSupAdmSupPrefStore().getCategoriesPrices"
+                      class="elevation-20">
 
-          <v-toolbar>
-            <v-toolbar-title>Categories Prices</v-toolbar-title>
-            <v-btn color="primary">Add Price</v-btn>
-          </v-toolbar>
+          <template v-slot:top>
+            <v-toolbar extended extension-height="1" title="Categories Prices">
+              <v-btn :disabled="isLoading" color="primary" variant="outlined"
+                     @click="onAddCategoriesPriceMenu">Add
+                categories price
+              </v-btn>
 
-          <v-card-text>
-            <v-table>
-              <thead>
-              <tr>
-                <th scope="col">Categories (Amount)</th>
-                <th scope="col">Price (MDL)</th>
-              </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </v-table>
-          </v-card-text>
-        </v-card>
+              <template v-slot:extension>
+                <v-progress-linear v-if="isLoading" striped/>
+              </template>
+            </v-toolbar>
+          </template>
+
+          <template v-slot:item.actions="{ item, index }">
+            <v-btn :disabled="isLoading || isDialogLoading"
+                   icon
+                   variant="plain"
+                   @click="onEditCategoriesPriceMenu(item.raw)">
+              <v-icon icon="mdi-pencil"/>
+            </v-btn>
+
+            <v-btn
+              :disabled="isLoading || isDialogLoading || index !== useSupAdmSupPrefStore().getCategoriesPrices.length - 1"
+              icon
+              variant="plain">
+              <v-icon color="error" icon="mdi-delete"/>
+              <v-menu activator="parent">
+                <v-card title="Are you sure to remove this categories price?" variant="tonal">
+                  <v-card-actions>
+                    <v-btn block
+                           color="error"
+                           prepend-icon="mdi-delete"
+                           @click="onRemoveCategoriesPrice">
+                      Remove price
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-menu>
+            </v-btn>
+          </template>
+        </v-data-table>
       </v-col>
 
-      <v-dialog v-model="show">
+      <v-dialog v-model="show" :persistent="isDialogLoading">
         <v-row justify="center">
-          <v-col md="4" sm="8">
-            <v-card>
-              <v-card-title>Edit Organization Preferences</v-card-title>
-
+          <v-col md="4">
+            <v-card title="Edit Organization Preferences">
               <v-form ref="form" v-model="valid" @submit.prevent="submit()">
                 <v-card-text>
                   <v-card-subtitle class="pt4">Request Offset</v-card-subtitle>
@@ -101,8 +129,7 @@
                         :rules="[supplierPreferencesRules.minimumZero]"
                         color="primary"
                         label="Request Offset Days"
-                        type="number"
-                      />
+                        type="number"/>
                     </v-col>
                     <v-col>
                       <v-text-field
@@ -110,8 +137,7 @@
                         :rules="[supplierPreferencesRules.minimumZero]"
                         color="primary"
                         label="Request Offset Hours"
-                        type="number"
-                      />
+                        type="number"/>
                     </v-col>
                     <v-col>
                       <v-text-field
@@ -119,8 +145,7 @@
                         :rules="[supplierPreferencesRules.minimumZero]"
                         color="primary"
                         label="Request Offset Minutes"
-                        type="number"
-                      />
+                        type="number"/>
                     </v-col>
                   </v-row>
 
@@ -132,8 +157,7 @@
                         color="primary"
                         hint="Enter the time when you start accepting lunch requests"
                         label="Start work at"
-                        type="time"
-                      />
+                        type="time"/>
                     </v-col>
                     <v-col>
                       <v-text-field
@@ -142,8 +166,7 @@
                         color="primary"
                         hint="Enter the time when you stop accepting lunch requests"
                         label="End work at"
-                        type="time"
-                      />
+                        type="time"/>
                     </v-col>
                   </v-row>
 
@@ -160,6 +183,7 @@
                     <v-col>
                       <v-text-field
                         v-model="updatePreferences.minimumCategories"
+                        :rules="[supplierPreferencesRules.required, supplierPreferencesRules.minimumOne]"
                         color="primary"
                         hint="Enter a minimum amount of categories required for employee's order"
                         label="Minimum categories in employee's order"
@@ -198,19 +222,88 @@
                 </v-card-text>
 
                 <v-card-actions>
-                  <v-btn color="primary" type="submit" variant="outlined">Save</v-btn>
-                  <v-btn color="secondary" variant="plain" @click="show = false">Cancel</v-btn>
+                  <v-btn :loading="isDialogLoading" block color="primary" type="submit"
+                         variant="outlined">Save
+                  </v-btn>
                 </v-card-actions>
               </v-form>
             </v-card>
           </v-col>
         </v-row>
       </v-dialog>
+
+      <v-dialog v-model="showAddCategoriesPriceDialog" :persistent="isDialogLoading">
+        <v-row justify="center">
+          <v-col md="3">
+            <v-form @submit.prevent="onAddCategoriesPrice">
+              <v-card title="Add Categories Price">
+                <v-card-subtitle>
+                  Amount:
+                  <v-chip color="info" label>
+                    {{ useSupAdmSupPrefStore().getNextCategoriesPricesAmount }}
+                  </v-chip>
+                </v-card-subtitle>
+
+                <v-card-text>
+                  <v-text-field
+                    v-model="categoriesPrice.price"
+                    :rules="[supplierPreferencesRules.required, supplierPreferencesRules.positiveDecimal]"
+                    label="Price for categories"
+                    min="0"
+                    step="0.01"
+                    type="number"/>
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-btn :loading="isDialogLoading" block color="primary" type="submit"
+                         variant="outlined">
+                    Add
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-form>
+          </v-col>
+        </v-row>
+
+      </v-dialog>
+
+      <v-dialog v-model="showEditCategoriesPriceDialog" :persistent="isDialogLoading">
+        <v-row justify="center">
+          <v-col md="3">
+            <v-form @submit.prevent="onEditCategoriesPrice">
+              <v-card title="Edit Categories Price">
+                <v-card-subtitle>
+                  Amount:
+                  <v-chip color="info" label>{{ categoriesPrice.amount }}</v-chip>
+                </v-card-subtitle>
+
+                <v-card-text>
+                  <v-text-field
+                    v-model="categoriesPrice.price"
+                    :rules="[supplierPreferencesRules.required, supplierPreferencesRules.positiveDecimal]"
+                    label="Price for categories"
+                    min="0"
+                    step="0.01"
+                    type="number"/>
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-btn :loading="isDialogLoading" block color="primary" type="submit"
+                         variant="outlined">
+                    Save
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-form>
+          </v-col>
+        </v-row>
+
+      </v-dialog>
     </v-row>
   </v-container>
 </template>
 <script lang="ts" setup>
-import {computed, onMounted, Ref, ref} from "vue";
+import {onMounted, Ref, ref} from "vue";
 import {useSupAdmSupPrefStore} from "@/store/supplier-adm-app";
 import {OrderType} from "@/models/OrderType";
 import supplierPreferencesService from "@/services/SupplierPreferencesService";
@@ -220,16 +313,21 @@ import toastManager from "@/services/ToastManager";
 import {Utils} from "@/models/Utils";
 import {VForm} from "vuetify/components";
 import {CategoryTag} from "@/models/CategoryTag";
+import {CategoriesPrice} from "@/models/CategoriesPrice";
 
 onMounted(() => {
-  useSupAdmSupPrefStore().requestFreshPreferencesData()
-  //todo request price categories
+  useSupAdmSupPrefStore().requestFreshPreferencesDataIfEmpty().finally(() => {
+    isLoading.value = false
+  })
 })
 
 const form = ref(null) as Ref<InstanceType<typeof VForm> | null>;
-const tags = computed(() => useSupAdmSupPrefStore().getPreferences.categoriesTags)
 const valid = ref(false);
 const show = ref(false)
+const showAddCategoriesPriceDialog = ref(false)
+const showEditCategoriesPriceDialog = ref(false)
+const isLoading = ref(true)
+const isDialogLoading = ref(false)
 const updatePreferences = ref({
   offsetDays: 0,
   offsetHours: 0,
@@ -241,6 +339,14 @@ const updatePreferences = ref({
   orderType: OrderType.UnlimitedOptions,
   categoriesTags: [CategoryTag.SALADS]
 });
+const categoriesPrice = ref()
+
+
+const headers = [
+  {title: 'Categories (Amount)', key: 'amount', align: 'center'},
+  {title: 'Price (MDL)', key: 'price', align: 'center'},
+  {title: 'Actions', key: 'actions', sortable: false, align: 'center'},
+]
 
 const supplierPreferencesRules = {
   required: (value: any) => !!value || 'Required field.',
@@ -249,6 +355,9 @@ const supplierPreferencesRules = {
   },
   minimumOne: (value: number) => {
     return value >= 1 || 'Should be greater than zero.';
+  },
+  positiveDecimal: (value: number) => {
+    return value >= 0.01 || 'Should be greater than zero.';
   },
 };
 
@@ -288,6 +397,7 @@ async function submit() {
   await form.value?.validate()
   if (valid.value === true) {
     try {
+      isDialogLoading.value = true
       const days: number = updatePreferences.value.offsetDays
       const hours: number = updatePreferences.value.offsetHours
       const minutes: number = updatePreferences.value.offsetMinutes
@@ -313,7 +423,47 @@ async function submit() {
     } catch (error) {
       console.log('Something wrong happened during preferences update: ' + error)
       toastManager.showDefaultError("There was an error during preferences update")
+    } finally {
+      isDialogLoading.value = false
     }
+  }
+}
+
+async function onAddCategoriesPriceMenu() {
+  categoriesPrice.value = new CategoriesPrice('', 1, 0.01)
+  showAddCategoriesPriceDialog.value = true
+}
+
+async function onEditCategoriesPriceMenu(pfc: CategoriesPrice) {
+  categoriesPrice.value = new CategoriesPrice(pfc.id, pfc.amount, pfc.price)
+  showEditCategoriesPriceDialog.value = true
+}
+
+async function onAddCategoriesPrice() {
+  try {
+    isDialogLoading.value = true
+    await useSupAdmSupPrefStore().addPriceForCategories(categoriesPrice.value)
+  } finally {
+    isDialogLoading.value = false
+  }
+}
+
+async function onEditCategoriesPrice() {
+  try {
+    isDialogLoading.value = true
+    await useSupAdmSupPrefStore().editPriceForCategories(categoriesPrice.value)
+    showEditCategoriesPriceDialog.value = false
+  } finally {
+    isDialogLoading.value = false
+  }
+}
+
+async function onRemoveCategoriesPrice() {
+  try {
+    isDialogLoading.value = true
+    await useSupAdmSupPrefStore().removePriceForCategories()
+  } finally {
+    isDialogLoading.value = false
   }
 }
 </script>

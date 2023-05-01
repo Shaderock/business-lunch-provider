@@ -18,9 +18,9 @@ public record PublicSupplierPreferencesDto(
     Duration requestOffset,
     LocalTime workDayStart,
     LocalTime workDayEnd,
-    Integer minimumOrdersPerRequest,
+    Integer minimumOrdersPerCompanyRequest,
     Integer minimumCategoriesForEmployeeOrder,
-    Set<UUID> pricesForCategoriesIds,
+    Set<UUID> categoriesPricesIds,
     OrderType orderType,
     List<CategoryTag> categoriesTags) implements Serializable {
 
