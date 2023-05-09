@@ -4,6 +4,7 @@ lunch:
     users:
       generate:
         default: false
+        password: dummy
     actuator:
       username: test
       password: test
