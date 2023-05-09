@@ -24,7 +24,7 @@ jobs:
           distribution: 'corretto'
 
       - name: Build with Maven
-        run: mvn -B clean install -Pintegration-test
+        run: mvn -B -f backend-apps/backend/pom.xml clean install -Pintegration-test
 
       - name: Send email if build fails
         if: failure()
