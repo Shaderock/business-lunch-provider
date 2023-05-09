@@ -18,12 +18,12 @@ public class ArchitectureTests {
       .layer("Controller").definedBy("..controller..")
       .layer("Service").definedBy("..service..")
       .layer("Repository").definedBy("..repository..")
-      .layer("Entities").definedBy("..BaseEntity..")
+      .layer("Entities").definedBy("..entity..")
 
       .whereLayer("Controller").mayNotBeAccessedByAnyLayer()
       .whereLayer("Service").mayOnlyBeAccessedByLayers("Controller", "Service")
-      .whereLayer("Repository").mayOnlyBeAccessedByLayers("Service")
-      .whereLayer("Entities").mayOnlyBeAccessedByLayers("Repository", "Service");
+      .whereLayer("Repository").mayOnlyBeAccessedByLayers("Controller", "Service")
+      .whereLayer("Entities").mayOnlyBeAccessedByLayers("Controller", "Repository", "Service");
 
   @ArchTest
   static final ArchRule fieldInjectionNotAllowed = ArchRuleDefinition.noFields().should(

@@ -261,6 +261,31 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>dev</id>
+      <properties>
+        <skipTests>true</skipTests>
+        <spring.profiles.active>dev</spring.profiles.active>
+      </properties>
+    </profile>
+
+    <profile>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <id>integration-test</id>
+      <properties>
+        <spring.profiles.active>integration-test</spring.profiles.active>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>prod</id>
+      <properties>
+        <spring.profiles.active>prod</spring.profiles.active>
+      </properties>
+    </profile>
   </profiles>
 
 </project>

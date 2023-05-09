@@ -1,49 +1,85 @@
 version: '3.8'
 
+x-environment:
+  &default-environment
+  ACTUATOR_USERNAME: ${ACTUATOR_USERNAME:-actuator}
+  ACTUATOR_PASSWORD: ${ACTUATOR_PASSWORD:-admin}
+  BLP_EMAIL_USER: ${BLP_EMAIL_USER:-user@example.com}
+  BLP_EMAIL_PASS: ${BLP_EMAIL_PASS:-password}
+  DISCOVERY_USERNAME: ${DISCOVERY_USERNAME:-admin}
+  DISCOVERY_PASSWORD: ${DISCOVERY_PASSWORD:-admin}
+  JWT_SECRET: ${JWT_SECRET:-dummySecret}
+  MONITORING_USERNAME: ${ACTUATOR_USERNAME:-monitoring}
+  MONITORING_PASSWORD: ${ACTUATOR_PASSWORD:-admin}
+  POSTGRES_DB: ${POSTGRES_DB:-business-lunch-provider-db}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-db_password}
+  POSTGRES_USER: ${POSTGRES_USER:-db_user}
+  SPRING_SECURITY_PASSWORD: ${SPRING_SECURITY_PASSWORD:-admin}
+  SPRING_SECURITY_USERNAME: ${SPRING_SECURITY_USERNAME:-actuator}
+  SYSTEM_ADMIN_EMAIL: ${SYSTEM_ADMIN_EMAIL:-sysadm@adm.adm.adm}
+  SYSTEM_ADMIN_PASSWORD: ${SYSTEM_ADMIN_PASSWORD:-sysadm}
+  USERS_GENERATE_PASSWORD: ${USERS_GENERATE_PASSWORD:-test}
+  VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_ROOT_TOKEN_ID:-vault-token}
+  VAULT_DEV_LISTEN_ADDRESS: ${VAULT_DEV_LISTEN_ADDRESS:-0.0.0.0:8200}
+  VAULT_ADDR: ${VAULT_ADDR:-http://vault:8200}
+  VAULT_TOKEN: ${VAULT_TOKEN:-vault-token}
+
+volumes:
+  db-data:
+
 services:
   ###########################################################################################
   database:
     image: 'postgres:15'
     ports:
       - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: db_user
-      POSTGRES_PASSWORD: db_password
-      POSTGRES_DB: business-lunch-provider-db
+      <<: *default-environment
   ###########################################################################################
   vault:
     image: vault:1.12.2
     ports:
       - "8200:8200"
+    cap_add:
+      - IPC_LOCK
     environment:
-      - cap-add=IPC_LOCK
-      - VAULT_DEV_ROOT_TOKEN_ID=${TOKEN_VAULT}
-      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+      <<: *default-environment
   ###########################################################################################
   vault-hack:
     image: vault:1.12.2
     depends_on:
       - vault
     environment:
-      - VAULT_ADDR=http://vault:8200
-      - VAULT_TOKEN=${TOKEN_VAULT}
+      <<: *default-environment
     command: >
-      sh -c ' sleep 5
+      /bin/sh -c ' sleep 5
       && date
-      && vault kv put secret/blp-discovery 
-      lunch.discovery.username=admin lunch.discovery.password=admin
+      && vault kv put secret/blp-discovery
+      lunch.discovery.username=$${DISCOVERY_USERNAME}
+      lunch.discovery.password=$${DISCOVERY_PASSWORD}
       && vault kv put secret/blp-backend 
-      lunch.discovery.username=admin lunch.discovery.password=admin 
-      lunch.jwt.secret=dummySecret lunch.database.username=db_user 
-      lunch.database.password=db_password lunch.mail.username=${BLP_EMAIL_USER} 
-      lunch.mail.password="$BLP_EMAIL_PASS"
-      lunch.backend.actuator.username=actuator lunch.backend.actuator.password=admin
-      spring.security.user.name=actuator spring.security.user.password=admin
-      lunch.backend.system.admin.email=sysadm@adm.adm.adm
-      lunch.backend.system.admin.password=sysadm
+      lunch.discovery.username=$${DISCOVERY_USERNAME}
+      lunch.discovery.password=$${DISCOVERY_PASSWORD}
+      lunch.jwt.secret=$${JWT_SECRET}
+      lunch.database.username=$${POSTGRES_USER}
+      lunch.database.password=$${POSTGRES_PASSWORD}
+      lunch.mail.username=$${BLP_EMAIL_USER}
+      lunch.mail.password="$${BLP_EMAIL_PASS}"
+      lunch.backend.actuator.username=$${ACTUATOR_USERNAME}
+      lunch.backend.actuator.password=$${ACTUATOR_PASSWORD}
+      lunch.backend.users.generate.password=$${USERS_GENERATE_PASSWORD}
+      spring.security.user.name=$${SPRING_SECURITY_USERNAME}
+      spring.security.user.password=$${SPRING_SECURITY_PASSWORD}
+      lunch.backend.system.admin.email=$${SYSTEM_ADMIN_EMAIL}
+      lunch.backend.system.admin.password=$${SYSTEM_ADMIN_PASSWORD}
       && vault kv put secret/blp-spring-admin 
-      lunch.monitoring.username=admin lunch.monitoring.password=admin
-      lunch.discovery.username=admin lunch.discovery.password=admin 
-      lunch.backend.actuator.username=actuator lunch.backend.actuator.password=admin     
+      lunch.monitoring.username=$${DISCOVERY_USERNAME}
+      lunch.monitoring.password=$${DISCOVERY_PASSWORD}
+      lunch.discovery.username=$${DISCOVERY_USERNAME}
+      lunch.discovery.password=$${DISCOVERY_PASSWORD}
+      lunch.backend.actuator.username=$${ACTUATOR_USERNAME}
+      lunch.backend.actuator.password=$${ACTUATOR_PASSWORD}
       && date
       && exit'

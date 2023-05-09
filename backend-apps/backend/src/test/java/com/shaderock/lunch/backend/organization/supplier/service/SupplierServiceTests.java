@@ -16,6 +16,7 @@ import com.shaderock.lunch.backend.feature.food.menu.service.MenuService;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.feature.organization.form.OrganizationRegistrationForm;
 import com.shaderock.lunch.backend.feature.organization.service.OrganizationDetailsService;
+import com.shaderock.lunch.backend.feature.organization.service.OrganizationDetailsValidationService;
 import com.shaderock.lunch.backend.feature.supplier.entity.Supplier;
 import com.shaderock.lunch.backend.feature.supplier.repository.SupplierRepository;
 import com.shaderock.lunch.backend.feature.supplier.service.SupplierService;
@@ -39,6 +40,8 @@ class SupplierServiceTests {
   private SupplierRepository supplierRepository;
   @Mock
   private OrganizationDetailsService organizationDetailsService;
+  @Mock
+  private OrganizationDetailsValidationService organizationDetailsValidationService;
   @Mock
   private MenuService menuService;
   @Mock
@@ -148,6 +151,9 @@ class SupplierServiceTests {
         .menuUrl(URI.create("http://fourth"))
         .build();
     supplierUpdate.setId(supplier.getId());
+
+    when(supplierRepository.save(any())).thenReturn(supplierUpdate);
+
     Supplier updatedSupplier = supplierService.update(supplierUpdate);
 
     assertNotNull(updatedSupplier);

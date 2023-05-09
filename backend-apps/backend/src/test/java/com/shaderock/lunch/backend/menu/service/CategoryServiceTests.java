@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
@@ -14,6 +14,7 @@ import com.shaderock.lunch.backend.feature.food.category.entity.Category;
 import com.shaderock.lunch.backend.feature.food.category.mapper.CategoryMapper;
 import com.shaderock.lunch.backend.feature.food.category.repository.CategoryRepository;
 import com.shaderock.lunch.backend.feature.food.category.service.CategoryService;
+import com.shaderock.lunch.backend.feature.food.category.service.CategoryValidationService;
 import com.shaderock.lunch.backend.feature.food.menu.entity.Menu;
 import com.shaderock.lunch.backend.feature.food.option.entity.Option;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
@@ -36,6 +37,8 @@ class CategoryServiceTests {
   private CategoryRepository categoryRepository;
   @Mock
   private CategoryMapper categoryMapper;
+  @Mock
+  private CategoryValidationService categoryValidationService;
   @InjectMocks
   private CategoryService categoryService;
   private Category category;
@@ -80,8 +83,6 @@ class CategoryServiceTests {
   @Test
   void CreateCategory_OnValidDto_ReturnsCreatedCategory() {
     when(categoryMapper.toEntity(any())).thenReturn(category);
-    when(categoryRepository.findByNameAndMenu_Supplier_Id(anyString(), any())).thenReturn(
-        Optional.empty());
     when(categoryRepository.save(any())).thenReturn(category);
 
     category.setMenu(null);
@@ -95,8 +96,9 @@ class CategoryServiceTests {
 
   @Test
   void CreateCategory_OnCategoryAlreadyExists_CrudValidationExceptionThrown() {
-    when(categoryRepository.findByNameAndMenu_Supplier_Id(anyString(), any())).thenReturn(
-        Optional.of(category));
+    doThrow(new CrudValidationException("Exists"))
+        .when(categoryValidationService)
+        .validateCreate(any(), any());
     assertThrows(CrudValidationException.class, () -> categoryService.create(category, supplier));
   }
 

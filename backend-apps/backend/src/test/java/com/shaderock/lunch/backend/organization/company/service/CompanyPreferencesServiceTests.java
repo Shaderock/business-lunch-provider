@@ -98,6 +98,7 @@ class CompanyPreferencesServiceTests {
     when(companyPreferenceRepository.findByCompany_OrganizationDetails_Users_UserDetails_Id(
         any())).thenReturn(Optional.of(preferences));
     when(companyPreferencesMapper.toEntity(any())).thenReturn(preferences);
+    when(companyPreferenceRepository.save(any())).thenReturn(preferences);
 
     CompanyPreferences updated = companyPreferencesService.update(preferencesDto, userDetails);
     assertNotNull(updated);
@@ -137,6 +138,7 @@ class CompanyPreferencesServiceTests {
         spyMapper);
     when(companyPreferenceRepository.findByCompany_OrganizationDetails_Users_UserDetails_Id(any()))
         .thenReturn(Optional.of(preferences));
+    when(companyPreferenceRepository.save(any())).thenReturn(preferences);
 
     CompanyPreferences updated = companyPreferencesService.update(preferencesDto, userDetails);
     assertNotNull(updated);

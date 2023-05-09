@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @RequiredArgsConstructor
-@Profile("!test")
+@Profile("!integration-test")
 public class SpanAspect {
 
   private final Tracer tracer;

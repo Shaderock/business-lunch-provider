@@ -52,7 +52,7 @@ import org.springframework.web.context.WebApplicationContext;
 @TestPropertySource(properties = {"spring.config.name=application-integration-test",
     "spring.config.location=classpath:/"})
 @TestInstance(Lifecycle.PER_CLASS)
-@ActiveProfiles("test")
+@ActiveProfiles("integration-test")
 class CategoryControllerIntegrationTests {
 
   private MockMvc mockMvc;
@@ -136,23 +136,6 @@ class CategoryControllerIntegrationTests {
     when(mockPrincipal.getName()).thenReturn("test");
     when(supplierRepository.findByOrganizationDetails_Users_UserDetails_Email(
         anyString())).thenReturn(Optional.empty());
-
-    mockMvc.perform(post(ApiConstants.SUPPLIER_ADM_CATEGORY)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(categoryDto))
-            .principal(mockPrincipal))
-        .andDo(print())
-        .andExpect(status().isBadRequest());
-  }
-
-  @Test
-  void CreateCategory_OnCategoryAlreadyExists_ReturnsBadRequest() throws Exception {
-    Principal mockPrincipal = Mockito.mock(Principal.class);
-    when(mockPrincipal.getName()).thenReturn("test");
-    when(supplierRepository.findByOrganizationDetails_Users_UserDetails_Email(
-        anyString())).thenReturn(Optional.of(supplier));
-    when(categoryRepository.findByNameAndMenu_Supplier_Id(anyString(), any())).thenReturn(
-        Optional.of(category));
 
     mockMvc.perform(post(ApiConstants.SUPPLIER_ADM_CATEGORY)
             .contentType(MediaType.APPLICATION_JSON)

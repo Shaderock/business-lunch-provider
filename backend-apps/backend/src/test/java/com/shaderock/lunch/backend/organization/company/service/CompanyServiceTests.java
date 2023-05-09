@@ -19,6 +19,7 @@ import com.shaderock.lunch.backend.feature.details.type.Role;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.feature.organization.form.OrganizationRegistrationForm;
 import com.shaderock.lunch.backend.feature.organization.service.OrganizationDetailsService;
+import com.shaderock.lunch.backend.feature.organization.service.OrganizationDetailsValidationService;
 import com.shaderock.lunch.backend.feature.user.entity.AppUser;
 import java.util.HashSet;
 import java.util.Optional;
@@ -42,6 +43,8 @@ class CompanyServiceTests {
   private CompanyPreferencesService companyPreferencesService;
   @InjectMocks
   private CompanyService companyService;
+  @Mock
+  private OrganizationDetailsValidationService organizationDetailsValidationService;
   private OrganizationDetails organizationDetails;
   private Company company;
   private AppUserDetails userDetails;

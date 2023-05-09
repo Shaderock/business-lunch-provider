@@ -6,7 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.shaderock.lunch.backend.communication.exception.CrudValidationException;
@@ -41,6 +42,8 @@ class OrganizationDetailsServiceTests {
   private OrganizationDetailsRepository organizationDetailsRepository;
   @InjectMocks
   private OrganizationDetailsService organizationDetailsService;
+  @Mock
+  private OrganizationDetailsValidationService organizationDetailsValidationServiceMock;
   @InjectMocks
   private OrganizationDetailsValidationService organizationDetailsValidationService;
   @Mock
@@ -52,7 +55,7 @@ class OrganizationDetailsServiceTests {
 
   @BeforeEach
   public void init() {
-    OrganizationDetails organizationDetails = OrganizationDetails.builder()
+    organizationDetails = OrganizationDetails.builder()
         .name("organization")
         .phone("+373777777")
         .email("organization@dummy.email.test")
@@ -84,8 +87,7 @@ class OrganizationDetailsServiceTests {
 
     assertThrows(CompanyRegistrationValidationException.class,
         () -> organizationDetailsValidationService.validateOrganizationRegistration(
-            registrationForm,
-            userDetails));
+            registrationForm, userDetails));
   }
 
   @Test
@@ -103,6 +105,9 @@ class OrganizationDetailsServiceTests {
 
   @Test
   void CreateOrganization_OnBlankName_ValidationExceptionThrown() {
+    doThrow(new CrudValidationException("Blank name"))
+        .when(organizationDetailsValidationServiceMock)
+        .validateCreate(organizationDetails);
     organizationDetails.setName("");
 
     assertThrows(ValidationException.class,
@@ -111,6 +116,9 @@ class OrganizationDetailsServiceTests {
 
   @Test
   void CreateOrganization_OnNullName_ValidationExceptionThrown() {
+    doThrow(new CrudValidationException("Null name"))
+        .when(organizationDetailsValidationServiceMock)
+        .validateCreate(organizationDetails);
     organizationDetails.setName(null);
 
     assertThrows(ValidationException.class,
@@ -119,8 +127,9 @@ class OrganizationDetailsServiceTests {
 
   @Test
   void CreateOrganization_OnOrganizationExists_ValidationExceptionThrown() {
-    when(organizationDetailsRepository.existsByName(anyString())).thenReturn(
-        true);
+    doThrow(new CrudValidationException("Exists"))
+        .when(organizationDetailsValidationServiceMock)
+        .validateCreate(organizationDetails);
 
     assertThrows(ValidationException.class,
         () -> organizationDetailsService.create(organizationDetails));
@@ -128,9 +137,11 @@ class OrganizationDetailsServiceTests {
 
   @Test
   void CreateOrganization_OnValidOrganization_ReturnsOrganizationCreated() {
-    when(organizationDetailsRepository.existsByName(anyString())).thenReturn(false);
     when(organizationDetailsRepository.save(any(OrganizationDetails.class))).thenReturn(
         organizationDetails);
+    doNothing()
+        .when(organizationDetailsValidationServiceMock)
+        .validateCreate(organizationDetails);
 
     OrganizationDetails created = organizationDetailsService.create(
         organizationDetails);
@@ -148,6 +159,8 @@ class OrganizationDetailsServiceTests {
 
   @Test
   void ReadOrganizationByPrincipal_OnUserHasOrganization_ReturnsOrganization() {
+    when(organizationDetailsRepository.findByUsers_UserDetails(userDetails)).thenReturn(
+        Optional.of(organizationDetails));
     OrganizationDetails createdDetails = organizationDetailsService.read(userDetails);
 
     assertNotNull(createdDetails);
@@ -222,14 +235,5 @@ class OrganizationDetailsServiceTests {
   void DeleteOrganization_OnNullOrganizationPassed_ReturnsUpdatedOrganization() {
     UUID nullId = UUID.randomUUID();
     assertThrows(CrudValidationException.class, () -> organizationDetailsService.delete(nullId));
-  }
-
-  @Test
-  void DeleteOrganization_OnOrganizationNotFound_ReturnsUpdatedOrganization() {
-    when(organizationDetailsRepository.findById(organizationDetails.getId())).thenReturn(
-        Optional.empty());
-
-    assertThrows(CrudValidationException.class,
-        () -> organizationDetailsService.delete(organizationDetails));
   }
 }

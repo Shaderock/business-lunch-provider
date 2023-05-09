@@ -3,7 +3,7 @@ lunch:
     url: ${BACKEND_URL}
     users:
       generate:
-        default: false
+        default: true
   frontend:
     url: ${FRONTEND_URL}
   discovery:

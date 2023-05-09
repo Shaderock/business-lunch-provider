@@ -57,7 +57,6 @@ import org.springframework.stereotype.Component;
 public class StartupEntitiesGenerator implements
     ApplicationListener<ContextRefreshedEvent> {
 
-  public static final String DEFAULT_USER_PASSWORD = "test";
   private final CategoriesPriceRepository categoriesPriceRepository;
   private final CompanyRepository companyRepository;
   private final SupplierRepository supplierRepository;
@@ -77,6 +76,8 @@ public class StartupEntitiesGenerator implements
   private String sysAdminPassword;
   @Value(value = "${lunch.backend.users.generate.default}")
   private boolean shouldDefaultUsersBeGenerated;
+  @Value(value = "${lunch.backend.users.generate.password}")
+  private String defaultDummyUserPassword;
 
   @Override
   @Transactional
@@ -129,7 +130,7 @@ public class StartupEntitiesGenerator implements
     for (int i = 0; i < 50; i++) {
       Optional<AppUserDetails> generatedUser = generateUser(
           faker.internet().safeEmailAddress(),
-          "test",
+          defaultDummyUserPassword,
           faker.name().firstName(),
           faker.name().lastName(),
           Set.of(Role.USER));
@@ -304,7 +305,7 @@ public class StartupEntitiesGenerator implements
     for (int i = 0; i < 20; i++) {
       Optional<AppUserDetails> generatedUser = generateUser(
           faker.internet().safeEmailAddress(),
-          "test",
+          defaultDummyUserPassword,
           faker.name().firstName(),
           faker.name().lastName(),
           Set.of(Role.EMPLOYEE));
@@ -319,7 +320,7 @@ public class StartupEntitiesGenerator implements
   private void generateDefaultUsers() {
     LOGGER.info("Generating default users");
     for (User user : User.values()) {
-      generateUser(user.email, DEFAULT_USER_PASSWORD, user.firstName, user.lastName, user.roles);
+      generateUser(user.email, defaultDummyUserPassword, user.firstName, user.lastName, user.roles);
     }
   }
 
