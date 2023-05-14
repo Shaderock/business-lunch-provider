@@ -9,7 +9,7 @@ pipeline {
         stage('Dockerize Backend Spring Boot Application') {
             steps {
                 sh 'cd backend-apps && cd backend && sudo docker build -t blp-backend .'
-                sh 'cd backend-apps && cd backend && sudo docker run -d -p 8080:8080 -e BACKEND_URL=http://104.248.80.209:8081 -e FRONTEND_URL=http://104.248.80.209:3000 -e DISCOVERY-ADDRESS=104.248.80.209:5050 -e DATABASE_ADDRESS=104.248.80.209:5432 blp-backend'
+                sh 'cd backend-apps && cd backend && sudo docker run -d -p 8081:8081 -e BACKEND_URL=http://104.248.80.209:8081 -e FRONTEND_URL=http://104.248.80.209:3000 -e DISCOVERY-ADDRESS=104.248.80.209:5050 -e DATABASE_ADDRESS=104.248.80.209:5432 blp-backend'
             }
         }
     }
