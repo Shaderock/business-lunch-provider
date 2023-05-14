@@ -10,3 +10,6 @@ lunch:
     address: ${DISCOVERY_ADDRESS}
   database:
     address: ${DATABASE_ADDRESS}
+
+server:
+  port: 8081
