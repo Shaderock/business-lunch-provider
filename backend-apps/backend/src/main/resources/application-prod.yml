@@ -13,3 +13,7 @@ lunch:
 
 server:
   port: 8081
+spring:
+  cloud:
+    vault:
+      uri: http://104.248.80.209:8200
