@@ -10,7 +10,7 @@
   <appender name="BACKEND-APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
       <fileNamePattern>
-        D:/business-lunch-provider/logs/%d{yyyy-MM-dd}/backend/backend.%i.log.zip
+        business-lunch-provider-logs/%d{yyyy-MM-dd}/backend/backend.%i.log.zip
       </fileNamePattern>
       <maxFileSize>50MB</maxFileSize>
       <maxHistory>30</maxHistory>
