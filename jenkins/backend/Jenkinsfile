@@ -3,8 +3,7 @@ pipeline {
     stages {
         stage('Build and Test Backend Spring Boot Application') {
             steps {
-                sh 'sudo whoami'
-                sh 'cd backend-apps && cd backend && sudo mvn clean test'
+                sh 'cd backend-apps && cd backend && sudo mvn clean verify'
             }
         }
         stage('Dockerize Backend Spring Boot Application') {
