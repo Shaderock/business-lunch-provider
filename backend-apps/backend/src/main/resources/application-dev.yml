@@ -10,7 +10,3 @@ lunch:
     address: localhost:8761
   database:
     address: localhost:5432
-spring:
-  cloud:
-    vault:
-      uri: http://localhost:8200

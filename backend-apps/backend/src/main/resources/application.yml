@@ -43,6 +43,9 @@ spring:
       reactive.enabled: false
       authentication: TOKEN
       token: ${TOKEN_VAULT}
+      scheme: http
+      host: ${VAULT_HOST:localhost}
+      port: 8200
   security:
     user:
       name: ${lunch.backend.actuator.password}
