@@ -89,7 +89,7 @@
               <v-row justify="center">
                 <v-col md="6">
                   <v-card>
-                    <v-card-title>{{ usePublicSupplierStore().getDetails.name }}</v-card-title>
+                    <v-card-title>{{ usePublicSupplierStore().getDetails?.name || ''}}</v-card-title>
                     <v-card-text>
                       <v-list>
                         <v-list-subheader title="Details"/>

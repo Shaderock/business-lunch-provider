@@ -8,7 +8,7 @@
               <template v-slot:extension>
                 <v-tabs v-model="supplierTabs" :disabled="isLoading" align-tabs="start">
                   <v-tab v-for="cartSupplierInfo in useCartStore().getCartSuppliersInfo"
-                         :key="cartSupplierInfo.supplier.id"
+                         :key="cartSupplierInfo.supplier.id ?? undefined"
                          :value="cartSupplierInfo"
                          color="primary"
                          @click="switchSupplier(cartSupplierInfo)">
@@ -64,14 +64,14 @@
               <v-list>
                 <v-list-item title="Supplier">
                   <v-list-item-subtitle>
-                    {{ useCartStore().getCurrentSupplierInfo.supplierDetails.name }}
+                    {{ useCartStore().getCurrentSupplierInfo?.supplierDetails.name || ''}}
                   </v-list-item-subtitle>
                 </v-list-item>
                 <v-divider inset/>
 
                 <v-list-item title="Options amount">
                   <v-list-item-subtitle>
-                    {{ useCartStore().getCartSupplierCartOptions.length }}
+                    {{ useCartStore().getCartSupplierCartOptions.length ?? ''}}
                   </v-list-item-subtitle>
                 </v-list-item>
                 <v-divider/>
@@ -103,7 +103,7 @@
                 <v-list-item title="Supplier default price sum">
                   <template v-slot:append>
                     <v-chip class="font-weight-bold" color="info" label>
-                      +{{ useCartStore().getCurrentOrderWithPrices.supplierDefaultPrice }} MDL
+                      +{{ useCartStore().getCurrentOrderWithPrices?.supplierDefaultPrice || '' }} MDL
                     </v-chip>
                   </template>
                 </v-list-item>
@@ -112,7 +112,7 @@
                 <v-list-item prepend-icon="mdi-sale" title="Supplier discount">
                   <template v-slot:append>
                     <v-chip class="font-weight-bold" color="secondary" label>
-                      -{{ useCartStore().getCurrentOrderWithPrices.supplierDiscount }} MDL
+                      -{{ useCartStore().getCurrentOrderWithPrices?.supplierDiscount || ''}} MDL
                     </v-chip>
                   </template>
                 </v-list-item>
@@ -121,7 +121,7 @@
                 <v-list-item prepend-icon="mdi-sale" title="Company discount">
                   <template v-slot:append>
                     <v-chip class="font-weight-bold" color="secondary" label>
-                      -{{ useCartStore().getCurrentOrderWithPrices.companyDiscount }} MDL
+                      -{{ useCartStore().getCurrentOrderWithPrices?.companyDiscount || '' }} MDL
                     </v-chip>
                   </template>
                 </v-list-item>
@@ -130,7 +130,7 @@
                 <v-list-item title="Final price">
                   <template v-slot:append>
                     <v-chip class="font-weight-bold" color="success" label>
-                      {{ useCartStore().getCurrentOrderWithPrices.finalPrice }} MDL
+                      {{ useCartStore().getCurrentOrderWithPrices?.finalPrice || '' }} MDL
                     </v-chip>
                   </template>
                 </v-list-item>
@@ -170,7 +170,7 @@
             <v-col v-if="!isLoading">
               <v-window v-model="supplierTabs">
                 <v-window-item v-for="cartSupplierInfo in useCartStore().getCartSuppliersInfo"
-                               :key="cartSupplierInfo.supplier.id"
+                               :key="cartSupplierInfo.supplier.id ?? ''"
                                :value="cartSupplierInfo">
                   <v-row justify="center">
                     <v-col v-for="cartOption in useCartStore().getCartSupplierCartOptions"
@@ -256,7 +256,7 @@
                               <v-list-item
                                 v-for="categoriesPrice in useCartStore().getCurrentSupplierInfo?.supplierCategoriesPrices
                                 .sort((cur, next) => cur.amount - next.amount)"
-                                :key="categoriesPrice">
+                                :key="categoriesPrice.id">
                                 <v-tooltip
                                   v-if="categoriesPrice.amount === usePublicSupplierStore().getPreferences?.minimumCategoriesForEmployeeOrder"
                                   class="color-info" location="bottom">

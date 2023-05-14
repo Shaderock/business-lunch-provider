@@ -133,7 +133,7 @@
               <template v-slot:extension>
                 <v-tabs v-model="supplierDetailsTab" :disabled="isLoading">
                   <v-tab v-for="supplierDetails in useCompAdmEmpOrderStore().getSuppliersDetails"
-                         :key="supplierDetails.id"
+                         :key="supplierDetails.id ?? ''"
                          :value="supplierDetails"
                          color="primary"
                          @click="onSupplierTabChanged">

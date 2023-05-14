@@ -19,9 +19,9 @@
 
             <v-list-item prepend-icon="mdi-car-clock" title="Request offset">
               <v-list-item-subtitle>
-                {{ useSupAdmSupPrefStore().getRequestOffset.days() }} Days
-                {{ useSupAdmSupPrefStore().getRequestOffset.hours() }} Hours
-                {{ useSupAdmSupPrefStore().getRequestOffset.minutes() }} Minutes
+                {{ useSupAdmSupPrefStore().getRequestOffset?.days() || '' }} Days
+                {{ useSupAdmSupPrefStore().getRequestOffset?.hours() || ''}} Hours
+                {{ useSupAdmSupPrefStore().getRequestOffset?.minutes() || ''}} Minutes
               </v-list-item-subtitle>
             </v-list-item>
             <v-divider inset/>
