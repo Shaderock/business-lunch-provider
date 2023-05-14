@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build and Test Backend Spring Boot Application') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+        stage('Dockerize Backend Spring Boot Application') {
+            steps {
+                sh "docker build -t blp-backend ."
+                sh 'docker run -d -p 8080:8080 -e BACKEND_URL=http://104.248.80.209:8081 -e FRONTEND_URL=http://104.248.80.209:3000 -e DISCOVERY-ADDRESS=104.248.80.209:5050 -e DATABASE_ADDRESS=104.248.80.209:5432 blp-backend'
+            }
+        }
+    }
+    post {
+        failure {
+            mail to: 'blp.app.team@gmail.com',
+                 subject: "Build failed: ${currentBuild.fullDisplayName}",
+                 body: "Something went wrong with ${env.BUILD_URL}"
+        }
+    }
+}
