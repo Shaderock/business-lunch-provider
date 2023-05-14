@@ -2,7 +2,9 @@ pipeline {
     agent any
     stages {
         stage("Clone the project") {
-          git branch: 'master', url: 'https://github.com/Shaderock/business-lunch-provider.git'
+            steps{
+                git branch: 'master', url: 'https://github.com/Shaderock/business-lunch-provider.git'
+            }
         }
         stage('Build and Test Backend Spring Boot Application') {
             steps {
