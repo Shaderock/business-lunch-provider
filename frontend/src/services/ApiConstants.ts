@@ -1,7 +1,7 @@
 export class ApiConstants {
   static readonly API: string = "/api"
 
-  static readonly BACKEND_URL: string = `${process.env.BACKEND_URL ?? 'http://localhost:8080'}${ApiConstants.API}`
+  static readonly BACKEND_URL: string = `${process.env.VUE_APP_BACKEND_URL ?? 'http://104.248.80.209:8081'}${ApiConstants.API}`
 
   static readonly SYS_ADM: string = ApiConstants.BACKEND_URL + "/sys-adm"
   static readonly SYS_ADM_ORGANIZATION: string = ApiConstants.SYS_ADM + "/organization/details"
