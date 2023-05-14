@@ -10,7 +10,7 @@ spring:
       schema: blp_schema
     username: ${lunch.database.username}
     password: ${lunch.database.password}
-    url: jdbc:postgresql://${lunch.database.address}/business-lunch-provider-db
+    url: jdbc:postgresql://${DATABASE_ADDRESS:localhost}:5432/business-lunch-provider-db
   flyway:
     enabled: true
     schemas: blp_schema
