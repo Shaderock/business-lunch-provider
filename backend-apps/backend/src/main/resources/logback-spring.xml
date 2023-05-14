@@ -33,6 +33,7 @@
   <springProfile name="prod">
     <root level="INFO">
       <appender-ref ref="BACKEND-APP"/>
+      <appender-ref ref="STDOUT"/>
     </root>
   </springProfile>
 </configuration>
