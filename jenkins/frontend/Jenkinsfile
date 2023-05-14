@@ -4,7 +4,7 @@ pipeline {
         stage('Dockerize Frontend Vue3/Vite Application') {
             steps {
                 sh "cd frontend && sudo docker build -t blp-frontend ."
-                sh 'cd frontend && sudo docker run -d -p 3000:3000 -e BACKEND_URL=http://104.248.80.209:8081 blp-frontend'
+                sh 'cd frontend && sudo docker run -d -p 4173:4173 -e BACKEND_URL=http://104.248.80.209:8081 blp-frontend'
             }
         }
     }
