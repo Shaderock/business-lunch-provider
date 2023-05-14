@@ -4,6 +4,7 @@ pipeline {
         stage('Build and Test Backend Spring Boot Application') {
             steps {
                 dir('/backend-apps/backend') {
+                    sh 'whoami'
                     sh 'mvn clean install'
                 }
             }
