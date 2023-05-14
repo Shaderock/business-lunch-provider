@@ -11,10 +11,3 @@ lunch:
 
 server:
   port: 8081
-
-spring:
-  cloud:
-    vault:
-      scheme: http
-      host: 104.248.80.209
-      port: 8200
