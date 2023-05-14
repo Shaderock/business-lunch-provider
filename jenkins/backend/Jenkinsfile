@@ -4,16 +4,14 @@ pipeline {
         stage('Build and Test Backend Spring Boot Application') {
             steps {
                 sh 'sudo whoami'
-                dir('/backend-apps/backend') {
-                    sh 'sudo mvn clean install'
-                }
+                sh 'cd /backend-apps/backend && sudo mvn clean install'
             }
         }
         stage('Dockerize Backend Spring Boot Application') {
             steps {
                 dir('/backend-apps/backend') {
-                    sh "sudo docker build -t blp-backend ."
-                    sh 'sudo docker run -d -p 8080:8080 -e BACKEND_URL=http://104.248.80.209:8081 -e FRONTEND_URL=http://104.248.80.209:3000 -e DISCOVERY-ADDRESS=104.248.80.209:5050 -e DATABASE_ADDRESS=104.248.80.209:5432 blp-backend'
+                    sh 'cd /backend-apps/backend && sudo docker build -t blp-backend .'
+                    sh 'cd /backend-apps/backend && sudo docker run -d -p 8080:8080 -e BACKEND_URL=http://104.248.80.209:8081 -e FRONTEND_URL=http://104.248.80.209:3000 -e DISCOVERY-ADDRESS=104.248.80.209:5050 -e DATABASE_ADDRESS=104.248.80.209:5432 blp-backend'
                 }
             }
         }
