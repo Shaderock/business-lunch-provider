@@ -47,6 +47,9 @@ public class AuthService {
 
     try {
       userDetails = appUserDetailsService.loadUserByUsername(form.email());
+      if (!passwordEncoder.matches(form.password(), userDetails.getPassword())) {
+        throw new BadCredentialsException("Bad Credentials");
+      }
     } catch (UsernameNotFoundException ex) {
       throw new BadCredentialsException("Bad Credentials");
     }

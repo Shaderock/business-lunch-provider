@@ -86,6 +86,11 @@ public class CompanyService {
     return read(userDetailsService.loadUserByUsername(userEmail));
   }
 
+  public Company readByAppToken(@NonNull UUID appToken) {
+    return companyRepository.findByAppToken(appToken)
+        .orElseThrow(() -> new CrudValidationException("Company not found by token"));
+  }
+
   public Company read(@NonNull AppUserDetails userDetails) {
     OrganizationDetails organizationDetails = organizationDetailsService.read(userDetails);
     return read(organizationDetails);

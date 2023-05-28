@@ -5,11 +5,13 @@ import com.shaderock.lunch.backend.feature.config.preference.company.entity.Comp
 import com.shaderock.lunch.backend.feature.invitation.entity.Invitation;
 import com.shaderock.lunch.backend.feature.organization.entity.OrganizationDetails;
 import com.shaderock.lunch.backend.feature.subscription.entity.Subscription;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +50,9 @@ public class Company extends DeletableEntity {
   @Exclude
   private List<Invitation> invitations = new ArrayList<>();
 
+  @Column
+  private UUID appToken;
+
   @Builder
   public Company(UUID id, boolean isDeleted, OrganizationDetails organizationDetails,
       CompanyPreferences preferences, Set<Subscription> subscriptions) {
@@ -55,5 +60,12 @@ public class Company extends DeletableEntity {
     this.organizationDetails = organizationDetails;
     this.preferences = preferences;
     this.subscriptions = subscriptions;
+  }
+
+  @PrePersist
+  public void assignAppToken() {
+    if (appToken == null) {
+      appToken = UUID.randomUUID();
+    }
   }
 }

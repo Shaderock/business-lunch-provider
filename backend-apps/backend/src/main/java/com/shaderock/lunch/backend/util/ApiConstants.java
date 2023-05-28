@@ -43,6 +43,7 @@ public class ApiConstants {
   public static final String ANONYM_CATEGORY = ANONYM + "/category";
   public static final String ANONYM_OPTION = ANONYM + "/option";
   public static final String ANONYM_CATEGORIES_PRICE = ANONYM + "/categories-price";
+  public static final String ANONYM_DELIVERY = ANONYM + "/delivery";
   public static final String INVITATION = API + "/invitation";
   public static final String NOTIFICATIONS = API + "/notifications";
   private static final String ORGANIZATION_ADM = API + "/organization-adm";
