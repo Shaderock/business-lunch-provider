@@ -27,11 +27,6 @@ opportunity to reach a larger audience and streamline the negotiation process wi
 * Orientation (Determine three possible ideas for the future project)
 * Documentation (Select one idea for the future development, create FRs, NFRs, Backlog and Wiki page)
 * Design / UX / UI
-
-### In Progress
-* Backend
-
-## Future plans
 * Efficient Communication
 * Frontend
 * QA / Unit Testing
@@ -44,12 +39,17 @@ opportunity to reach a larger audience and streamline the negotiation process wi
 
 # Links
 * [Repository](https://github.com/Shaderock/business-lunch-provider)
-* [README](https://github.com/Shaderock/business-lunch-provider/blob/master/README.md)
-* [Project Installation](https://github.com/Shaderock/business-lunch-provider/wiki/Project-Installation)
 * [Functional Requirements](https://github.com/Shaderock/business-lunch-provider/wiki/Functional-Requirements)
 * [Nonfunctional Requirements](https://github.com/Shaderock/business-lunch-provider/wiki/Nonfunctional-Requirements)
-* [Backlog](https://github.com/users/Shaderock/projects/1/views/5)
 * [UX / UI Design](https://github.com/Shaderock/business-lunch-provider/wiki/UX-UI-Design)
+---
+* [Project Installation](https://github.com/Shaderock/business-lunch-provider/wiki/Project-Installation)
 * [Database Flyway Migration](https://github.com/Shaderock/business-lunch-provider/wiki/Database-Flyway-Migration)
+---
+* [Iot](https://github.com/Shaderock/business-lunch-provider/wiki/IoT)
+* [Manual Test Cases](https://github.com/Shaderock/business-lunch-provider/wiki/Manual-Test-Cases)
+* [Mobile](https://github.com/Shaderock/business-lunch-provider/wiki/Mobile)
 * [Security](https://github.com/Shaderock/business-lunch-provider/wiki/Security)
 * [Functional View](https://github.com/Shaderock/business-lunch-provider/wiki/Functional-View)
+---
+* [Backlog](https://github.com/users/Shaderock/projects/1/views/5)
